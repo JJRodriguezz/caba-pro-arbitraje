@@ -31,3 +31,13 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# JVM crash dumps
+hs_err_pid*
