@@ -1,0 +1,465 @@
+/* Reset y configuración base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #4ea1a5 0%, #265b52 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Formas flotantes de fondo */
+body::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background:
+            radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 60%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+    animation: float 20s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(30px, -30px) rotate(120deg); }
+    66% { transform: translate(-20px, 20px) rotate(240deg); }
+}
+
+/* Container principal - LOGIN Y REGISTRO */
+.login-container, .registro-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Formulario de login y registro */
+.login-form, .registro-form {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    border-radius: 25px;
+    box-shadow:
+            0 25px 50px rgba(0, 0, 0, 0.15),
+            0 0 0 1px rgba(255, 255, 255, 0.2);
+    padding: 50px 40px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efecto de brillo en el formulario */
+.login-form::before, .registro-form::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transform: rotate(45deg);
+    animation: formShine 4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes formShine {
+    0%, 100% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    50% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+/* Logo Container */
+.logo-container {
+    position: relative;
+    top: 0;
+    margin: 0 auto 5px auto;
+    width: 120px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+
+/* Logo Image */
+.logo-container img {
+    content: url(trinity-logo.png);
+    width: 100px;
+    height: auto;
+    max-width: 100%;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
+}
+
+/* Título principal - LOGIN Y REGISTRO */
+.login-form h2, .registro-form h2 {
+    color: #2c3e50;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 30px 0 10px 0;
+    position: relative;
+    z-index: 3;
+}
+
+/* Subtítulo específico para LOGIN */
+.login-form h2::after {
+    content: 'Sistema de Gestión Integral de Arbitraje';
+    display: block;
+    font-size: 14px;
+    color: #7f8c8d;
+    font-weight: 400;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+}
+
+/* Subtítulo específico para REGISTRO */
+.registro-form h2::after {
+    content: 'Crea tu cuenta en CABA Pro';
+    display: block;
+    font-size: 14px;
+    color: #7f8c8d;
+    font-weight: 400;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+}
+
+/* Grupos de input */
+.input-group {
+    margin-bottom: 25px;
+    text-align: left;
+    position: relative;
+    z-index: 3;
+}
+
+/* Labels */
+.input-group label {
+    display: block;
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 8px;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+/* Inputs */
+.input-group input {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid #e1e8ed;
+    border-radius: 15px;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+
+.input-group input:focus {
+    border-color: #4ea1a5;
+    box-shadow:
+            0 0 0 3px rgba(78, 161, 165, 0.1),
+            0 8px 25px rgba(78, 161, 165, 0.15);
+    background: white;
+    transform: translateY(-2px);
+}
+
+.input-group input::placeholder {
+    color: #a0aec0;
+    font-style: italic;
+}
+
+/* Botón principal - LOGIN Y REGISTRO */
+.btn, .btn-registro {
+    background: linear-gradient(135deg, #4ea1a5 0%, #265b52 100%);
+    border: none;
+    border-radius: 15px;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 18px 40px;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:
+            0 10px 25px rgba(78, 161, 165, 0.3),
+            0 5px 10px rgba(0, 0, 0, 0.1);
+    margin: 10px 0 25px 0;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 3;
+    overflow: hidden;
+}
+
+.btn::before, .btn-registro::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn:hover::before, .btn-registro:hover::before {
+    left: 100%;
+}
+
+.btn:hover, .btn-registro:hover {
+    transform: translateY(-3px);
+    box-shadow:
+            0 15px 35px rgba(78, 161, 165, 0.4),
+            0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn:active, .btn-registro:active {
+    transform: translateY(-1px);
+    transition: transform 0.1s;
+}
+
+/* Mensajes de estado */
+.message {
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    font-weight: 500;
+    text-align: center;
+    position: relative;
+    z-index: 3;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message.error {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+}
+
+.message.success {
+    background: linear-gradient(135deg, #27ae60, #229954);
+    color: white;
+    box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+}
+
+/* Efectos adicionales para iconos en mensajes */
+.message.error::before {
+    content: '⚠️ ';
+    margin-right: 8px;
+}
+
+.message.success::before {
+    content: '✅ ';
+    margin-right: 8px;
+}
+
+/* ERRORES DE VALIDACIÓN DE CAMPOS (REGISTRO) */
+.field-error {
+    display: block;
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 5px;
+    font-weight: 500;
+    animation: slideIn 0.3s ease-out;
+    background: rgba(231, 76, 60, 0.1);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border-left: 3px solid #e74c3c;
+}
+
+/* INPUT CON ERROR */
+.input-group input.error {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+/* ENLACES DE NAVEGACIÓN */
+.login-link, .register-link {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(226, 232, 240, 0.5);
+    text-align: center;
+}
+
+.login-link p, .register-link p {
+    color: #7f8c8d;
+    font-size: 14px;
+    margin: 0;
+}
+
+.login-link a, .register-link a {
+    color: #4ea1a5;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.login-link a:hover, .register-link a:hover {
+    color: #265b52;
+    text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 576px) {
+    body {
+        padding: 10px;
+    }
+
+    .login-form, .registro-form {
+        padding: 40px 25px;
+        border-radius: 20px;
+        margin: 10px;
+    }
+
+    .logo-container {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 20px;
+    }
+
+    .logo-container img {
+        width: 80px;
+    }
+
+    .login-form h2, .registro-form h2 {
+        font-size: 28px;
+        margin: 20px 0 10px 0;
+    }
+
+    .login-form h2::after, .registro-form h2::after {
+        font-size: 12px;
+    }
+
+    .input-group input {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+
+    .btn, .btn-registro {
+        padding: 15px 30px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 400px) {
+    .login-form, .registro-form {
+        padding: 35px 20px;
+    }
+
+    .login-form h2, .registro-form h2 {
+        font-size: 24px;
+    }
+
+    .login-form h2::after, .registro-form h2::after {
+        font-size: 11px;
+    }
+}
+
+/* Animaciones de entrada */
+.login-container, .registro-container {
+    animation: containerFadeIn 0.8s ease-out;
+}
+
+@keyframes containerFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Efectos de focus mejorados */
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+    color: #4ea1a5;
+    transform: translateY(-2px);
+}
+
+/* Hover effects para inputs */
+.input-group input:hover {
+    border-color: #cbd5e0;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* Mejoras de accesibilidad */
+.btn:focus, .btn-registro:focus,
+.input-group input:focus {
+    outline: 2px solid #4ea1a5;
+    outline-offset: 2px;
+}
+
+/* Estilo para el texto del logo CABA Pro - LOGIN Y REGISTRO */
+.login-form h2::before, .registro-form h2::before {
+    content: 'CABA Pro';
+    display: block;
+    font-size: 36px;
+    background: linear-gradient(135deg, #94d68c, #1e5167);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+}
+
+/* FORMULARIO DE REGISTRO - MÁRGENES AJUSTADOS */
+.registro-form {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.registro-form .input-group {
+    margin-bottom: 20px;
+}
+
+.registro-form h2 {
+    margin: 20px 0 10px 0;
+}
+
+/* SCROLL PERSONALIZADO PARA FORMULARIO REGISTRO EN MÓVIL */
+.registro-form::-webkit-scrollbar {
+    width: 6px;
+}
+
+.registro-form::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.registro-form::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4ea1a5, #265b52);
+    border-radius: 10px;
+}
+
+.registro-form::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #265b52, #4ea1a5);
+}

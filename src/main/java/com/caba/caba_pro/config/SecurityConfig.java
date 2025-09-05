@@ -1,25 +1,76 @@
+/**
+ * Archivo: SecurityConfig.java Autores: Isabella.Idarraga Fecha última modificación: [04.09.2025]
+ * Descripción: Configuración de seguridad para la aplicación Proyecto: CABA Pro - Sistema de
+ * Gestión Integral de Arbitraje
+ */
 package com.caba.caba_pro.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
 
+  @Autowired private UserDetailsService usuarioDetailsService;
+
+  @Autowired private CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+
   @Bean
-  SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http
-      .authorizeHttpRequests(auth -> auth
-        .requestMatchers("/h2-console/**").permitAll()
-        .anyRequest().permitAll()
-      )
-      .headers(h -> h.frameOptions(f -> f.sameOrigin()))
-      .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"))
-      .formLogin(Customizer.withDefaults())
-      .logout(Customizer.withDefaults());
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
+
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http.authorizeHttpRequests(
+            authorize ->
+                authorize
+                    // Rutas públicas
+                    .requestMatchers("/h2-console/**")
+                    .permitAll()
+                    .requestMatchers(
+                        "/login", "/registro", "/css/**", "/js/**", "/images/**", "/h2-console")
+                    .permitAll()
+
+                    // Rutas administrativas - solo ROLE_ADMIN
+                    .requestMatchers("/admin/**")
+                    .hasRole("ADMIN")
+
+                    // Rutas de árbitro - ROLE_USER o ROLE_ARBITRO
+                    .requestMatchers("/arbitro/**")
+                    .hasAnyRole("USER", "ARBITRO")
+
+                    // Cualquier otra request requiere autenticación
+                    .anyRequest()
+                    .authenticated())
+        .formLogin(
+            form ->
+                form.loginPage("/login")
+                    .successHandler(authenticationSuccessHandler) // Usar handler personalizado
+                    .failureUrl("/login?error=true")
+                    .permitAll())
+        .logout(
+            logout ->
+                logout
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/login?logout")
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID")
+                    .permitAll())
+        .sessionManagement(session -> session.maximumSessions(1).maxSessionsPreventsLogin(false))
+
+        // Deshabilitar CSRF solo en desarrollo
+        .csrf(csrf -> csrf.disable())
+
+        // Permitir frames para H2 (solo desarrollo)
+        .headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
+
     return http.build();
   }
 }
