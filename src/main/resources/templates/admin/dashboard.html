@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <title>Dashboard Administrador - CABA Pro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Header Navigation -->
+    <nav class="header-nav">
+        <div class="nav-links">
+            <a th:href="@{/admin/arbitros}">Árbitros</a>
+            <a th:href="@{/admin/partidos}">Partidos</a>
+            <a th:href="@{/admin/torneos}">Torneos</a>
+            <a th:href="@{/admin/calendario}">Calendario</a>
+            <a th:href="@{/admin/perfil}">👤</a>
+        </div>
+        <div class="user-section">
+
+            <span sec:authentication="name">Administrador</span>
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit" class="logout-btn">🔓 Salir</button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- Main Panel -->
+    <div class="main-panel">
+        <h1 class="welcome-title">Bienvenido <span sec:authentication="name">Nombre</span></h1>
+        <p class="welcome-subtitle">Estas en la vista de Admin</p>
+
+        <button class="stats-button" onclick="location.href='/admin/estadisticas'">
+            Ver Estadísticas
+        </button>
+
+        <!-- Floating Icons -->
+        <div class="floating-icons">
+            <div class="float-icon" title="Reportes">
+                📊
+            </div>
+            <div class="float-icon" title="Configuración">
+                💰
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
