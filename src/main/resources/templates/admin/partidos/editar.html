@@ -22,7 +22,7 @@
   <div th:if="${error}" class="message error" th:text="${error}"></div>
 
   <!-- Form -->
-  <form th:action="@{'/admin/partidos/' + ${partido.id} + '/editar'}"
+  <form th:action="@{/admin/partidos/{id}/editar(id=${partido.id})}"
         method="post"
         th:object="${partidoDto}">
 
@@ -52,6 +52,19 @@
       </div>
 
       <div class="form-group">
+        <label for="torneoId">Torneo (Opcional)</label>
+        <select id="torneoId" th:field="*{torneoId}">
+          <option value="">No asociar a ningún torneo</option>
+          <option th:each="torneo : ${torneos}" 
+                  th:value="${torneo.id}" 
+                  th:text="${torneo.nombre + ' (' + torneo.estado.descripcion + ')'}">
+            Torneo ejemplo
+          </option>
+        </select>
+        <span th:if="${#fields.hasErrors('torneoId')}" th:errors="*{torneoId}" class="error"></span>
+      </div>
+
+      <div class="form-group">
         <label for="equipoLocal">Equipo local *</label>
         <input type="text" id="equipoLocal" th:field="*{equipoLocal}" required>
         <span th:if="${#fields.hasErrors('equipoLocal')}" th:errors="*{equipoLocal}" class="error"></span>
@@ -65,8 +78,8 @@
     </div>
 
     <div class="buttons">
-      <button type="submit" class="btn btn-primary">Guardar cambios</button>
       <a th:href="@{/admin/partidos}" class="btn btn-secondary">Cancelar</a>
+      <button type="submit" class="btn btn-primary">Guardar cambios</button>
     </div>
   </form>
 </div>

@@ -1,20 +1,27 @@
 /**
- * Archivo: Usuario.java Autores: Isabella.Idarraga Fecha última modificación: [04.09.2025]
- * Descripción: Clase que representa a un usuario en el sistema Proyecto: CABA Pro - Sistema de
- * Gestión Integral de Arbitraje
+ * Archivo: Administrador.java Autores: Isabella.Idarraga & Diego.Gonzalez Fecha última
+ * modificación: [06.09.2025] Descripción: Modelo para la gestión de administradores en la
+ * aplicación Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.models;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(
-    name = "usuarios",
+    name = "administrador",
     uniqueConstraints = {@UniqueConstraint(columnNames = "username")})
-public class Usuario {
+public class Administrador {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +38,7 @@ public class Usuario {
 
   @NotBlank(message = "El rol es obligatorio")
   @Column(nullable = false)
-  private String role;
+  private String role = "ROLE_ADMIN";
 
   @Column(name = "fecha_creacion", nullable = false)
   private LocalDateTime fechaCreacion;
@@ -40,13 +47,13 @@ public class Usuario {
   private Boolean activo = true;
 
   // Constructor por defecto
-  public Usuario() {}
+  public Administrador() {}
 
   // Constructor con parámetros
-  public Usuario(String username, String password, String role) {
+  public Administrador(String username, String password) {
     this.username = username;
     this.password = password;
-    this.role = role;
+    this.role = "ROLE_ADMIN";
   }
 
   @PrePersist
