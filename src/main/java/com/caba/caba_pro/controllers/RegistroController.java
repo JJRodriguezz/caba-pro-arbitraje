@@ -30,7 +30,7 @@ public class RegistroController {
   }
 
   @PostMapping("/registro")
-  public String registrarUsuario(
+  public String registrarAdministrador(
       @Valid @ModelAttribute("registroForm") RegistroForm registroForm,
       BindingResult result,
       RedirectAttributes flash,
@@ -46,8 +46,8 @@ public class RegistroController {
     }
 
     try {
-      registroService.registrarUsuario(registroForm);
-      flash.addFlashAttribute("success", "Usuario registrado exitosamente");
+      registroService.registrarAdministrador(registroForm);
+      flash.addFlashAttribute("success", "Administrador registrado exitosamente");
       return "redirect:/login?registroExitoso";
     } catch (BusinessException e) {
       flash.addFlashAttribute("error", e.getMessage());

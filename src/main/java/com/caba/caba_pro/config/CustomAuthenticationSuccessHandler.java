@@ -1,7 +1,8 @@
 /**
- * Archivo: CustomAuthenticationSuccessHandler.java Autores: Isabella.Idarraga Fecha última modificación: [04.09.2025]
- * Descripción: Manejador personalizado de autenticación que redirige a los usuarios según su rol tras iniciar sesión. Proyecto: CABA Pro - Sistema de
- * Gestión Integral de Arbitraje
+ * Archivo: CustomAuthenticationSuccessHandler.java Autores: Isabella.Idarraga Fecha última
+ * modificación: [04.09.2025] Descripción: Manejador personalizado de autenticación que redirige a
+ * los usuarios según su rol tras iniciar sesión. Proyecto: CABA Pro - Sistema de Gestión Integral
+ * de Arbitraje
  */
 package com.caba.caba_pro.config;
 

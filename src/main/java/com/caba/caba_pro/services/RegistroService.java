@@ -1,14 +1,14 @@
 /**
- * Archivo: RegistroService.java Autores: Isabella.Idarraga Fecha última modificación: [04.09.2025]
- * Descripción: Servicio para la gestión de registros en la aplicación Proyecto: CABA Pro - Sistema de
- * Gestión Integral de Arbitraje
+ * Archivo: RegistroService.java Autores: Diego.Gonzalez Fecha última modificación: [06.09.2025]
+ * Descripción: Servicio para la gestión de registros de administradores en la aplicación Proyecto:
+ * CABA Pro - Sistema de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.services;
 
 import com.caba.caba_pro.DTOs.RegistroForm;
 import com.caba.caba_pro.exceptions.BusinessException;
-import com.caba.caba_pro.models.Usuario;
-import com.caba.caba_pro.repositories.UsuarioRepository;
+import com.caba.caba_pro.models.Administrador;
+import com.caba.caba_pro.repositories.AdministradorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,42 +22,40 @@ public class RegistroService {
 
   private static final Logger logger = LoggerFactory.getLogger(RegistroService.class);
 
-  @Autowired private UsuarioRepository usuarioRepository;
+  @Autowired private AdministradorRepository administradorRepository;
 
   @Autowired private PasswordEncoder passwordEncoder;
 
-  public Usuario registrarUsuario(RegistroForm registroForm) {
+  public Administrador registrarAdministrador(RegistroForm registroForm) {
 
-    logger.info("Iniciando registro de usuario: {}", registroForm.getUsername());
+    logger.info("Iniciando registro de administrador: {}", registroForm.getUsername());
 
-    // Validar parámetros de entrada
-    if (registroForm == null) {
-      throw new IllegalArgumentException("Los datos de registro no pueden ser nulos");
+    // Validar que el administrador no exista
+    if (administradorRepository.existsByUsername(registroForm.getUsername())) {
+      logger.warn("Administrador ya existe: {}", registroForm.getUsername());
+      throw new BusinessException("Ya existe un administrador con ese nombre");
     }
 
-    // Validar que el usuario no exista
-    if (usuarioRepository.existsByUsername(registroForm.getUsername())) {
-      logger.warn("Usuario ya existe: {}", registroForm.getUsername());
-      throw new BusinessException("Ya existe un usuario con ese nombre");
-    }
+    // Crear y mapear el administrador
+    Administrador administrador = mapearFormAAdministrador(registroForm);
+    logger.info("Administrador mapeado: {}", administrador.getUsername());
 
-    // Crear y mapear el usuario
-    Usuario usuario = mapearFormAUsuario(registroForm);
-    logger.info("Usuario mapeado: {}", usuario.getUsername());
+    // Persistir el administrador
+    Administrador administradorGuardado = administradorRepository.save(administrador);
+    logger.info("Administrador guardado exitosamente con ID: {}", administradorGuardado.getId());
 
-    // Persistir el usuario
-    Usuario usuarioGuardado = usuarioRepository.save(usuario);
-    logger.info("Usuario guardado exitosamente con ID: {}", usuarioGuardado.getId());
-
-    return usuarioGuardado;
+    return administradorGuardado;
   }
 
-  private Usuario mapearFormAUsuario(RegistroForm form) {
-    Usuario usuario = new Usuario();
-    usuario.setUsername(form.getUsername());
-    usuario.setPassword(passwordEncoder.encode(form.getPassword()));
-    usuario.setRole("ROLE_USER");
-    logger.debug("Usuario mapeado: username={}, role={}", usuario.getUsername(), usuario.getRole());
-    return usuario;
+  private Administrador mapearFormAAdministrador(RegistroForm form) {
+    Administrador administrador = new Administrador();
+    administrador.setUsername(form.getUsername());
+    administrador.setPassword(passwordEncoder.encode(form.getPassword()));
+    administrador.setRole("ROLE_ADMIN");
+    logger.debug(
+        "Administrador mapeado: username={}, role={}",
+        administrador.getUsername(),
+        administrador.getRole());
+    return administrador;
   }
 }
