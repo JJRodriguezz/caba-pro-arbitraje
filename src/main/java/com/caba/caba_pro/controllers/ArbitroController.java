@@ -1,7 +1,7 @@
 /**
- * Archivo: ArbitroController.java Autores: Isabella.Idarraga Fecha última modificación: [04.09.2025]
- * Descripción: Controlador para la gestión de árbitros en la aplicación Proyecto: CABA Pro - Sistema de
- * Gestión Integral de Arbitraje
+ * Archivo: ArbitroController.java Autores: Isabella.Idarraga Fecha última modificación:
+ * [04.09.2025] Descripción: Controlador para la gestión de árbitros en la aplicación Proyecto: CABA
+ * Pro - Sistema de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.controllers;
 

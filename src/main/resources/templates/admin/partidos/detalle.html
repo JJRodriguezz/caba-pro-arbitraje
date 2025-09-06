@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Partido – Asignar Árbitro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" th:href="@{/css/partidos.css}" />
+</head>
+<body>
+<div class="container">
+  <!-- Nav -->
+  <div class="nav-bar">
+    <div class="nav-links">
+      <a th:href="@{/admin/dashboard}">Dashboard</a>
+      <a th:href="@{/admin/arbitros}">Árbitros</a>
+      <a th:href="@{/admin/partidos}" class="active">Partidos</a>
+      <a th:href="@{/admin/torneos}">Torneos</a>
+      <a th:href="@{/admin/calendario}">Calendario</a>
+    </div>
+    <div class="user-info">
+      <span th:text="${#authentication.name}">Administrador</span>
+      <form th:action="@{/logout}" method="post" style="display:inline;">
+        <button type="submit" class="logout-btn">Salir</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mensajes -->
+  <div th:if="${success}" class="message success" th:text="${success}"></div>
+  <div th:if="${error}" class="message error" th:text="${error}"></div>
+
+  <!-- Header -->
+  <div class="header">
+    <h1 th:text="${'Partido: ' + partido.nombre}">Partido</h1>
+    <div class="action-buttons">
+      <a th:href="@{/admin/partidos}" class="btn btn-secondary">Volver</a>
+      <a th:href="@{'/admin/partidos/' + ${partido.id} + '/editar'}" class="btn btn-primary">Editar</a>
+    </div>
+  </div>
+
+  <!-- Contenido: dos columnas -->
+  <div class="grid-2">
+    <!-- Columna izquierda: info + asignaciones -->
+    <section class="card">
+      <h2 style="margin-top:0;">Información</h2>
+      <ul class="info-list">
+        <li><b>Fecha:</b> <span th:text="${#temporals.format(partido.fechaHora,'dd/MM/yyyy HH:mm')}">01/01/2026 19:00</span></li>
+        <li><b>Sede:</b> <span th:text="${partido.sede}">Coliseo</span></li>
+        <li><b>Equipos:</b>
+          <span th:text="${partido.equipoLocal}">Local</span>
+          vs
+          <span th:text="${partido.equipoVisitante}">Visitante</span>
+        </li>
+        <li><b>Estado:</b>
+          <span class="status-badge"
+                th:class="'status-badge status-' + ${#strings.toLowerCase(partido.estado)}"
+                th:text="${partido.estado}">PROGRAMADO</span>
+        </li>
+      </ul>
+
+      <h2>Asignaciones</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Árbitro</th>
+            <th>Posición</th>
+            <th>Estado</th>
+            <th>Asignado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:if="${#lists.isEmpty(partido.asignaciones)}">
+            <td colspan="4">Sin asignaciones aún.</td>
+          </tr>
+          <tr th:each="a : ${partido.asignaciones}">
+            <td th:text="${a.arbitro.nombre + ' ' + a.arbitro.apellidos}">Nombre</td>
+            <td th:text="${a.posicion}">PRINCIPAL</td>
+            <td>
+              <span class="status-badge"
+                    th:class="'status-badge status-' + ${#strings.toLowerCase(a.estado)}"
+                    th:text="${a.estado}">PENDIENTE</span>
+            </td>
+            <td th:text="${#temporals.format(a.asignadoEn,'dd/MM/yyyy HH:mm')}">01/01/2026 18:30</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Columna derecha: formulario de asignación -->
+    <section class="card">
+      <h2 id="asignar" style="margin-top:0;">Asignar Árbitro</h2>
+      <form th:action="@{'/admin/partidos/' + ${partido.id} + '/asignar'}"
+            th:object="${asignacionDto}"
+            method="post">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="arbitroId">Árbitro *</label>
+            <select id="arbitroId" th:field="*{arbitroId}" required>
+              <option value="">Selecciona un árbitro</option>
+              <option th:each="arb : ${arbitros}"
+                      th:value="${arb.id}"
+                      th:text="${arb.nombre + ' ' + arb.apellidos}">
+              </option>
+            </select>
+            <span th:if="${#fields.hasErrors('arbitroId')}" th:errors="*{arbitroId}" class="error"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="posicion">Posición *</label>
+            <select id="posicion" th:field="*{posicion}" required>
+              <option value="">Selecciona posición</option>
+              <option value="PRINCIPAL">PRINCIPAL</option>
+              <option value="ASISTENTE 1">ASISTENTE 1</option>
+              <option value="ASISTENTE 2">ASISTENTE 2</option>
+              <option value="ANOTADOR">ANOTADOR</option>
+            </select>
+            <span th:if="${#fields.hasErrors('posicion')}" th:errors="*{posicion}" class="error"></span>
+          </div>
+        </div>
+
+        <div class="buttons" style="margin-top:12px;">
+          <button type="submit" class="btn btn-primary">Asignar</button>
+          <a th:href="@{/admin/partidos}" class="btn btn-secondary">Cancelar</a>
+        </div>
+      </form>
+    </section>
+  </div>
+</div>
+</body>
+</html>
