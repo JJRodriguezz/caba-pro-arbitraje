@@ -145,6 +145,21 @@ input:focus, select:focus {
     border: 1px solid #f5c6cb;
 }
 
+/* Security note styles */
+.security-note {
+    background: #f8f9fa;
+    border-left: 4px solid #007bff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+    font-style: italic;
+}
+
+.security-note strong {
+    color: #007bff;
+    font-weight: bold;
+}
+
 @media (max-width: 768px) {
     .form-grid {
         grid-template-columns: 1fr;

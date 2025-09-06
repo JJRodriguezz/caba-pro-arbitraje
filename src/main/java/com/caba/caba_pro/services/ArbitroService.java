@@ -1,20 +1,18 @@
 /**
- * Archivo: ArbitroService.java Autores: Isabella.Idarraga Fecha última modificación: [04.09.2025]
- * Descripción: Servicio para la gestión de árbitros en la aplicación Proyecto: CABA Pro - Sistema
- * de Gestión Integral de Arbitraje
+ * Archivo: ArbitroService.java Autores:Isabella.Idarraga & Diego.Gonzalez Fecha última
+ * modificación: [06.09.2025] Descripción: Servicio para la gestión de árbitros en la aplicación
+ * Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.services;
 
+// 1. Java estándar
 import com.caba.caba_pro.DTOs.ArbitroDto;
 import com.caba.caba_pro.exceptions.BusinessException;
 import com.caba.caba_pro.models.Arbitro;
-import com.caba.caba_pro.models.Usuario;
 import com.caba.caba_pro.repositories.ArbitroRepository;
-import com.caba.caba_pro.repositories.UsuarioRepository;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,13 +21,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ArbitroService {
 
+  // 1. Constantes estáticas
   private static final Logger logger = LoggerFactory.getLogger(ArbitroService.class);
 
-  @Autowired private ArbitroRepository arbitroRepository;
+  // 2. Variables de instancia
+  private final ArbitroRepository arbitroRepository;
+  private final PasswordEncoder passwordEncoder;
 
-  @Autowired private UsuarioRepository usuarioRepository;
+  // 3. Constructores
+  public ArbitroService(ArbitroRepository arbitroRepository, PasswordEncoder passwordEncoder) {
+    this.arbitroRepository = arbitroRepository;
+    this.passwordEncoder = passwordEncoder;
+  }
 
-  @Autowired private PasswordEncoder passwordEncoder;
+  // 4. Métodos públicos
 
   @Transactional(readOnly = true)
   public List<Arbitro> buscarTodosActivos() {
@@ -49,14 +54,13 @@ public class ArbitroService {
     // Validaciones de negocio
     validarDatosArbitro(arbitroDto);
 
-    // Crear usuario para el árbitro
-    Usuario usuario = crearUsuarioParaArbitro(arbitroDto);
-
     // Crear árbitro
     Arbitro arbitro = mapearDtoAArbitro(arbitroDto);
 
-    // Asociar usuario al árbitro (si tienes esta relación)
-    // arbitro.setUsuario(usuario);
+    // Establecer contraseña encriptada y rol
+    arbitro.setPassword(passwordEncoder.encode(arbitroDto.getPassword()));
+    arbitro.setRole("ROLE_ARBITRO");
+    arbitro.setActivo(true);
 
     arbitro = arbitroRepository.save(arbitro);
     logger.info("Árbitro creado exitosamente con ID: {}", arbitro.getId());
@@ -65,19 +69,31 @@ public class ArbitroService {
   }
 
   public Arbitro actualizarArbitro(Long id, ArbitroDto arbitroDto) {
+    logger.info("Actualizando árbitro con ID: {}", id);
+
     Arbitro arbitroExistente = buscarPorId(id);
 
-    // Validar si el username cambió y no existe en otro usuario
+    // Validar si el email cambió y no existe en otro árbitro
     if (!arbitroExistente.getEmail().equals(arbitroDto.getEmail())) {
-      if (usuarioRepository.existsByUsername(arbitroDto.getUsername())) {
-        throw new BusinessException("Ya existe un usuario con ese nombre");
+      if (arbitroRepository.existsByEmailAndActivoTrue(arbitroDto.getEmail())) {
+        throw new BusinessException("Ya existe un árbitro con ese email");
+      }
+    }
+
+    // Validar si el número de identificación cambió y no existe en otro árbitro
+    if (!arbitroExistente.getNumeroIdentificacion().equals(arbitroDto.getNumeroIdentificacion())) {
+      if (arbitroRepository.existsByNumeroIdentificacion(arbitroDto.getNumeroIdentificacion())) {
+        throw new BusinessException("Ya existe un árbitro con ese número de identificación");
       }
     }
 
     // Actualizar datos del árbitro
     actualizarDatosArbitro(arbitroExistente, arbitroDto);
 
-    return arbitroRepository.save(arbitroExistente);
+    Arbitro arbitroActualizado = arbitroRepository.save(arbitroExistente);
+    logger.info("Árbitro actualizado exitosamente con ID: {}", arbitroActualizado.getId());
+
+    return arbitroActualizado;
   }
 
   public void eliminarArbitro(Long id) {
@@ -87,6 +103,7 @@ public class ArbitroService {
     logger.info("Árbitro desactivado: {}", id);
   }
 
+  // Métodos de validación privados
   private void validarDatosArbitro(ArbitroDto dto) {
     // Validar que no exista árbitro con mismo número de identificación
     if (arbitroRepository.existsByNumeroIdentificacion(dto.getNumeroIdentificacion())) {
@@ -97,24 +114,6 @@ public class ArbitroService {
     if (arbitroRepository.existsByEmailAndActivoTrue(dto.getEmail())) {
       throw new BusinessException("Ya existe un árbitro con ese email");
     }
-
-    // Validar que no exista usuario con ese username
-    if (usuarioRepository.existsByUsername(dto.getUsername())) {
-      throw new BusinessException("Ya existe un usuario con ese nombre");
-    }
-  }
-
-  private Usuario crearUsuarioParaArbitro(ArbitroDto dto) {
-    Usuario usuario = new Usuario();
-    usuario.setUsername(dto.getUsername());
-    usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
-    usuario.setRole("ROLE_USER"); // Los árbitros tienen rol de usuario
-    usuario.setActivo(true);
-
-    usuario = usuarioRepository.save(usuario);
-    logger.info("Usuario creado para árbitro: {}", usuario.getUsername());
-
-    return usuario;
   }
 
   private Arbitro mapearDtoAArbitro(ArbitroDto dto) {

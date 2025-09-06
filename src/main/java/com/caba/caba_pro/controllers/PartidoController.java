@@ -5,13 +5,16 @@
  */
 package com.caba.caba_pro.controllers;
 
+// 1. Java estándar
 import com.caba.caba_pro.DTOs.AsignacionDto;
 import com.caba.caba_pro.DTOs.PartidoDto;
 import com.caba.caba_pro.exceptions.BusinessException;
 import com.caba.caba_pro.models.Arbitro;
 import com.caba.caba_pro.models.Partido;
-import com.caba.caba_pro.repositories.ArbitroRepository;
+import com.caba.caba_pro.models.Torneo;
+import com.caba.caba_pro.services.ArbitroService;
 import com.caba.caba_pro.services.PartidoService;
+import com.caba.caba_pro.services.TorneoService;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,12 +37,15 @@ public class PartidoController {
 
   // 2. Variables de instancia
   private final PartidoService partidoService;
-  private final ArbitroRepository arbitroRepository;
+  private final ArbitroService arbitroService;
+  private final TorneoService torneoService;
 
   // 3. Constructores
-  public PartidoController(PartidoService partidoService, ArbitroRepository arbitroRepository) {
+  public PartidoController(
+      PartidoService partidoService, ArbitroService arbitroService, TorneoService torneoService) {
     this.partidoService = partidoService;
-    this.arbitroRepository = arbitroRepository;
+    this.arbitroService = arbitroService;
+    this.torneoService = torneoService;
   }
 
   // 4. Métodos públicos
@@ -54,6 +60,9 @@ public class PartidoController {
   @GetMapping("/nuevo")
   public String mostrarFormularioCreacion(Model model) {
     model.addAttribute("partidoDto", new PartidoDto());
+    // Añadir lista de torneos activos para el formulario
+    List<Torneo> torneosActivos = torneoService.buscarTodosActivos();
+    model.addAttribute("torneos", torneosActivos);
     return "admin/partidos/form";
   }
 
@@ -64,6 +73,9 @@ public class PartidoController {
       Model model) {
 
     if (result.hasErrors()) {
+      // Si hay errores, volvemos a cargar la lista de torneos
+      List<Torneo> torneosActivos = torneoService.buscarTodosActivos();
+      model.addAttribute("torneos", torneosActivos);
       return "admin/partidos/form";
     }
 
@@ -74,7 +86,7 @@ public class PartidoController {
   @GetMapping("/{id}")
   public String detalle(@PathVariable Long id, Model model) {
     Partido partido = partidoService.buscarPorId(id);
-    List<Arbitro> arbitros = arbitroRepository.findByActivoTrue();
+    List<Arbitro> arbitros = arbitroService.buscarTodosActivos();
     model.addAttribute("partido", partido);
     model.addAttribute("arbitros", arbitros);
     model.addAttribute("asignacionDto", new AsignacionDto());
@@ -93,9 +105,16 @@ public class PartidoController {
     dto.setSede(partido.getSede());
     dto.setEquipoLocal(partido.getEquipoLocal());
     dto.setEquipoVisitante(partido.getEquipoVisitante());
+    // Incluir el torneo actual si existe
+    dto.setTorneoId(partido.getTorneo() != null ? partido.getTorneo().getId() : null);
+
+    // Añadir lista de torneos activos para el formulario
+    List<Torneo> torneosActivos = torneoService.buscarTodosActivos();
+    model.addAttribute("torneos", torneosActivos);
 
     model.addAttribute("partido", partido);
     model.addAttribute("partidoDto", dto);
+    model.addAttribute("partidoId", id); // Añadir ID explícitamente
     return "admin/partidos/editar";
   }
 
@@ -107,28 +126,23 @@ public class PartidoController {
       BindingResult result,
       Model model) {
 
-    // Si hay errores de validación del formulario, volvemos al detalle sin perder
-    // lo digitado
     if (result.hasErrors()) {
       // Cargamos datos necesarios de la vista
       model.addAttribute("partido", partidoService.buscarPorId(id));
-      model.addAttribute("arbitros", arbitroRepository.findByActivoTrue());
+      model.addAttribute("arbitros", arbitroService.buscarTodosActivos());
       return "admin/partidos/detalle";
     }
 
     try {
       partidoService.asignarArbitro(id, asignacionDto);
     } catch (BusinessException e) {
-      // Mostrar el mensaje en la misma vista (bloque rojo .message.error ya existe en
-      // el template)
       model.addAttribute("error", e.getMessage());
       // Reponer datos de la pantalla y mantener el DTO con lo que el usuario eligió
       model.addAttribute("partido", partidoService.buscarPorId(id));
-      model.addAttribute("arbitros", arbitroRepository.findByActivoTrue());
+      model.addAttribute("arbitros", arbitroService.buscarTodosActivos());
       return "admin/partidos/detalle";
     }
 
-    // Éxito: volvemos al detalle (si prefieres, podrías redirigir a "#asignar")
     return "redirect:/admin/partidos/{id}";
   }
 
@@ -151,6 +165,9 @@ public class PartidoController {
     if (result.hasErrors()) {
       // Requiere el objeto partido para el header de la vista editar
       model.addAttribute("partido", partidoService.buscarPorId(id));
+      // Si hay errores, se vuelve a cargar la lista de torneos
+      List<Torneo> torneosActivos = torneoService.buscarTodosActivos();
+      model.addAttribute("torneos", torneosActivos);
       return "admin/partidos/editar";
     }
 
