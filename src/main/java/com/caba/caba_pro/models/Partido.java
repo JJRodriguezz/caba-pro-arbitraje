@@ -13,6 +13,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
@@ -58,6 +60,10 @@ public class Partido {
 
   @OneToMany(mappedBy = "partido")
   private List<Asignacion> asignaciones = new ArrayList<>();
+
+  @ManyToOne
+  @JoinColumn(name = "torneo_id")
+  private Torneo torneo;
 
   // 3. Constructores
   public Partido() {
@@ -136,6 +142,14 @@ public class Partido {
 
   public List<Asignacion> getAsignaciones() {
     return asignaciones;
+  }
+
+  public Torneo getTorneo() {
+    return torneo;
+  }
+
+  public void setTorneo(Torneo torneo) {
+    this.torneo = torneo;
   }
 
   // 5. Métodos privados

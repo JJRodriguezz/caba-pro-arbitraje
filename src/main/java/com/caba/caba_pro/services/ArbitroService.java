@@ -5,6 +5,7 @@
  */
 package com.caba.caba_pro.services;
 
+// 1. Java estándar
 import com.caba.caba_pro.DTOs.ArbitroDto;
 import com.caba.caba_pro.exceptions.BusinessException;
 import com.caba.caba_pro.models.Arbitro;
@@ -12,7 +13,6 @@ import com.caba.caba_pro.repositories.ArbitroRepository;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +21,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class ArbitroService {
 
+  // 1. Constantes estáticas
   private static final Logger logger = LoggerFactory.getLogger(ArbitroService.class);
 
-  @Autowired private ArbitroRepository arbitroRepository;
+  // 2. Variables de instancia
+  private final ArbitroRepository arbitroRepository;
+  private final PasswordEncoder passwordEncoder;
 
-  @Autowired private PasswordEncoder passwordEncoder;
+  // 3. Constructores
+  public ArbitroService(ArbitroRepository arbitroRepository, PasswordEncoder passwordEncoder) {
+    this.arbitroRepository = arbitroRepository;
+    this.passwordEncoder = passwordEncoder;
+  }
+
+  // 4. Métodos públicos
 
   @Transactional(readOnly = true)
   public List<Arbitro> buscarTodosActivos() {
@@ -94,6 +103,7 @@ public class ArbitroService {
     logger.info("Árbitro desactivado: {}", id);
   }
 
+  // Métodos de validación privados
   private void validarDatosArbitro(ArbitroDto dto) {
     // Validar que no exista árbitro con mismo número de identificación
     if (arbitroRepository.existsByNumeroIdentificacion(dto.getNumeroIdentificacion())) {

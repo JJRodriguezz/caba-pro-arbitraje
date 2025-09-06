@@ -5,7 +5,7 @@
  */
 package com.caba.caba_pro.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+// 3. Spring Framework
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,7 +16,15 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-  @Autowired private CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+  // 2. Variables de instancia
+  private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+
+  // 3. Constructores
+  public SecurityConfig(CustomAuthenticationSuccessHandler authenticationSuccessHandler) {
+    this.authenticationSuccessHandler = authenticationSuccessHandler;
+  }
+
+  // 4. Métodos públicos
 
   @Bean
   public PasswordEncoder passwordEncoder() {

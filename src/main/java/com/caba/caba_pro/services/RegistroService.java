@@ -5,13 +5,13 @@
  */
 package com.caba.caba_pro.services;
 
+// 2. Librerías externas
 import com.caba.caba_pro.DTOs.RegistroForm;
 import com.caba.caba_pro.exceptions.BusinessException;
 import com.caba.caba_pro.models.Administrador;
 import com.caba.caba_pro.repositories.AdministradorRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,12 +20,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class RegistroService {
 
+  // 1. Constantes estáticas
   private static final Logger logger = LoggerFactory.getLogger(RegistroService.class);
 
-  @Autowired private AdministradorRepository administradorRepository;
+  // 2. Variables de instancia
+  private final AdministradorRepository administradorRepository;
+  private final PasswordEncoder passwordEncoder;
 
-  @Autowired private PasswordEncoder passwordEncoder;
+  // 3. Constructores
+  public RegistroService(
+      AdministradorRepository administradorRepository, PasswordEncoder passwordEncoder) {
+    this.administradorRepository = administradorRepository;
+    this.passwordEncoder = passwordEncoder;
+  }
 
+  // 4. Métodos públicos
   public Administrador registrarAdministrador(RegistroForm registroForm) {
 
     logger.info("Iniciando registro de administrador: {}", registroForm.getUsername());
@@ -47,6 +56,7 @@ public class RegistroService {
     return administradorGuardado;
   }
 
+  // Métodos de mapeo privados
   private Administrador mapearFormAAdministrador(RegistroForm form) {
     Administrador administrador = new Administrador();
     administrador.setUsername(form.getUsername());

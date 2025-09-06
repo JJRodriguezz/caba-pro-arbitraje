@@ -5,6 +5,7 @@
  */
 package com.caba.caba_pro.services;
 
+// 1. Java estándar
 import com.caba.caba_pro.models.Administrador;
 import com.caba.caba_pro.models.Arbitro;
 import com.caba.caba_pro.repositories.AdministradorRepository;
@@ -13,7 +14,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -27,11 +27,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+  // 1. Constantes estáticas
   private static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
 
-  @Autowired private AdministradorRepository administradorRepository;
+  // 2. Variables de instancia
+  private final AdministradorRepository administradorRepository;
+  private final ArbitroRepository arbitroRepository;
 
-  @Autowired private ArbitroRepository arbitroRepository;
+  // 3. Constructores
+  public UserDetailsServiceImpl(
+      AdministradorRepository administradorRepository, ArbitroRepository arbitroRepository) {
+    this.administradorRepository = administradorRepository;
+    this.arbitroRepository = arbitroRepository;
+  }
+
+  // 4. Métodos públicos
 
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

@@ -22,7 +22,7 @@
   <div th:if="${error}" class="message error" th:text="${error}"></div>
 
   <!-- Form -->
-  <form th:action="@{'/admin/partidos/' + ${partido.id} + '/editar'}"
+  <form th:action="@{/admin/partidos/{id}/editar(id=${partido.id})}"
         method="post"
         th:object="${partidoDto}">
 
@@ -49,6 +49,19 @@
         <label for="sede">Sede *</label>
         <input type="text" id="sede" th:field="*{sede}" required>
         <span th:if="${#fields.hasErrors('sede')}" th:errors="*{sede}" class="error"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="torneoId">Torneo (Opcional)</label>
+        <select id="torneoId" th:field="*{torneoId}">
+          <option value="">No asociar a ningún torneo</option>
+          <option th:each="torneo : ${torneos}" 
+                  th:value="${torneo.id}" 
+                  th:text="${torneo.nombre + ' (' + torneo.estado.descripcion + ')'}">
+            Torneo ejemplo
+          </option>
+        </select>
+        <span th:if="${#fields.hasErrors('torneoId')}" th:errors="*{torneoId}" class="error"></span>
       </div>
 
       <div class="form-group">
