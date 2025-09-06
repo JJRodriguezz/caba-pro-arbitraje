@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <title>Mi Perfil - CABA Pro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/perfil.css}" />
+    <link rel="stylesheet" th:href="@{/css/formularios.css}" />
+</head>
+<body style="margin: 0; padding: 0; min-height: 100vh; overflow-x: hidden; overflow-y: auto;">
+
+<div class="perfil-container">
+    <!-- Header del perfil -->
+    <div class="perfil-header">
+        <!-- Mostrar mensajes flash -->
+        <div th:if="${success}" class="alert alert-success">
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="alert alert-error">
+            <span th:text="${error}"></span>
+        </div>
+        
+        <div class="perfil-avatar">
+            <span th:if="${perfil.isArbitro()}" th:text="${perfil.nombre != null ? #strings.substring(perfil.nombre, 0, 1) + #strings.substring(perfil.apellidos, 0, 1) : '👤'}"></span>
+            <span th:if="${perfil.isAdmin()}" th:text="${perfil.username != null ? #strings.substring(perfil.username, 0, 1) : '🔧'}"></span>
+        </div>
+        <h1 th:if="${perfil.isArbitro()}" th:text="${perfil.nombreCompleto}"></h1>
+        <h1 th:if="${perfil.isAdmin()}" th:text="${perfil.username}"></h1>
+        <p th:if="${perfil.isArbitro()}" class="text-muted">Árbitro Profesional</p>
+        <p th:if="${perfil.isAdmin()}" class="text-muted">Administrador del Sistema</p>
+    </div>
+
+    <!-- Información del perfil -->
+    <div class="perfil-info">
+        <!-- Información Personal -->
+        <div class="info-section" th:if="${perfil.isArbitro()}">
+            <div class="info-title">
+                <span>👤</span> Información Personal
+            </div>
+            <div class="info-item">
+                <span class="info-label">Nombre Completo:</span>
+                <span class="info-value" th:text="${perfil.nombreCompleto}"></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Identificación:</span>
+                <span class="info-value" th:text="${perfil.numeroIdentificacion}"></span>
+            </div>
+            <div class="info-item" th:if="${perfil.fechaNacimiento}">
+                <span class="info-label">Fecha de Nacimiento:</span>
+                <span class="info-value" th:text="${#temporals.format(perfil.fechaNacimiento, 'dd/MM/yyyy')}"></span>
+            </div>
+        </div>
+
+        <!-- Información de Contacto -->
+        <div class="info-section" th:if="${perfil.isArbitro()}">
+            <div class="info-title">
+                <span>📧</span> Contacto
+            </div>
+            <div class="info-item">
+                <span class="info-label">Email:</span>
+                <span class="info-value" th:text="${perfil.email}"></span>
+            </div>
+            <div class="info-item" th:if="${perfil.telefono}">
+                <span class="info-label">Teléfono:</span>
+                <span class="info-value" th:text="${perfil.telefono}"></span>
+            </div>
+        </div>
+
+        <!-- Información Profesional para Árbitros -->
+        <div class="info-section" th:if="${perfil.isArbitro()}">
+            <div class="info-title">
+                <span>⚽</span> Información Profesional
+            </div>
+            <div class="info-item">
+                <span class="info-label">Especialidad:</span>
+                <span class="info-value">
+                    <span th:class="${perfil.especialidad == T(com.caba.caba_pro.enums.Especialidad).CAMPO} ? 'especialidad-badge especialidad-campo' : 'especialidad-badge especialidad-mesa'"
+                          th:text="${perfil.especialidad?.descripcion}"></span>
+                </span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Escalafón:</span>
+                <span class="info-value" th:text="${perfil.escalafon}"></span>
+            </div>
+        </div>
+
+        <!-- Información del Sistema -->
+        <div class="info-section">
+            <div class="info-title">
+                <span>⚙️</span> Información del Sistema
+            </div>
+            <div class="info-item" th:if="${perfil.isAdmin()}">
+                <span class="info-label">Usuario:</span>
+                <span class="info-value" th:text="${perfil.username}"></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Rol:</span>
+                <span class="info-value" th:text="${perfil.isAdmin() ? 'Administrador' : 'Árbitro'}"></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Estado:</span>
+                <span th:class="${perfil.activo} ? 'status-badge status-activo' : 'status-badge status-inactivo'"
+                      th:text="${perfil.activo} ? 'Activo' : 'Inactivo'"></span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">Miembro desde:</span>
+                <span class="info-value" th:text="${#temporals.format(perfil.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="actions-section">
+        <a th:href="${perfil.isAdmin() ? '/admin/dashboard' : '/arbitro/dashboard'}" 
+           class="btn btn-secondary">🔙 Volver al Dashboard</a>
+        <a th:href="${perfil.isAdmin() ? '/admin/perfil/editar' : '/arbitro/perfil/editar'}" 
+           class="btn btn-primary">✏️ Editar Perfil</a>
+        <a th:href="${perfil.isAdmin() ? '/admin/perfil/cambiar-password' : '/arbitro/perfil/cambiar-password'}" 
+           class="btn btn-primary">🔒 Cambiar Contraseña</a>
+    </div>
+</div>
+
+</body>
+</html>
