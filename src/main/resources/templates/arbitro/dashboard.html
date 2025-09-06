@@ -18,7 +18,7 @@
       <a th:href="@{/arbitro/disponibilidad}">Disponibilidad</a>
     </div>
     <div class="user-section">
-      <span>👤</span>
+      <a th:href="@{/arbitro/perfil}">👤</a>
       <span sec:authentication="name">Árbitro</span>
       <form th:action="@{/logout}" method="post" style="display: inline;">
         <button type="submit" class="logout-btn">🔓 Salir</button>

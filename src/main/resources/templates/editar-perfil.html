@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <title>Editar Perfil - CABA Pro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" th:href="@{/css/perfil.css}" />
+    <link rel="stylesheet" th:href="@{/css/formularios.css}" />
+</head>
+<body style="margin: 0; padding: 0; min-height: 100vh; overflow-x: hidden; overflow-y: auto;">
+
+<div class="perfil-container">
+    <!-- Header del formulario -->
+    <div class="perfil-header">
+        <h1>✏️ Editar Perfil</h1>
+        <p th:if="${esAdmin}" class="text-muted">Administrador del Sistema</p>
+        <p th:if="${!esAdmin}" class="text-muted">Árbitro Profesional</p>
+    </div>
+
+    <!-- Mostrar errores -->
+    <div th:if="${error}" class="alert alert-error">
+        <span th:text="${error}"></span>
+    </div>
+
+    <!-- Formulario de edición -->
+    <form th:action="${esAdmin ? '/admin/perfil/editar' : '/arbitro/perfil/editar'}" 
+          th:object="${editarPerfil}" 
+          method="post">
+
+        <!-- Información para Administrador -->
+        <div th:if="${esAdmin}" class="info-section">
+            <div class="info-title">
+                <span>🔧</span> Información del Administrador
+            </div>
+            
+            <div class="form-group">
+                <label for="username">Nombre de Usuario:</label>
+                <input type="text" 
+                       id="username" 
+                       th:field="*{username}" 
+                       class="form-control"
+                       placeholder="Ingrese el nombre de usuario" />
+                <span th:if="${#fields.hasErrors('username')}" 
+                      th:errors="*{username}" 
+                      class="error-message"></span>
+            </div>
+        </div>
+
+        <!-- Información para Árbitro -->
+        <div th:if="${!esAdmin}" class="perfil-info">
+            <!-- Información Personal -->
+            <div class="info-section">
+                <div class="info-title">
+                    <span>👤</span> Información Personal
+                </div>
+                
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" 
+                           id="nombre" 
+                           th:field="*{nombre}" 
+                           class="form-control"
+                           placeholder="Ingrese su nombre" />
+                    <span th:if="${#fields.hasErrors('nombre')}" 
+                          th:errors="*{nombre}" 
+                          class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="apellidos">Apellidos:</label>
+                    <input type="text" 
+                           id="apellidos" 
+                           th:field="*{apellidos}" 
+                           class="form-control"
+                           placeholder="Ingrese sus apellidos" />
+                    <span th:if="${#fields.hasErrors('apellidos')}" 
+                          th:errors="*{apellidos}" 
+                          class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="numeroIdentificacion">Número de Identificación:</label>
+                    <input type="text" 
+                           id="numeroIdentificacion" 
+                           th:field="*{numeroIdentificacion}" 
+                           class="form-control"
+                           placeholder="Ingrese su número de identificación" />
+                </div>
+
+                <div class="form-group">
+                    <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+                    <input type="date" 
+                           id="fechaNacimiento" 
+                           th:field="*{fechaNacimiento}" 
+                           class="form-control" />
+                </div>
+            </div>
+
+            <!-- Información de Contacto -->
+            <div class="info-section">
+                <div class="info-title">
+                    <span>📧</span> Contacto
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" 
+                           id="email" 
+                           th:field="*{email}" 
+                           class="form-control"
+                           placeholder="Ingrese su email" />
+                    <span th:if="${#fields.hasErrors('email')}" 
+                          th:errors="*{email}" 
+                          class="error-message"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="tel" 
+                           id="telefono" 
+                           th:field="*{telefono}" 
+                           class="form-control"
+                           placeholder="Ingrese su teléfono" />
+                </div>
+            </div>
+
+            <!-- Información Profesional -->
+            <div class="info-section">
+                <div class="info-title">
+                    <span>⚽</span> Información Profesional
+                </div>
+                
+                <div class="form-group">
+                    <label for="especialidad">Especialidad:</label>
+                    <select id="especialidad" 
+                            th:field="*{especialidad}" 
+                            class="form-control">
+                        <option value="">Seleccione una especialidad</option>
+                        <option th:each="esp : ${especialidades}" 
+                                th:value="${esp}" 
+                                th:text="${esp.descripcion}"></option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="escalafon">Escalafón:</label>
+                    <input type="text" 
+                           id="escalafon" 
+                           th:field="*{escalafon}" 
+                           class="form-control"
+                           placeholder="Ingrese su escalafón" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Estado común -->
+        <div class="info-section">
+            <div class="info-title">
+                <span>⚙️</span> Estado
+            </div>
+            
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" 
+                           th:field="*{activo}" 
+                           class="form-checkbox" />
+                    <span class="checkmark"></span>
+                    Usuario Activo
+                </label>
+                <small class="help-text">Desmarque para establecer como "Ausente"</small>
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="actions-section">
+            <a th:href="${esAdmin ? '/admin/perfil' : '/arbitro/perfil'}" 
+               class="btn btn-secondary">❌ Cancelar</a>
+            <button type="submit" class="btn btn-primary">💾 Guardar Cambios</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>
