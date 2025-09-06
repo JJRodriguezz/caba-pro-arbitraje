@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Editar Partido - CABA Pro</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" th:href="@{/css/crear-arbitros.css}" />
+</head>
+<body>
+<div class="container">
+  <!-- Navigation -->
+  <div class="nav-bar">
+    <a th:href="@{/admin/dashboard}">Dashboard</a>
+    <a th:href="@{/admin/partidos}" style="background: rgba(255,255,255,0.3);">Partidos</a>
+    <a href="#">Editar Partido</a>
+  </div>
+
+  <h1 th:text="${'Editar Partido: ' + partido.nombre}">Editar Partido</h1>
+
+  <!-- Messages -->
+  <div th:if="${success}" class="message success" th:text="${success}"></div>
+  <div th:if="${error}" class="message error" th:text="${error}"></div>
+
+  <!-- Form -->
+  <form th:action="@{'/admin/partidos/' + ${partido.id} + '/editar'}"
+        method="post"
+        th:object="${partidoDto}">
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="nombre">Nombre *</label>
+        <input type="text" id="nombre" th:field="*{nombre}" required>
+        <span th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="error"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="descripcion">Descripción</label>
+        <input type="text" id="descripcion" th:field="*{descripcion}">
+        <span th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}" class="error"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="fechaHora">Fecha y hora *</label>
+        <input type="datetime-local" id="fechaHora" th:field="*{fechaHora}" required>
+        <span th:if="${#fields.hasErrors('fechaHora')}" th:errors="*{fechaHora}" class="error"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="sede">Sede *</label>
+        <input type="text" id="sede" th:field="*{sede}" required>
+        <span th:if="${#fields.hasErrors('sede')}" th:errors="*{sede}" class="error"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="equipoLocal">Equipo local *</label>
+        <input type="text" id="equipoLocal" th:field="*{equipoLocal}" required>
+        <span th:if="${#fields.hasErrors('equipoLocal')}" th:errors="*{equipoLocal}" class="error"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="equipoVisitante">Equipo visitante *</label>
+        <input type="text" id="equipoVisitante" th:field="*{equipoVisitante}" required>
+        <span th:if="${#fields.hasErrors('equipoVisitante')}" th:errors="*{equipoVisitante}" class="error"></span>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button type="submit" class="btn btn-primary">Guardar cambios</button>
+      <a th:href="@{/admin/partidos}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</div>
+</body>
+</html>

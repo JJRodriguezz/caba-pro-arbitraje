@@ -1,5 +1,5 @@
 /**
- * Archivo: RegistroService.java Autores: Diego.Gonzalez Fecha última modificación: [06.09.2025]
+ * Archivo: RegistroService.java Autores: Isabella.Idarraga Fecha última modificación: [06.09.2025]
  * Descripción: Servicio para la gestión de registros de administradores en la aplicación Proyecto:
  * CABA Pro - Sistema de Gestión Integral de Arbitraje
  */

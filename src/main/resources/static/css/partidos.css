@@ -1,0 +1,118 @@
+/* === CABA Pro • Partidos  === */
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.1);
+}
+
+/* Nav superior */
+.nav-bar {
+  background: #4ea1a5;
+  padding: 15px;
+  margin: -30px -30px 30px -30px;
+  border-radius: 10px 10px 0 0;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.nav-links a{
+  color:#fff; text-decoration:none; margin-right:20px; padding:8px 16px;
+  border-radius:5px; background:rgba(255,255,255,.1); transition:background .3s;
+}
+.nav-links a:hover, .nav-links a.active{ background:rgba(255,255,255,.3); }
+.user-info{ color:#fff; }
+.logout-btn{ background:#e74c3c; color:#fff; border:none; padding:8px 16px; border-radius:5px; cursor:pointer; margin-left:10px; }
+
+/* Header */
+.header{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:30px; border-bottom:2px solid #eee; padding-bottom:20px;
+}
+h1{ color:#333; margin:0; }
+.action-buttons{ display:flex; gap:10px; }
+.btn{ padding:10px 20px; border:none; border-radius:5px; text-decoration:none; font-weight:700; cursor:pointer; transition:all .3s; }
+.btn-primary{ background:#4ea1a5; color:#fff; }
+.btn-secondary{ background:#28a745; color:#fff; }
+.btn:hover{ opacity:.9; transform:translateY(-1px); }
+
+/* Tabla */
+table{ width:100%; border-collapse:collapse; margin-top:20px; }
+th, td{ padding:12px; text-align:left; border-bottom:1px solid #ddd; }
+th{ background:#f8f9fa; font-weight:700; color:#333; }
+tbody tr:hover{ background:#f8f9fa; }
+
+/* Acciones por fila */
+.action-links{ display:flex; gap:8px; align-items:center; }
+.action-links form{ display:inline; margin:0; }           /* el form del botón Eliminar va inline */
+.action-links a,
+.action-links button{
+  padding:4px 8px; border-radius:4px; font-size:12px; text-decoration:none;
+  display:inline-block; border:none; outline:none; cursor:pointer; transition:all .3s;
+  color:#fff;                                             /* texto blanco por defecto */
+}
+.action-links a:hover,
+.action-links button:hover{ opacity:.9; transform:translateY(-1px); }
+.assign-btn{ background:#17a2b8; }                        /* Asignar */
+.edit-btn{ background:#ffc107; color:#2c3e50; }           /* Editar: texto oscuro */
+.delete-btn{ background:#dc3545; color:#fff; }            /* Eliminar: rojo + texto blanco */
+
+/* Badges de estado */
+.status-badge{
+  padding:4px 8px; border-radius:12px; font-size:12px; font-weight:700; color:#fff;
+}
+.status-programado{ background:#17a2b8; }
+.status-en_curso{   background:#6f42c1; }
+.status-finalizado{ background:#28a745; }
+.status-cancelado{  background:#dc3545; }
+
+/* Mensajes / vacío */
+.message{ padding:15px; border-radius:5px; margin-bottom:20px; }
+.message.success{ background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
+.message.error{   background:#f8d7da; color:#721c24; border:1px solid #f5c6cb; }
+.empty-state{ text-align:center; padding:40px; color:#6c757d; }
+
+/* Responsive */
+@media (max-width:768px){
+  .nav-bar{ flex-direction:column; gap:10px; }
+  .header{ flex-direction:column; gap:15px; text-align:center; }
+  table{ font-size:14px; } th, td{ padding:8px; }
+}
+
+/* Tarjetas y layout en dos columnas (detalle) */
+.card{
+  background:#fff; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,.08);
+  padding:20px;
+}
+.grid-2{
+  display:grid; grid-template-columns:2fr 1fr; gap:20px;
+}
+@media(max-width:992px){ .grid-2{ grid-template-columns:1fr; } }
+
+/* Lista de información del partido */
+.info-list{ list-style:none; padding:0; margin:0 0 16px 0; }
+.info-list li{ margin:6px 0; color:#333; }
+
+/* Formulario */
+.form-grid{ display:grid; grid-template-columns:1fr; gap:14px; }
+.form-group{ display:flex; flex-direction:column; gap:6px; }
+.form-group input,
+.form-group select{
+  padding:10px 12px; border:1px solid #ddd; border-radius:6px; font-size:14px;
+}
+.form-group input:focus,
+.form-group select:focus{ outline:none; border-color:#4ea1a5; box-shadow:0 0 0 2px rgba(78,161,165,.2); }
+.error{ color:#dc3545; font-size:12px; }
+
+/* Estados de asignación  */
+.status-pendiente{  background:#6c757d; }
+.status-aceptada{   background:#28a745; }
+.status-rechazada{  background:#dc3545; }
+.status-completada{ background:#17a2b8; }
