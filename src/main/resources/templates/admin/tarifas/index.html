@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Tarifas por Escalafón - CABA Pro</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" th:href="@{/css/crear-arbitros.css}" />
+</head>
+<body>
+<div class="container">
+  <!-- Navigation -->
+  <div class="nav-bar">
+    <a th:href="@{/admin/dashboard}">Dashboard</a>
+    <a th:href="@{/admin/partidos}">Partidos</a>
+    <a href="#" style="background: rgba(255,255,255,0.3);">Tarifas</a>
+  </div>
+
+  <h1>Tarifas por Escalafón</h1>
+
+  <!-- Messages -->
+  <div th:if="${success}" class="message success" th:text="${success}"></div>
+  <div th:if="${error}" class="message error" th:text="${error}"></div>
+
+  <form th:action="@{/admin/tarifas}" th:object="${tarifaForm}" method="post">
+    <div class="form-grid">
+      <div class="form-group" th:each="item, iter : *{tarifas}">
+        <label th:for="${'tarifa-' + iter.index}"
+               th:text="${item.escalafon + ' (COP $)'}">FIBA (COP $)</label>
+
+        <!-- escalafón como hidden para mantener el binding -->
+        <input type="hidden" th:field="*{tarifas[__${iter.index}__].escalafon}"/>
+
+        <input type="number"
+               th:id="${'tarifa-' + iter.index}"
+               th:field="*{tarifas[__${iter.index}__].monto}"
+               min="0" step="0.01" placeholder="0.00" required />
+
+        <span th:if="${#fields.hasErrors('tarifas[' + iter.index + '].monto')}"
+              th:errors="*{tarifas[__${iter.index}__].monto}"
+              class="error"></span>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button type="submit" class="btn btn-primary">Guardar cambios</button>
+      <a th:href="@{/admin/dashboard}" class="btn btn-secondary">Cancelar</a>
+    </div>
+  </form>
+</div>
+</body>
+</html>
