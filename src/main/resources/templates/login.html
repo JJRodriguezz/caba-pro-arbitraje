@@ -29,6 +29,8 @@
             <div th:if="${param.logout}" class="message success">
                 Has cerrado sesión correctamente.
             </div>
+            <div th:if="${success}" class="message success" th:text="${success}">
+            </div>
         </form>
     </div>
 </body>

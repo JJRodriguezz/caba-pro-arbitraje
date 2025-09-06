@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Torneos - CABA Pro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/arbitros.css}" />
+    <link rel="stylesheet" th:href="@{/css/torneos.css}" />
+</head>
+<body>
+<div class="container">
+    <!-- Navegación -->
+    <div class="nav-bar">
+        <div class="nav-links">
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <a th:href="@{/admin/arbitros}">Árbitros</a>
+            <a th:href="@{/admin/partidos}">Partidos</a>
+            <a href="#" class="active">Torneos</a>
+            <a th:href="@{/admin/calendario}">Calendario</a>
+        </div>
+        <div class="user-info">
+            <span th:text="${#authentication.name}">Administrador</span>
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit" class="logout-btn">Salir</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mensajes -->
+    <div th:if="${success}" class="message success" th:text="${success}"></div>
+    <div th:if="${error}" class="message error" th:text="${error}"></div>
+
+    <!-- Encabezado -->
+    <div class="header">
+        <h1>Gestión de Torneos</h1>
+        <div class="action-buttons">
+            <a href="#" class="btn btn-secondary">Exportar Excel</a>
+            <a th:href="@{/admin/torneos/nuevo}" class="btn btn-primary">Crear Torneo</a>
+        </div>
+    </div>
+
+    <!-- Tabla -->
+    <div th:if="${not #lists.isEmpty(torneos)}">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+                <th>Estado</th>
+                <th>Ubicación</th>
+                <th>Partidos</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="torneo : ${torneos}">
+                <td th:text="${torneo.id}">1</td>
+                <td th:text="${torneo.nombre}">Torneo Primavera</td>
+                <td th:text="${#strings.abbreviate(torneo.descripcion, 50)}">Descripción del torneo...</td>
+                <td th:text="${#temporals.format(torneo.fechaInicio, 'dd/MM/yyyy')}">01/10/2025</td>
+                <td th:text="${#temporals.format(torneo.fechaFin, 'dd/MM/yyyy')}">31/10/2025</td>
+                <td>
+                    <span th:class="'status-badge status-' + ${#strings.toLowerCase(torneo.estado)}"
+                          th:text="${torneo.estado.descripcion}">Próximo</span>
+                </td>
+                <td th:text="${torneo.ubicacion}">Polideportivo Central</td>
+                <td th:text="${torneo.totalPartidos}">5</td>
+                <td>
+                    <div class="action-links">
+                        <a th:href="@{/admin/torneos/ver/{id}(id=${torneo.id})}" class="view-btn">Ver</a>
+                        <a th:href="@{/admin/torneos/editar/{id}(id=${torneo.id})}" class="edit-btn">Editar</a>
+                        <a th:href="@{/admin/torneos/eliminar/{id}(id=${torneo.id})}"
+                           class="delete-btn"
+                           onclick="return confirm('¿Seguro que quieres eliminar este torneo?')">Eliminar</a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Estado vacío -->
+    <div th:if="${#lists.isEmpty(torneos)}" class="empty-state">
+        <h3>No hay torneos registrados</h3>
+        <p>Comienza creando tu primer torneo para organizar partidos</p>
+        <a th:href="@{/admin/torneos/nuevo}" class="btn btn-primary">Crear Primer Torneo</a>
+    </div>
+</div>
+
+</body>
+</html>

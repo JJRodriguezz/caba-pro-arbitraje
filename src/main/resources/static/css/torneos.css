@@ -1,0 +1,99 @@
+
+/* Badges de estado de torneo */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status-proximo {
+    background: #e3f2fd;
+    color: #1976d2;
+}
+
+.status-activo {
+    background: #e8f5e8;
+    color: #2e7d32;
+}
+
+.status-finalizado {
+    background: #f3e5f5;
+    color: #7b1fa2;
+}
+
+/* Botones de acción */
+.view-btn {
+    color: #2196f3;
+    text-decoration: none;
+    margin-right: 8px;
+}
+
+.view-btn:hover {
+    text-decoration: underline;
+}
+
+/* Campos de formulario específicos */
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    resize: vertical;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: #4ea1a5;
+    box-shadow: 0 0 0 2px rgba(78, 161, 165, 0.2);
+}
+
+select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: white;
+}
+
+/* Secciones de información */
+.info-section h3 {
+    color: #333;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #4ea1a5;
+    padding-bottom: 5px;
+}
+
+.info-item {
+    margin-bottom: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.info-item strong {
+    display: inline-block;
+    width: 150px;
+    color: #555;
+}
+
+/* Grid de detalles */
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .info-item strong {
+        width: 120px;
+    }
+}

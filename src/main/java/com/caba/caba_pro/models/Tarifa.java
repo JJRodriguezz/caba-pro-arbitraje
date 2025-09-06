@@ -17,7 +17,7 @@ import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "tarifas")
+@Table(name = "tarifa")
 public class Tarifa {
 
   // 1. Constantes estáticas

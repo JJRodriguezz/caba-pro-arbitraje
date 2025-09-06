@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "asignaciones")
+@Table(name = "asignacion")
 public class Asignacion {
 
   // 1. Constantes estáticas

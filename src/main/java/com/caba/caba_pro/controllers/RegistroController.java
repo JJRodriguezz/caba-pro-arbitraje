@@ -5,11 +5,11 @@
  */
 package com.caba.caba_pro.controllers;
 
+// 2. Librerías externas
 import com.caba.caba_pro.DTOs.RegistroForm;
 import com.caba.caba_pro.exceptions.BusinessException;
 import com.caba.caba_pro.services.RegistroService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,7 +21,15 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class RegistroController {
 
-  @Autowired private RegistroService registroService;
+  // 2. Variables de instancia
+  private final RegistroService registroService;
+
+  // 3. Constructores
+  public RegistroController(RegistroService registroService) {
+    this.registroService = registroService;
+  }
+
+  // 4. Métodos públicos
 
   @GetMapping("/registro")
   public String mostrarRegistro(Model model) {
@@ -30,7 +38,7 @@ public class RegistroController {
   }
 
   @PostMapping("/registro")
-  public String registrarUsuario(
+  public String registrarAdministrador(
       @Valid @ModelAttribute("registroForm") RegistroForm registroForm,
       BindingResult result,
       RedirectAttributes flash,
@@ -46,8 +54,8 @@ public class RegistroController {
     }
 
     try {
-      registroService.registrarUsuario(registroForm);
-      flash.addFlashAttribute("success", "Usuario registrado exitosamente");
+      registroService.registrarAdministrador(registroForm);
+      flash.addFlashAttribute("success", "Administrador registrado exitosamente");
       return "redirect:/login?registroExitoso";
     } catch (BusinessException e) {
       flash.addFlashAttribute("error", e.getMessage());

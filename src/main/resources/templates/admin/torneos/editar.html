@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Editar Torneo - CABA Pro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/crear-arbitros.css}" />
+    <link rel="stylesheet" th:href="@{/css/torneos.css}" />
+</head>
+<body>
+<div class="container">
+    <!-- Navegación -->
+    <div class="nav-bar">
+        <a th:href="@{/admin/dashboard}">Dashboard</a>
+        <a th:href="@{/admin/torneos}">Torneos</a>
+        <a href="#" style="background: rgba(255,255,255,0.3);">Editar Torneo</a>
+    </div>
+
+    <h1>Editar Torneo</h1>
+
+    <!-- Mensajes -->
+    <div th:if="${success}" class="message success" th:text="${success}"></div>
+    <div th:if="${error}" class="message error" th:text="${error}"></div>
+
+    <!-- Formulario -->
+    <form th:action="@{/admin/torneos/{id}(id=${torneoId})}" method="post" th:object="${torneoDto}">
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="nombre">Nombre del Torneo *</label>
+                <input type="text" id="nombre" th:field="*{nombre}" required>
+                <span th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="ubicacion">Ubicación</label>
+                <input type="text" id="ubicacion" th:field="*{ubicacion}">
+                <span th:if="${#fields.hasErrors('ubicacion')}" th:errors="*{ubicacion}" class="error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="fechaInicio">Fecha de Inicio *</label>
+                <input type="date" id="fechaInicio" th:field="*{fechaInicio}" required>
+                <span th:if="${#fields.hasErrors('fechaInicio')}" th:errors="*{fechaInicio}" class="error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="fechaFin">Fecha de Fin *</label>
+                <input type="date" id="fechaFin" th:field="*{fechaFin}" required>
+                <span th:if="${#fields.hasErrors('fechaFin')}" th:errors="*{fechaFin}" class="error"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="estado">Estado *</label>
+                <select id="estado" th:field="*{estado}" required>
+                    <option value="">Seleccionar estado</option>
+                    <option th:each="estado : ${estados}" 
+                            th:value="${estado}" 
+                            th:text="${estado.descripcion}">Próximo</option>
+                </select>
+                <span th:if="${#fields.hasErrors('estado')}" th:errors="*{estado}" class="error"></span>
+            </div>
+        </div>
+
+        <!-- Sección de descripción -->
+        <div class="form-group" style="grid-column: 1/-1;">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" th:field="*{descripcion}" rows="4" 
+                      placeholder="Describe el torneo, categorías, premios, etc."></textarea>
+            <span th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}" class="error"></span>
+        </div>
+
+        <!-- Botones -->
+        <div class="buttons">
+            <a th:href="@{/admin/torneos}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Actualizar Torneo</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

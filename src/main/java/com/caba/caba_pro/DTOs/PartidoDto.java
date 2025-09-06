@@ -39,6 +39,9 @@ public class PartidoDto {
   @NotBlank(message = "El equipo visitante es obligatorio")
   private String equipoVisitante;
 
+  // Para asociar el partido a un torneo
+  private Long torneoId;
+
   // 3. Constructores
   public PartidoDto() {}
 
@@ -89,5 +92,13 @@ public class PartidoDto {
 
   public void setEquipoVisitante(String equipoVisitante) {
     this.equipoVisitante = equipoVisitante;
+  }
+
+  public Long getTorneoId() {
+    return torneoId;
+  }
+
+  public void setTorneoId(Long torneoId) {
+    this.torneoId = torneoId;
   }
 }

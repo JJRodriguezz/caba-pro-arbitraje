@@ -1,5 +1,5 @@
 /**
- * Archivo: Arbitro.java Autores: Isabella.Idarraga Fecha última modificación: [04.09.2025]
+ * Archivo: Arbitro.java Autores: Diego.Gonzalez Fecha última modificación: [06.09.2025]
  * Descripción: Modelo para la gestión de árbitros en la aplicación Proyecto: CABA Pro - Sistema de
  * Gestión Integral de Arbitraje
  */
@@ -22,7 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "arbitros")
+@Table(name = "arbitro")
 public class Arbitro {
 
   @Id
@@ -68,6 +68,14 @@ public class Arbitro {
 
   @Column(nullable = false)
   private Boolean activo = true;
+
+  @NotBlank(message = "La contraseña es obligatoria")
+  @Column(nullable = false)
+  private String password;
+
+  @NotBlank(message = "El rol es obligatorio")
+  @Column(nullable = false)
+  private String role = "ROLE_ARBITRO";
 
   // Constructor por defecto
   public Arbitro() {}
@@ -180,5 +188,21 @@ public class Arbitro {
 
   public boolean isActivo() {
     return activo != null && activo;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public String getRole() {
+    return role;
+  }
+
+  public void setRole(String role) {
+    this.role = role;
   }
 }

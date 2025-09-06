@@ -5,11 +5,10 @@
  */
 package com.caba.caba_pro.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
+// 3. Spring Framework
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -17,9 +16,15 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
-  @Autowired private UserDetailsService usuarioDetailsService;
+  // 2. Variables de instancia
+  private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
 
-  @Autowired private CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+  // 3. Constructores
+  public SecurityConfig(CustomAuthenticationSuccessHandler authenticationSuccessHandler) {
+    this.authenticationSuccessHandler = authenticationSuccessHandler;
+  }
+
+  // 4. Métodos públicos
 
   @Bean
   public PasswordEncoder passwordEncoder() {
@@ -42,9 +47,9 @@ public class SecurityConfig {
                     .requestMatchers("/admin/**")
                     .hasRole("ADMIN")
 
-                    // Rutas de árbitro - ROLE_USER o ROLE_ARBITRO
+                    // Rutas de árbitro - solo ROLE_ARBITRO
                     .requestMatchers("/arbitro/**")
-                    .hasAnyRole("USER", "ARBITRO")
+                    .hasRole("ARBITRO")
 
                     // Cualquier otra request requiere autenticación
                     .anyRequest()

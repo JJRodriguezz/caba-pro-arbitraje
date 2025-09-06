@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Crear Árbitro - CABA Pro</title>
+    <title>Editar Árbitro - CABA Pro</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/crear-arbitros.css}" />
@@ -13,17 +13,17 @@
     <div class="nav-bar">
         <a th:href="@{/admin/dashboard}">Dashboard</a>
         <a th:href="@{/admin/arbitros}">Árbitros</a>
-        <a href="#" style="background: rgba(255,255,255,0.3);">Crear Árbitro</a>
+        <a href="#" style="background: rgba(255,255,255,0.3);">Editar Árbitro</a>
     </div>
 
-    <h1>Crear Nuevo Árbitro</h1>
+    <h1>Editar Árbitro</h1>
 
     <!-- Messages -->
     <div th:if="${success}" class="message success" th:text="${success}"></div>
     <div th:if="${error}" class="message error" th:text="${error}"></div>
 
     <!-- Form -->
-    <form th:action="@{/admin/arbitros}" method="post" th:object="${arbitroDto}">
+    <form th:action="@{/admin/arbitros/{id}(id=${arbitroId})}" method="post" th:object="${arbitroDto}">
 
         <div class="form-grid">
             <div class="form-group">
@@ -85,30 +85,18 @@
             </div>
         </div>
 
-        <!-- Credentials Section -->
+        <!-- Security Note -->
         <div class="credentials-section">
-            <h3>Credenciales de Acceso</h3>
-            <p>El árbitro usará estas credenciales para ingresar al sistema</p>
-
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="username">Usuario *</label>
-                    <input type="text" id="username" th:field="*{username}" required>
-                    <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error"></span>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Contraseña *</label>
-                    <input type="password" id="password" th:field="*{password}" required>
-                    <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error"></span>
-                </div>
-            </div>
+            <h3>Información de Seguridad</h3>
+            <p class="security-note">
+                <strong>Nota:</strong> Las credenciales de acceso (usuario y contraseña) no se pueden modificar desde esta vista por razones de seguridad.
+            </p>
         </div>
 
         <!-- Buttons -->
         <div class="buttons">
             <a th:href="@{/admin/arbitros}" class="btn btn-secondary">Cancelar</a>
-            <button type="submit" class="btn btn-primary">Crear Árbitro</button>
+            <button type="submit" class="btn btn-primary">Actualizar Árbitro</button>
         </div>
     </form>
 </div>

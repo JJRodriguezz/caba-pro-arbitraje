@@ -12,9 +12,11 @@ import com.caba.caba_pro.exceptions.BusinessException;
 import com.caba.caba_pro.models.Arbitro;
 import com.caba.caba_pro.models.Asignacion;
 import com.caba.caba_pro.models.Partido;
+import com.caba.caba_pro.models.Torneo;
 import com.caba.caba_pro.repositories.ArbitroRepository;
 import com.caba.caba_pro.repositories.AsignacionRepository;
 import com.caba.caba_pro.repositories.PartidoRepository;
+import com.caba.caba_pro.repositories.TorneoRepository;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,17 +35,20 @@ public class PartidoService {
   private final ArbitroRepository arbitroRepository;
   private final AsignacionRepository asignacionRepository;
   private final TarifaService tarifaService;
+  private final TorneoRepository torneoRepository;
 
   // 3. Constructores
   public PartidoService(
       PartidoRepository partidoRepository,
       ArbitroRepository arbitroRepository,
       AsignacionRepository asignacionRepository,
-      TarifaService tarifaService) {
+      TarifaService tarifaService,
+      TorneoRepository torneoRepository) {
     this.partidoRepository = partidoRepository;
     this.arbitroRepository = arbitroRepository;
     this.asignacionRepository = asignacionRepository;
     this.tarifaService = tarifaService;
+    this.torneoRepository = torneoRepository;
   }
 
   // 4. Métodos públicos
@@ -73,8 +78,22 @@ public class PartidoService {
     partido.setEstado(PartidoEstado.PROGRAMADO);
     partido.setActivo(true);
 
+    // Asociar con torneo si se especifica
+    if (dto.getTorneoId() != null) {
+      Torneo torneo =
+          torneoRepository
+              .findById(dto.getTorneoId())
+              .filter(t -> t.getActivo())
+              .orElseThrow(() -> new BusinessException("Torneo no encontrado o inactivo"));
+      partido.setTorneo(torneo);
+    }
+
     Partido guardado = partidoRepository.save(partido);
-    logger.info("Partido creado: {} (id={})", guardado.getNombre(), guardado.getId());
+    logger.info(
+        "Partido creado: {} (id={}, torneo={})",
+        guardado.getNombre(),
+        guardado.getId(),
+        guardado.getTorneo() != null ? guardado.getTorneo().getNombre() : "ninguno");
     return guardado;
   }
 
@@ -89,7 +108,24 @@ public class PartidoService {
     partido.setEquipoLocal(dto.getEquipoLocal());
     partido.setEquipoVisitante(dto.getEquipoVisitante());
 
-    logger.info("Partido actualizado (id={}): {}", id, partido.getNombre());
+    // Actualizar asociación con torneo
+    if (dto.getTorneoId() != null) {
+      Torneo torneo =
+          torneoRepository
+              .findById(dto.getTorneoId())
+              .filter(t -> t.getActivo())
+              .orElseThrow(() -> new BusinessException("Torneo no encontrado o inactivo"));
+      partido.setTorneo(torneo);
+    } else {
+      // Si no se especifica torneo, eliminar la asociación
+      partido.setTorneo(null);
+    }
+
+    logger.info(
+        "Partido actualizado (id={}): {} - Torneo: {}",
+        id,
+        partido.getNombre(),
+        partido.getTorneo() != null ? partido.getTorneo().getNombre() : "ninguno");
     return partidoRepository.save(partido);
   }
 
