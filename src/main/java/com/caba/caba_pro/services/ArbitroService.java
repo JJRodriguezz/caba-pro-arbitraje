@@ -60,6 +60,8 @@ public class ArbitroService {
   }
 
   public Arbitro actualizarArbitro(Long id, ArbitroDto arbitroDto) {
+    logger.info("Actualizando árbitro con ID: {}", id);
+
     Arbitro arbitroExistente = buscarPorId(id);
 
     // Validar si el email cambió y no existe en otro árbitro
@@ -69,10 +71,20 @@ public class ArbitroService {
       }
     }
 
+    // Validar si el número de identificación cambió y no existe en otro árbitro
+    if (!arbitroExistente.getNumeroIdentificacion().equals(arbitroDto.getNumeroIdentificacion())) {
+      if (arbitroRepository.existsByNumeroIdentificacion(arbitroDto.getNumeroIdentificacion())) {
+        throw new BusinessException("Ya existe un árbitro con ese número de identificación");
+      }
+    }
+
     // Actualizar datos del árbitro
     actualizarDatosArbitro(arbitroExistente, arbitroDto);
 
-    return arbitroRepository.save(arbitroExistente);
+    Arbitro arbitroActualizado = arbitroRepository.save(arbitroExistente);
+    logger.info("Árbitro actualizado exitosamente con ID: {}", arbitroActualizado.getId());
+
+    return arbitroActualizado;
   }
 
   public void eliminarArbitro(Long id) {
