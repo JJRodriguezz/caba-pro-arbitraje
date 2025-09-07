@@ -1,0 +1,87 @@
+/*
+ * Archivo: asignaciones.css
+ * Autores: Juan José
+ * Fecha última modificación: 07.09.2025
+ * Descripción: Estilos para la vista de asignaciones de árbitro.
+ * Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
+ */
+
+.asignaciones-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+.asignaciones-table th, .asignaciones-table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #eaeaea;
+  text-align: left;
+}
+.asignaciones-table th {
+  background: #f5f5f5;
+  font-weight: 600;
+}
+.action-links {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.action-links form {
+  display: inline;
+  margin: 0;
+}
+.btn {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  text-decoration: none;
+  display: inline-block;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: all .3s;
+  color: #fff;
+}
+.btn.btn-secondary {
+  background: #4ea1a5;
+  color: #fff;
+}
+.btn.delete-btn {
+  background: #dc3545;
+  color: #fff;
+}
+.btn:hover {
+  opacity: .9;
+  transform: translateY(-1px);
+}
+.alert {
+  padding: 0.7rem 1.2rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+.alert.success {
+  background: #d4edda;
+  color: #155724;
+}
+.alert.error {
+  background: #f8d7da;
+  color: #721c24;
+}
+.estado-label {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  background: #6c757d;
+  margin-right: 4px;
+}
+.estado-label.aceptada {
+  background: #4ea1a5;
+}
+.estado-label.rechazada {
+  background: #dc3545;
+}
