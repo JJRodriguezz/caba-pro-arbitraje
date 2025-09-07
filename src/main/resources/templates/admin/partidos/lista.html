@@ -18,7 +18,9 @@
       <a th:href="@{/admin/calendario}">Calendario</a>
     </div>
     <div class="user-info">
-      <span th:text="${#authentication.name}">Administrador</span>
+      <a th:href="@{/admin/perfil}" class="profile-link">
+        <span th:text="${#authentication.name}">Administrador</span>
+      </a>
       <form th:action="@{/logout}" method="post" style="display:inline;">
         <button type="submit" class="logout-btn">Salir</button>
       </form>
@@ -33,6 +35,7 @@
   <div class="header">
     <h1>Gestión de Partidos</h1>
     <div class="action-buttons">
+      <a href="#" class="btn btn-secondary">Exportar Excel</a>
       <a th:href="@{/admin/partidos/nuevo}" class="btn btn-primary">Crear Partido</a>
     </div>
   </div>

@@ -28,7 +28,73 @@ body {
   border-radius:5px; background:rgba(255,255,255,.1); transition:background .3s;
 }
 .nav-links a:hover, .nav-links a.active{ background:rgba(255,255,255,.3); }
-.user-info{ color:#fff; }
+.user-info{ 
+    color:#fff; 
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-info .profile-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+}
+
+.user-info .profile-link span,
+.user-info span {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    color: white;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.user-info .profile-link span::before,
+.user-info span::before {
+    content: '👤';
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+.user-info .profile-link span::after,
+.user-info span::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s;
+}
+
+.user-info .profile-link:hover span::after,
+.user-info span:hover::after {
+    left: 100%;
+}
+
+.user-info .profile-link:hover span,
+.user-info span:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Efecto adicional para indicar que es clickeable */
+.user-info .profile-link:hover span {
+    background: rgba(255, 255, 255, 0.35);
+    color: #f0f0f0;
+}
 .logout-btn{ background:#e74c3c; color:#fff; border:none; padding:8px 16px; border-radius:5px; cursor:pointer; margin-left:10px; }
 
 /* Header */
