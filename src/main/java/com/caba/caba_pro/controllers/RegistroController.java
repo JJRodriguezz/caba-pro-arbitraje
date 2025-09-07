@@ -58,10 +58,10 @@ public class RegistroController {
       flash.addFlashAttribute("success", "Administrador registrado exitosamente");
       return "redirect:/login?registroExitoso";
     } catch (BusinessException e) {
-      flash.addFlashAttribute("error", e.getMessage());
+      model.addAttribute("error", e.getMessage());
       return "registro";
     } catch (Exception e) {
-      flash.addFlashAttribute("error", "Error interno del sistema");
+      model.addAttribute("error", "Error interno del sistema");
       return "registro";
     }
   }

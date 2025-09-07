@@ -10,6 +10,7 @@ import com.caba.caba_pro.DTOs.RegistroForm;
 import com.caba.caba_pro.exceptions.BusinessException;
 import com.caba.caba_pro.models.Administrador;
 import com.caba.caba_pro.repositories.AdministradorRepository;
+import com.caba.caba_pro.repositories.ArbitroRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,12 +26,16 @@ public class RegistroService {
 
   // 2. Variables de instancia
   private final AdministradorRepository administradorRepository;
+  private final ArbitroRepository arbitroRepository;
   private final PasswordEncoder passwordEncoder;
 
   // 3. Constructores
   public RegistroService(
-      AdministradorRepository administradorRepository, PasswordEncoder passwordEncoder) {
+      AdministradorRepository administradorRepository,
+      ArbitroRepository arbitroRepository,
+      PasswordEncoder passwordEncoder) {
     this.administradorRepository = administradorRepository;
+    this.arbitroRepository = arbitroRepository;
     this.passwordEncoder = passwordEncoder;
   }
 
@@ -42,7 +47,19 @@ public class RegistroService {
     // Validar que el administrador no exista
     if (administradorRepository.existsByUsername(registroForm.getUsername())) {
       logger.warn("Administrador ya existe: {}", registroForm.getUsername());
-      throw new BusinessException("Ya existe un administrador con ese nombre");
+      throw new BusinessException(
+          "El nombre de usuario '"
+              + registroForm.getUsername()
+              + "' ya está registrado en el sistema");
+    }
+
+    // Validar que el username no esté siendo usado por un árbitro
+    if (arbitroRepository.existsByUsername(registroForm.getUsername())) {
+      logger.warn("Username ya usado por árbitro: {}", registroForm.getUsername());
+      throw new BusinessException(
+          "El nombre de usuario '"
+              + registroForm.getUsername()
+              + "' ya está registrado en el sistema");
     }
 
     // Crear y mapear el administrador

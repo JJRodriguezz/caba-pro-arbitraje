@@ -1,7 +1,8 @@
 /**
- * Archivo: UserDetailsServiceImpl.java Autores: Diego.Gonzalez Fecha última modificación:
- * [06.09.2025] Descripción: Implementación de UserDetailsService para la autenticación de
- * administradores y árbitros Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
+ * Archivo: UserDetailsServiceImpl.java Autores: Isabella.Idarraga & Diego.Gonzalez Fecha última
+ * modificación: [06.09.2025] Descripción: Implementación de UserDetailsService para la
+ * autenticación de administradores y árbitros Proyecto: CABA Pro - Sistema de Gestión Integral de
+ * Arbitraje
  */
 package com.caba.caba_pro.services;
 
@@ -65,8 +66,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
       return new User(username, administrador.getPassword(), authorities);
     }
 
-    // Buscar como árbitro por email
-    Arbitro arbitro = arbitroRepository.findByEmail(username);
+    // Buscar como árbitro por username
+    Arbitro arbitro = arbitroRepository.findByUsername(username);
     if (arbitro != null && arbitro.isActivo()) {
       Set<GrantedAuthority> authorities = new HashSet<>();
       GrantedAuthority authority = new SimpleGrantedAuthority(arbitro.getRole());

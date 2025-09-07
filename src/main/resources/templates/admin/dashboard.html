@@ -16,11 +16,11 @@
             <a th:href="@{/admin/partidos}">Partidos</a>
             <a th:href="@{/admin/torneos}">Torneos</a>
             <a th:href="@{/admin/calendario}">Calendario</a>
-            <a th:href="@{/admin/perfil}">👤</a>
         </div>
         <div class="user-section">
-
-            <span sec:authentication="name">Administrador</span>
+            <a th:href="@{/admin/perfil}" class="profile-link">
+                <span sec:authentication="name">Administrador</span>
+            </a>
             <form th:action="@{/logout}" method="post" style="display: inline;">
                 <button type="submit" class="logout-btn">🔓 Salir</button>
             </form>
