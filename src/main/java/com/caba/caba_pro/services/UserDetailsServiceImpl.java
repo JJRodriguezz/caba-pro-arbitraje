@@ -65,8 +65,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
       return new User(username, administrador.getPassword(), authorities);
     }
 
-    // Buscar como árbitro por email
-    Arbitro arbitro = arbitroRepository.findByEmail(username);
+    // Buscar como árbitro por username
+    Arbitro arbitro = arbitroRepository.findByUsername(username);
     if (arbitro != null && arbitro.isActivo()) {
       Set<GrantedAuthority> authorities = new HashSet<>();
       GrantedAuthority authority = new SimpleGrantedAuthority(arbitro.getRole());

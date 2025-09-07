@@ -47,14 +47,14 @@ public class ArbitroController {
   public String listarArbitros(Model model) {
     List<Arbitro> arbitros = arbitroService.buscarTodosActivos();
     model.addAttribute("arbitros", arbitros);
-    return "admin/arbitros";
+    return "arbitro/arbitros";
   }
 
   @GetMapping("/nuevo")
   public String mostrarFormularioCrear(Model model) {
     model.addAttribute("arbitroDto", new ArbitroDto());
     model.addAttribute("especialidades", Especialidad.values());
-    return "admin/crear-arbitro";
+    return "arbitro/crear-arbitro";
   }
 
   @PostMapping
@@ -66,7 +66,7 @@ public class ArbitroController {
 
     if (result.hasErrors()) {
       model.addAttribute("especialidades", Especialidad.values());
-      return "admin/crear-arbitro";
+      return "arbitro/crear-arbitro";
     }
 
     try {
@@ -85,13 +85,13 @@ public class ArbitroController {
       logger.error("Error de negocio al crear árbitro: {}", e.getMessage());
       model.addAttribute("error", e.getMessage());
       model.addAttribute("especialidades", Especialidad.values());
-      return "admin/crear-arbitro";
+      return "arbitro/crear-arbitro";
 
     } catch (Exception e) {
       logger.error("Error inesperado al crear árbitro", e);
       model.addAttribute("error", "Error interno del sistema");
       model.addAttribute("especialidades", Especialidad.values());
-      return "admin/crear-arbitro";
+      return "arbitro/crear-arbitro";
     }
   }
 
@@ -104,7 +104,7 @@ public class ArbitroController {
       model.addAttribute("arbitroDto", arbitroDto);
       model.addAttribute("arbitroId", id);
       model.addAttribute("especialidades", Especialidad.values());
-      return "admin/editar-arbitro";
+      return "arbitro/editar-arbitro";
 
     } catch (BusinessException e) {
       logger.error("Árbitro no encontrado: {}", id);
@@ -123,7 +123,7 @@ public class ArbitroController {
     if (result.hasErrors()) {
       model.addAttribute("arbitroId", id);
       model.addAttribute("especialidades", Especialidad.values());
-      return "admin/editar-arbitro";
+      return "arbitro/editar-arbitro";
     }
 
     try {
@@ -135,7 +135,7 @@ public class ArbitroController {
       model.addAttribute("error", e.getMessage());
       model.addAttribute("arbitroId", id);
       model.addAttribute("especialidades", Especialidad.values());
-      return "admin/editar-arbitro";
+      return "arbitro/editar-arbitro";
     }
   }
 
@@ -155,6 +155,7 @@ public class ArbitroController {
     ArbitroDto dto = new ArbitroDto();
     dto.setNombre(arbitro.getNombre());
     dto.setApellidos(arbitro.getApellidos());
+    dto.setUsername(arbitro.getUsername());
     dto.setNumeroIdentificacion(arbitro.getNumeroIdentificacion());
     dto.setEmail(arbitro.getEmail());
     dto.setTelefono(arbitro.getTelefono());

@@ -29,8 +29,12 @@ public interface ArbitroRepository extends JpaRepository<Arbitro, Long> {
 
   boolean existsByEmailAndActivoTrue(String email);
 
+  boolean existsByUsernameAndActivoTrue(String username);
+
   // Búsqueda para autenticación
   Arbitro findByEmail(String email);
+
+  Arbitro findByUsername(String username);
 
   // Query personalizada para árbitros disponibles
   @Query("SELECT a FROM Arbitro a WHERE a.activo = true AND a.fechaCreacion >= :fecha")

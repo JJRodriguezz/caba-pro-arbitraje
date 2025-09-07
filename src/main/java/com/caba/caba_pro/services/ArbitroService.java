@@ -9,6 +9,7 @@ package com.caba.caba_pro.services;
 import com.caba.caba_pro.DTOs.ArbitroDto;
 import com.caba.caba_pro.exceptions.BusinessException;
 import com.caba.caba_pro.models.Arbitro;
+import com.caba.caba_pro.repositories.AdministradorRepository;
 import com.caba.caba_pro.repositories.ArbitroRepository;
 import java.util.List;
 import org.slf4j.Logger;
@@ -26,11 +27,16 @@ public class ArbitroService {
 
   // 2. Variables de instancia
   private final ArbitroRepository arbitroRepository;
+  private final AdministradorRepository administradorRepository;
   private final PasswordEncoder passwordEncoder;
 
   // 3. Constructores
-  public ArbitroService(ArbitroRepository arbitroRepository, PasswordEncoder passwordEncoder) {
+  public ArbitroService(
+      ArbitroRepository arbitroRepository,
+      AdministradorRepository administradorRepository,
+      PasswordEncoder passwordEncoder) {
     this.arbitroRepository = arbitroRepository;
+    this.administradorRepository = administradorRepository;
     this.passwordEncoder = passwordEncoder;
   }
 
@@ -114,12 +120,23 @@ public class ArbitroService {
     if (arbitroRepository.existsByEmailAndActivoTrue(dto.getEmail())) {
       throw new BusinessException("Ya existe un árbitro con ese email");
     }
+
+    // Validar que no exista árbitro con mismo username
+    if (arbitroRepository.existsByUsernameAndActivoTrue(dto.getUsername())) {
+      throw new BusinessException("Ya existe un árbitro con ese nombre de usuario");
+    }
+
+    // Validar que no exista administrador con mismo username
+    if (administradorRepository.existsByUsername(dto.getUsername())) {
+      throw new BusinessException("Ya existe un administrador con ese nombre de usuario");
+    }
   }
 
   private Arbitro mapearDtoAArbitro(ArbitroDto dto) {
     Arbitro arbitro = new Arbitro();
     arbitro.setNombre(dto.getNombre());
     arbitro.setApellidos(dto.getApellidos());
+    arbitro.setUsername(dto.getUsername());
     arbitro.setNumeroIdentificacion(dto.getNumeroIdentificacion());
     arbitro.setEmail(dto.getEmail());
     arbitro.setTelefono(dto.getTelefono());
@@ -134,6 +151,7 @@ public class ArbitroService {
   private void actualizarDatosArbitro(Arbitro arbitro, ArbitroDto dto) {
     arbitro.setNombre(dto.getNombre());
     arbitro.setApellidos(dto.getApellidos());
+    arbitro.setUsername(dto.getUsername());
     arbitro.setNumeroIdentificacion(dto.getNumeroIdentificacion());
     arbitro.setEmail(dto.getEmail());
     arbitro.setTelefono(dto.getTelefono());

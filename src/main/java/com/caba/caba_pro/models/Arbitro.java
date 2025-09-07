@@ -69,6 +69,10 @@ public class Arbitro {
   @Column(nullable = false)
   private Boolean activo = true;
 
+  @NotBlank(message = "El nombre de usuario es obligatorio")
+  @Column(unique = true, nullable = false)
+  private String username;
+
   @NotBlank(message = "La contraseña es obligatoria")
   @Column(nullable = false)
   private String password;
@@ -188,6 +192,14 @@ public class Arbitro {
 
   public boolean isActivo() {
     return activo != null && activo;
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  public void setUsername(String username) {
+    this.username = username;
   }
 
   public String getPassword() {
