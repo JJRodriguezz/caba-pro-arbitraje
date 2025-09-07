@@ -1,5 +1,5 @@
 /**
- * Archivo: TarifaController.java Autores: Juan José Fecha última modificación: 06.09.2025
+ * Archivo: TarifaController.java Autores: JJRodriguezz Fecha última modificación: 06.09.2025
  * Descripción: Controlador HTTP para administración de tarifas por escalafón. Proyecto: CABA Pro -
  * Sistema de Gestión Integral de Arbitraje
  */

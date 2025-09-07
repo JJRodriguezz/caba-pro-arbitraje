@@ -1,5 +1,5 @@
 /**
- * Archivo: Asignacion.java Autores: Juan José Fecha última modificación: 05.09.2025 Descripción:
+ * Archivo: Asignacion.java Autores: JJRodriguezz Fecha última modificación: 05.09.2025 Descripción:
  * Entidad JPA para la asignación de árbitros a un partido. Proyecto: CABA Pro - Sistema de Gestión
  * Integral de Arbitraje
  */

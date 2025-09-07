@@ -1,5 +1,5 @@
 /**
- * Archivo: Tarifa.java Autores: Juan José Fecha última modificación: 06.09.2025 Descripción: Tarifa
+ * Archivo: Tarifa.java Autores: JJRodriguezz Fecha última modificación: 06.09.2025 Descripción: Tarifa
  * por partido según escalafón de árbitro. Proyecto: CABA Pro - Sistema de Gestión Integral de
  * Arbitraje
  */

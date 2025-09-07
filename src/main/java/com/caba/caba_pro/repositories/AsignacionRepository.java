@@ -1,5 +1,5 @@
 /**
- * Archivo: AsignacionRepository.java Autores: Juan José Fecha última modificación: 06.09.2025
+ * Archivo: AsignacionRepository.java Autores: JJRodriguezz Fecha última modificación: 06.09.2025
  * Descripción: Acceso a datos para asignaciones de árbitros. Proyecto: CABA Pro - Sistema de
  * Gestión Integral de Arbitraje
  */

@@ -1,5 +1,5 @@
 /**
- * Archivo: TarifaFormDto.java Autores: Juan José Fecha última modificación: 06.09.2025 Descripción:
+ * Archivo: TarifaFormDto.java Autores: JJRodriguezz Fecha última modificación: 06.09.2025 Descripción:
  * Formulario con listado de tarifas a actualizar. Proyecto: CABA Pro - Sistema de Gestión Integral
  * de Arbitraje
  */

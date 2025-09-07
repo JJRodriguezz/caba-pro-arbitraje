@@ -1,5 +1,5 @@
 /**
- * Archivo: PartidoEstado.java Autores: Juan José Fecha última modificación: 05.09.2025 Descripción:
+ * Archivo: PartidoEstado.java Autores: JJRodriguezz Fecha última modificación: 05.09.2025 Descripción:
  * Estados del ciclo de vida de un partido. Proyecto: CABA Pro - Sistema de Gestión Integral de
  * Arbitraje
  */

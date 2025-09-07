@@ -1,5 +1,5 @@
 /**
- * Archivo: AsignacionDto.java Autores: Juan José Fecha última modificación: 05.09.2025 Descripción:
+ * Archivo: AsignacionDto.java Autores: JJRodriguezz Fecha última modificación: 05.09.2025 Descripción:
  * DTO para asignar un árbitro a un partido. Proyecto: CABA Pro - Sistema de Gestión Integral de
  * Arbitraje
  */

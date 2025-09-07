@@ -1,5 +1,5 @@
 /**
- * Archivo: ArbitroAsignacionController.java Autores: Juan José Fecha última modificación:
+ * Archivo: ArbitroAsignacionController.java Autores: JJRodriguezz Fecha última modificación:
  * 07.09.2025 Descripción: Controlador para que los árbitros gestionen sus asignaciones
  * (aceptar/rechazar). Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
  */

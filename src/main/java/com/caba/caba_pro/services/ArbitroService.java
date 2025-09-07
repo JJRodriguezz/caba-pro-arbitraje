@@ -1,5 +1,5 @@
 /**
- * Archivo: ArbitroService.java Autores:Isabella.Idarraga, Diego.Gonzalez, Juan José Fecha última
+ * Archivo: ArbitroService.java Autores:Isabella.Idarraga, Diego.Gonzalez, JJRodriguezz Fecha última
  * modificación: [06.09.2025] Descripción: Servicio para la gestión de árbitros en la aplicación
  * Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
  */

@@ -1,5 +1,5 @@
 /**
- * Archivo: PartidoService.java Autores: Juan José Fecha última modificación: 05.09.2025
+ * Archivo: PartidoService.java Autores: JJRodriguezz Fecha última modificación: 05.09.2025
  * Descripción: Lógica de negocio para gestión de partidos y asignaciones. Proyecto: CABA Pro -
  * Sistema de Gestión Integral de Arbitraje
  */
@@ -38,7 +38,6 @@ public class PartidoService {
   private final TarifaService tarifaService;
   private final TorneoRepository torneoRepository;
   private final NotificacionService notificacionService;
-  private final AdministradorRepository administradorRepository;
 
   // 3. Constructores
   public PartidoService(
@@ -55,7 +54,6 @@ public class PartidoService {
     this.tarifaService = tarifaService;
     this.torneoRepository = torneoRepository;
     this.notificacionService = notificacionService;
-    this.administradorRepository = administradorRepository;
   }
 
   // 4. Métodos públicos
