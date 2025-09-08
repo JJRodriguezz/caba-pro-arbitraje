@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Árbitros - CABA Pro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/arbitros.css}" />
+
+</head>
+<body>
+<div class="container">
+    <!-- Navigation -->
+    <div class="nav-bar">
+        <div class="nav-links">
+            <a th:href="@{/admin/dashboard}">Dashboard</a>
+            <a href="#" class="active">Árbitros</a>
+            <a th:href="@{/admin/partidos}">Partidos</a>
+            <a th:href="@{/admin/torneos}">Torneos</a>
+            <a th:href="@{/admin/calendario}">Calendario</a>
+            <a th:href="@{/admin/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
+        </div>
+        <div class="user-info">
+            <span th:text="${#authentication.name}">Administrador</span>
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit" class="logout-btn">Salir</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Messages -->
+    <div th:if="${success}" class="message success" th:text="${success}"></div>
+    <div th:if="${error}" class="message error" th:text="${error}"></div>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>Gestión de Árbitros</h1>
+        <div class="action-buttons">
+            <a href="#" class="btn btn-secondary">Exportar Excel</a>
+            <a th:href="@{/admin/arbitros/nuevo}" class="btn btn-primary">Crear Árbitro</a>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div th:if="${not #lists.isEmpty(arbitros)}">
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Número ID</th>
+                <th>Email</th>
+                <th>Especialidad</th>
+                <th>Escalafón</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="arbitro : ${arbitros}">
+                <td th:text="${arbitro.id}">1</td>
+                <td th:text="${arbitro.nombre}">Juan</td>
+                <td th:text="${arbitro.apellidos}">Pérez</td>
+                <td th:text="${arbitro.numeroIdentificacion}">12345678</td>
+                <td th:text="${arbitro.email}">juan@email.com</td>
+                <td>
+                            <span th:if="${arbitro.especialidad}"
+                                  th:class="'specialty-badge specialty-' + ${#strings.toLowerCase(arbitro.especialidad)}"
+                                  th:text="${arbitro.especialidad}">CAMPO</span>
+                </td>
+                <td th:text="${arbitro.escalafon}">FIBA</td>
+                <td>
+                    <div class="action-links">
+                        <a th:href="@{/admin/arbitros/editar/{id}(id=${arbitro.id})}" class="edit-btn">Editar</a>
+                        <a th:href="@{/admin/arbitros/eliminar/{id}(id=${arbitro.id})}"
+                           class="delete-btn"
+                           onclick="return confirm('¿Seguro que quieres eliminar este árbitro?')">Eliminar</a>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${#lists.isEmpty(arbitros)}" class="empty-state">
+        <h3>No hay árbitros registrados</h3>
+        <p>Comienza creando el primer árbitro en el sistema</p>
+        <a th:href="@{/admin/arbitros/nuevo}" class="btn btn-primary">Crear Primer Árbitro</a>
+    </div>
+</div>
+</body>
+</html>
