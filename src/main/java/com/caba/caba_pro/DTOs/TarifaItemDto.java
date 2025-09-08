@@ -1,7 +1,7 @@
 /**
- * Archivo: TarifaItemDto.java Autores: JJRodriguezz Fecha última modificación: 06.09.2025 Descripción:
- * Ítem de tarifa (escalafón + monto) para el formulario. Proyecto: CABA Pro - Sistema de Gestión
- * Integral de Arbitraje
+ * Archivo: TarifaItemDto.java Autores: JJRodriguezz Fecha última modificación: 06.09.2025
+ * Descripción: Ítem de tarifa (escalafón + monto) para el formulario. Proyecto: CABA Pro - Sistema
+ * de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.DTOs;
 

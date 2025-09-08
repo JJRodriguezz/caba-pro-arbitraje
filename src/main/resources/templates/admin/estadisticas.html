@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Estadísticas de Árbitros - CABA Pro</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
+  <link rel="stylesheet" th:href="@{/css/estadisticas.css}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <nav class="header-nav">
+    <div class="nav-links">
+      <a th:href="@{/admin/arbitros}">Árbitros</a>
+      <a th:href="@{/admin/partidos}">Partidos</a>
+      <a th:href="@{/admin/torneos}">Torneos</a>
+      <a th:href="@{/admin/calendario}">Calendario</a>
+      <a th:href="@{/admin/notificaciones}" title="Notificaciones" class="notificaciones-btn">Notificaciones</a>
+      <a th:href="@{/admin/perfil}">👤</a>
+    </div>
+    <div class="user-section">
+      <span sec:authentication="name">Administrador</span>
+      <form th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit" class="logout-btn">🔓 Salir</button>
+      </form>
+    </div>
+  </nav>
+  <div class="estadisticas-container">
+    <h1 class="estadisticas-titulo">Estadísticas de Árbitros</h1>
+    <form method="get" th:action="@{/admin/estadisticas}" class="filter-form estadisticas-filtros">
+      <label for="desde">Desde:</label>
+      <input type="date" id="desde" name="desde" th:value="${desde}" />
+      <label for="hasta">Hasta:</label>
+      <input type="date" id="hasta" name="hasta" th:value="${hasta}" />
+      <button type="submit">Filtrar</button>
+    </form>
+
+    <section class="estadisticas-section">
+      <h2>Árbitros activos</h2>
+      <p>Total: <span th:text="${arbitrosStats.totalActivos}"></span></p>
+      <h3>Por especialidad</h3>
+      <ul>
+        <li th:each="entry : ${arbitrosStats.cantidadPorEspecialidad}">
+          <span th:text="${entry.key}"></span>: <span th:text="${entry.value}"></span>
+        </li>
+      </ul>
+      <div th:if="${arbitrosStats.cantidadPorEspecialidad == null or #lists.isEmpty(arbitrosStats.cantidadPorEspecialidad)}" class="no-data-message">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="12" fill="#fff">i</text></svg>
+        No hay datos de especialidades disponibles.
+      </div>
+      <h3>Por escalafón</h3>
+      <ul>
+        <li th:each="entry : ${arbitrosStats.cantidadPorEscalafon}">
+          <span th:text="${entry.key}"></span>: <span th:text="${entry.value}"></span>
+        </li>
+      </ul>
+      <div th:if="${arbitrosStats.cantidadPorEscalafon == null or #lists.isEmpty(arbitrosStats.cantidadPorEscalafon)}" class="no-data-message">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="12" fill="#fff">i</text></svg>
+        No hay datos de escalafón disponibles.
+      </div>
+    </section>
+
+    <section class="estadisticas-section">
+      <h2>Asignaciones</h2>
+      <p>Total: <span th:text="${asignacionesStats.totalAsignaciones}"></span></p>
+      <p>Aceptadas: <span th:text="${asignacionesStats.aceptadas}"></span> (<span th:text="${asignacionesStats.porcentajeAceptadas}"></span>%)</p>
+      <p>Rechazadas: <span th:text="${asignacionesStats.rechazadas}"></span> (<span th:text="${asignacionesStats.porcentajeRechazadas}"></span>%)</p>
+      <div th:if="${asignacionesStats.totalAsignaciones == null or asignacionesStats.totalAsignaciones == 0}" class="no-data-message">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="12" fill="#fff">i</text></svg>
+        No hay datos de asignaciones disponibles.
+      </div>
+    </section>
+
+    <section class="estadisticas-section">
+      <h2>Top 5 Árbitros más activos</h2>
+      <table class="estadisticas-table" th:if="${topArbitros.topArbitros != null and !#lists.isEmpty(topArbitros.topArbitros)}">
+        <thead>
+          <tr><th>Nombre</th><th>Asignaciones</th></tr>
+        </thead>
+        <tbody>
+          <tr th:each="arbitro : ${topArbitros.topArbitros}">
+            <td th:text="${arbitro.nombreCompleto}"></td>
+            <td th:text="${arbitro.cantidadAsignaciones}"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div th:if="${topArbitros.topArbitros == null or #lists.isEmpty(topArbitros.topArbitros)}" class="no-data-message">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="12" fill="#fff">i</text></svg>
+        No hay datos de árbitros activos disponibles.
+      </div>
+    </section>
+
+    <section class="estadisticas-section">
+      <h2>Gráficos</h2>
+      <div class="estadisticas-graficos">
+        <div>
+          <canvas id="graficoEspecialidad" width="400" height="200"></canvas>
+          <div th:if="${arbitrosStats.cantidadPorEspecialidad == null or #lists.isEmpty(arbitrosStats.cantidadPorEspecialidad)}" class="no-data-message">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="12" fill="#fff">i</text></svg>
+            No hay datos para graficar especialidades.
+          </div>
+        </div>
+        <div>
+          <canvas id="graficoAsignaciones" width="400" height="200"></canvas>
+          <div th:if="${asignacionesStats.totalAsignaciones == null or asignacionesStats.totalAsignaciones == 0}" class="no-data-message">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="12" fill="#fff">i</text></svg>
+            No hay datos para graficar asignaciones.
+          </div>
+        </div>
+      </div>
+      <script th:inline="javascript">
+        /*<![CDATA[*/
+        // 1) Inyecta los datos crudos tal cual (Thymeleaf los serializa como objeto JS en modo inline)
+        const mapaEspecialidad = /*[[${arbitrosStats.cantidadPorEspecialidad}]]*/ null;
+        const totalAsignaciones = /*[[${asignacionesStats != null ? asignacionesStats.totalAsignaciones : 0}]]*/ 0;
+        const aceptadas = /*[[${asignacionesStats != null ? asignacionesStats.aceptadas : 0}]]*/ 0;
+        const rechazadas = /*[[${asignacionesStats != null ? asignacionesStats.rechazadas : 0}]]*/ 0;
+
+        // 2) Transforma a arrays seguros en el navegador (evita #maps/#lists/#arrays)
+        const especialidades = mapaEspecialidad ? Object.keys(mapaEspecialidad) : [];
+        const cantidades     = mapaEspecialidad ? Object.values(mapaEspecialidad) : [];
+        const datosAsignaciones = [Number(aceptadas)||0, Number(rechazadas)||0];
+        const etiquetasAsignaciones = ['Aceptadas','Rechazadas'];
+
+        // Diagnóstico en consola (mira DevTools → Console)
+        console.log('[Estadísticas] especialidades:', especialidades);
+        console.log('[Estadísticas] cantidades:', cantidades);
+        console.log('[Estadísticas] asignaciones:', datosAsignaciones, 'total:', totalAsignaciones);
+
+        // 3) Dibuja solo si hay datos y el canvas existe
+        (function initCharts(){
+            const ce = document.getElementById('graficoEspecialidad');
+            if (ce && especialidades.length && cantidades.length) {
+            new Chart(ce.getContext('2d'), {
+                type: 'bar',
+                data: {
+                labels: especialidades,
+                datasets: [{ label: 'Árbitros por especialidad', data: cantidades }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            }
+
+            const ca = document.getElementById('graficoAsignaciones');
+            if (ca && (datosAsignaciones[0] > 0 || datosAsignaciones[1] > 0)) {
+            new Chart(ca.getContext('2d'), {
+                type: 'pie',
+                data: {
+                labels: etiquetasAsignaciones,
+                datasets: [{ label: 'Asignaciones', data: datosAsignaciones }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            }
+        })();
+        /*]]>*/
+        </script>
+    </section>
+  </div>
+</body>
+</html>

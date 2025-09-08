@@ -100,6 +100,15 @@ public class Asignacion {
     return estado;
   }
 
+  // Métodos de utilidad para estadísticas
+  public boolean isAceptada() {
+    return estado == com.caba.caba_pro.enums.AsignacionEstado.ACEPTADA;
+  }
+
+  public boolean isRechazada() {
+    return estado == com.caba.caba_pro.enums.AsignacionEstado.RECHAZADA;
+  }
+
   public void setEstado(AsignacionEstado estado) {
     this.estado = estado;
   }
