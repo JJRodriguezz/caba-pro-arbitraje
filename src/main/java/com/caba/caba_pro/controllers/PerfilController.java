@@ -82,12 +82,12 @@ public class PerfilController {
   @GetMapping("/arbitro/perfil")
   public String mostrarPerfilArbitro(Model model) {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    String email = auth.getName();
+    String username = auth.getName();
 
-    logger.info("Mostrando perfil de árbitro: {}", email);
+    logger.info("Mostrando perfil de árbitro: {}", username);
 
     try {
-      Arbitro arbitro = arbitroRepository.findByEmail(email);
+      Arbitro arbitro = arbitroRepository.findByUsername(username);
       if (arbitro == null || !arbitro.isActivo()) {
         throw new BusinessException("Árbitro no encontrado");
       }
@@ -131,10 +131,10 @@ public class PerfilController {
   @GetMapping("/arbitro/perfil/editar")
   public String mostrarFormularioEditarArbitro(Model model) {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    String email = auth.getName();
+    String username = auth.getName();
 
     try {
-      Arbitro arbitro = arbitroRepository.findByEmail(email);
+      Arbitro arbitro = arbitroRepository.findByUsername(username);
       if (arbitro == null || !arbitro.isActivo()) {
         throw new BusinessException("Árbitro no encontrado");
       }
@@ -233,10 +233,10 @@ public class PerfilController {
     }
 
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    String email = auth.getName();
+    String username = auth.getName();
 
     try {
-      Arbitro arbitro = arbitroRepository.findByEmail(email);
+      Arbitro arbitro = arbitroRepository.findByUsername(username);
       if (arbitro == null) {
         throw new BusinessException("Árbitro no encontrado");
       }
@@ -365,10 +365,10 @@ public class PerfilController {
     }
 
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    String email = auth.getName();
+    String username = auth.getName();
 
     try {
-      Arbitro arbitro = arbitroRepository.findByEmail(email);
+      Arbitro arbitro = arbitroRepository.findByUsername(username);
       if (arbitro == null) {
         throw new BusinessException("Árbitro no encontrado");
       }
@@ -409,7 +409,7 @@ public class PerfilController {
   private PerfilDto mapearArbitroADto(Arbitro arbitro) {
     PerfilDto dto = new PerfilDto();
     dto.setId(arbitro.getId());
-    dto.setUsername(arbitro.getEmail()); // Para árbitros, el username es el email
+    dto.setUsername(arbitro.getUsername()); // Usar el campo username del árbitro
     dto.setNombre(arbitro.getNombre());
     dto.setApellidos(arbitro.getApellidos());
     dto.setNombreCompleto(arbitro.getNombreCompleto());

@@ -1,0 +1,255 @@
+/* Estilos para el Calendario */
+
+/* Contenedor principal */
+.main-panel {
+    flex: 1;
+    padding: 30px;
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+
+.welcome-title {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 2.5em;
+    margin-bottom: 30px;
+    text-shadow: none;
+}
+
+/* Estilos específicos para integración visual del calendario */
+#calendar {
+    max-width: 1200px;
+    margin: 40px auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    backdrop-filter: blur(10px);
+}
+
+/* Estilos del calendario */
+.fc {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+
+.fc-toolbar-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2c3e50;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+}
+
+#calendar .fc-button {
+    background: linear-gradient(135deg, #4ea1a5, #265b52);
+    border: none;
+    border-radius: 12px;
+    padding: 10px 18px;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(78, 161, 165, 0.3);
+    cursor: pointer;
+}
+
+#calendar .fc-button:hover {
+    background: linear-gradient(135deg, #265b52, #1a3e36);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(78, 161, 165, 0.4);
+}
+
+.fc-button:active {
+    transform: translateY(0);
+}
+
+#calendar .fc-event {
+    background-color: #4ea1a5; /* Color por defecto */
+    border: none;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-weight: 500;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+#calendar .fc-event:hover {
+    transform: scale(1.05);
+    z-index: 999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+#calendar .fc-event-title {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+/* Filtros */
+.filtros-container {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.filtros-container h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.filtro-grupo {
+    display: inline-block;
+    margin-right: 20px;
+    margin-bottom: 15px;
+}
+
+.filtro-grupo label {
+    display: block;
+    font-weight: 500;
+    color: #34495e;
+    margin-bottom: 5px;
+}
+
+.filtro-grupo select,
+.filtro-grupo input {
+    padding: 8px 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    min-width: 150px;
+    transition: border-color 0.3s ease;
+}
+
+.filtro-grupo select:focus,
+.filtro-grupo input:focus {
+    outline: none;
+    border-color: #4ea1a5;
+}
+
+.btn-filtrar {
+    background: linear-gradient(135deg, #4ea1a5, #265b52);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 500;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-filtrar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(78, 161, 165, 0.4);
+}
+
+/* Modal para detalles del evento */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    animation: modalShow 0.3s ease;
+    position: relative;
+}
+
+@keyframes modalShow {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #4ea1a5;
+}
+
+.modal-title {
+    color: #2c3e50;
+    font-size: 1.5em;
+    font-weight: 600;
+    margin: 0;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.close:hover {
+    color: #e74c3c;
+}
+
+.detalle-item {
+    display: flex;
+    margin-bottom: 12px;
+    align-items: center;
+}
+
+.detalle-label {
+    font-weight: 600;
+    color: #34495e;
+    width: 100px;
+    flex-shrink: 0;
+}
+
+.detalle-valor {
+    color: #2c3e50;
+    flex: 1;
+}
+
+.detalle-icono {
+    margin-right: 8px;
+    width: 20px;
+}
+
+/* Info para árbitro (solo para la vista de árbitro) */
+.info-arbitro {
+    background: rgba(78, 161, 165, 0.1);
+    border-left: 4px solid #4ea1a5;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+.info-arbitro h4 {
+    color: #2c3e50;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.info-arbitro p {
+    color: #34495e;
+    margin: 0;
+    line-height: 1.5;
+}

@@ -17,11 +17,12 @@
             <a th:href="@{/admin/torneos}">Torneos</a>
             <a th:href="@{/admin/calendario}">Calendario</a>
             <a th:href="@{/admin/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
-            <a th:href="@{/admin/perfil}">👤</a>
+
         </div>
         <div class="user-section">
-
-            <span sec:authentication="name">Administrador</span>
+            <a th:href="@{/admin/perfil}" class="profile-link">
+                <span sec:authentication="name">Administrador</span>
+            </a>
             <form th:action="@{/logout}" method="post" style="display: inline;">
                 <button type="submit" class="logout-btn">🔓 Salir</button>
             </form>
@@ -31,7 +32,7 @@
     <!-- Main Panel -->
     <div class="main-panel">
         <h1 class="welcome-title">Bienvenido <span sec:authentication="name">Nombre</span></h1>
-        <p class="welcome-subtitle">Estas en la vista de Admin</p>
+        <p class="welcome-subtitle">Estás en la vista de Admin</p>
 
         <button class="stats-button" onclick="location.href='/admin/estadisticas'">
             Ver Estadísticas
@@ -39,11 +40,11 @@
 
         <!-- Floating Icons -->
         <div class="floating-icons">
-            <div class="float-icon" title="Reportes">
-                📊
-            </div>
             <div class="float-icon" title="Tarifas" onclick="location.href='/admin/tarifas'">
                 💰
+            </div>
+            <div class="float-icon" title="chat" onclick="location.href='/admin/chat'">
+                💬
             </div>
         </div>
     </div>

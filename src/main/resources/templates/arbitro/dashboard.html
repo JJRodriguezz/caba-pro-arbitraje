@@ -19,8 +19,9 @@
       <a th:href="@{/arbitro/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
     </div>
     <div class="user-section">
-      <a th:href="@{/arbitro/perfil}">👤</a>
-      <span sec:authentication="name">Árbitro</span>
+      <a th:href="@{/arbitro/perfil}" class="profile-link">
+        <span sec:authentication="name">Árbitro</span>
+      </a>
       <form th:action="@{/logout}" method="post" style="display: inline;">
         <button type="submit" class="logout-btn">🔓 Salir</button>
       </form>
@@ -30,7 +31,7 @@
   <!-- Main Panel -->
   <div class="main-panel">
     <h1 class="welcome-title">Bienvenido <span sec:authentication="name">José</span></h1>
-    <p class="welcome-subtitle">Estas en la vista de Árbitro</p>
+    <p class="welcome-subtitle">Estás en la vista de Árbitro</p>
 
     <!-- Acciones principales del árbitro -->
     <div class="arbitro-actions">
@@ -45,9 +46,14 @@
       </a>
     </div>
 
-    <!-- Icono flotante -->
-    <div class="floating-icons" title="Reportes" onclick="location.href='/arbitro/reportes'">
-      🧠
+    <!-- Iconos flotantes -->
+    <div class="floating-icons">
+      <div class="float-icon" title="Reportes" onclick="location.href='/arbitro/reportes'">
+        🧠
+      </div>
+      <div class="float-icon" title="chat" onclick="location.href='/arbitro/chat'">
+        💬
+      </div>
     </div>
   </div>
 </div>

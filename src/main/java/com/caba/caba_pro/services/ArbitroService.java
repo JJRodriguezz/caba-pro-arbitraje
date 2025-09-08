@@ -1,7 +1,7 @@
 /**
- * Archivo: ArbitroService.java Autores:Isabella.Idarraga, Diego.Gonzalez, JJRodriguezz Fecha última
- * modificación: [06.09.2025] Descripción: Servicio para la gestión de árbitros en la aplicación
- * Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
+ * Archivo: ArbitroService.java Autores: Isabella.Idarraga, Diego.Gonzalez, JJRodriguezz Fecha
+ * última modificación: [06.09.2025] Descripción: Servicio para la gestión de árbitros en la
+ * aplicación Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.services;
 
@@ -30,7 +30,8 @@ public class ArbitroService {
   private final AdministradorRepository administradorRepository;
   private final PasswordEncoder passwordEncoder;
 
-  // 3. Constructores
+  // 3. Constructor
+
   public ArbitroService(
       ArbitroRepository arbitroRepository,
       AdministradorRepository administradorRepository,
@@ -41,7 +42,8 @@ public class ArbitroService {
   }
 
   // 4. Métodos públicos
-  /** Buscar árbitro por username (email). */
+
+  // Buscar árbitro por username.
   @Transactional(readOnly = true)
   public Arbitro buscarPorUsername(String username) {
     Arbitro arbitro = arbitroRepository.findByUsername(username);
@@ -119,6 +121,7 @@ public class ArbitroService {
   }
 
   // Métodos de validación privados
+
   private void validarDatosArbitro(ArbitroDto dto) {
     // Validar que no exista árbitro con mismo número de identificación
     if (arbitroRepository.existsByNumeroIdentificacion(dto.getNumeroIdentificacion())) {

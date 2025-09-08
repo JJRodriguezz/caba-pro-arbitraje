@@ -29,8 +29,9 @@ Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
       <a th:href="@{/arbitro/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
     </div>
     <div class="user-section">
-      <a th:href="@{/arbitro/perfil}">👤</a>
-      <span sec:authentication="name">Árbitro</span>
+      <a th:href="@{/arbitro/perfil}" class="profile-link">
+        <span sec:authentication="name">Árbitro</span>
+      </a>
       <form th:action="@{/logout}" method="post" style="display: inline;">
         <button type="submit" class="logout-btn">🔓 Salir</button>
       </form>

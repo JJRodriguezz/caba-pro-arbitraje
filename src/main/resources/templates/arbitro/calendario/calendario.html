@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <title>Mi Calendario - CABA Pro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Estilos generales del dashboard -->
+    <link rel="stylesheet" th:href="@{/css/arbitro-dashboard.css}" />
+    
+    <!-- Estilos del calendario -->
+    <link rel="stylesheet" th:href="@{/css/calendario.css}" />
+
+    <!-- FullCalendar CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.css" rel="stylesheet" />
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Navbar -->
+    <nav class="header-nav">
+        <div class="nav-links">
+            <a th:href="@{/arbitro/dashboard}">Dashboard</a>
+            <a th:href="@{/arbitro/asignaciones}">Mis asignaciones</a>
+            <a th:href="@{/arbitro/calendario}" class="active">Calendario</a>
+            <a th:href="@{/arbitro/disponibilidad}" class="active">Disponibilidad</a>
+        </div>
+        <div class="user-section">
+            <a th:href="@{/arbitro/perfil}" class="profile-link">
+                <span sec:authentication="name">Árbitro</span>
+            </a>
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit" class="logout-btn">🔓 Salir</button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- Contenedor Principal -->
+    <div class="main-panel">
+        <h1 class="welcome-title">📅 Mi Calendario de Asignaciones</h1>
+        
+        <!-- Información para el árbitro -->
+        <div class="info-arbitro">
+            <h4>🏀 Mis Partidos Asignados</h4>
+            <p>Aquí puedes ver todos los partidos que tienes asignados. Los eventos mostrados corresponden únicamente a tus asignaciones activas.</p>
+        </div>
+        
+        <!-- Filtros -->
+        <div class="filtros-container">
+            <h3>🔍 Filtros</h3>
+            <div class="filtro-grupo">
+                <label for="filtroTorneo">Torneo:</label>
+                <select id="filtroTorneo">
+                    <option value="">Todos mis torneos</option>
+                    <!-- Se llenarán dinámicamente -->
+                </select>
+            </div>
+            <div class="filtro-grupo">
+                <label for="filtroFechaInicio">Desde:</label>
+                <input type="date" id="filtroFechaInicio">
+            </div>
+            <div class="filtro-grupo">
+                <label for="filtroFechaFin">Hasta:</label>
+                <input type="date" id="filtroFechaFin">
+            </div>
+            <button class="btn-filtrar" onclick="aplicarFiltros()">Aplicar Filtros</button>
+            <button class="btn-filtrar" onclick="limpiarFiltros()">Limpiar</button>
+        </div>
+
+        <!-- Calendario -->
+        <div id="calendar"></div>
+    </div>
+</div>
+
+<!-- Modal para detalles del evento -->
+<div id="modalDetalles" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title">⚽ Detalles del Partido</h2>
+            <span class="close" onclick="cerrarModal()">&times;</span>
+        </div>
+        <div id="contenidoModal">
+            <!-- Se llena dinámicamente -->
+        </div>
+    </div>
+</div>
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
+
+<script th:inline="javascript">
+    var calendar;
+
+    // Cuando la página carga
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+
+        // Configurar el calendario
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'es',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            height: 'auto',
+            events: '/eventos',
+            eventClick: function(info) {
+                mostrarDetalleEvento(info.event);
+            }
+        });
+
+        // Mostrar el calendario
+        calendar.render();
+        
+        // Cargar los torneos para los filtros
+        cargarTorneos();
+    });
+
+    // Mostrar los detalles cuando hagan click en un evento
+    function mostrarDetalleEvento(evento) {
+        var props = evento.extendedProps;
+        var fecha = evento.start;
+        
+        var contenido = '';
+        contenido += '<div class="detalle-item">';
+        contenido += '<span class="detalle-icono">⚽</span>';
+        contenido += '<span class="detalle-label">Partido:</span>';
+        contenido += '<span class="detalle-valor">' + evento.title + '</span>';
+        contenido += '</div>';
+        
+        contenido += '<div class="detalle-item">';
+        contenido += '<span class="detalle-icono">📅</span>';
+        contenido += '<span class="detalle-label">Fecha:</span>';
+        contenido += '<span class="detalle-valor">' + fecha.getDate() + '/' + (fecha.getMonth()+1) + '/' + fecha.getFullYear() + '</span>';
+        contenido += '</div>';
+        
+        contenido += '<div class="detalle-item">';
+        contenido += '<span class="detalle-icono">🕐</span>';
+        contenido += '<span class="detalle-label">Hora:</span>';
+        var horas = fecha.getHours().toString().padStart(2, '0');
+        var minutos = fecha.getMinutes().toString().padStart(2, '0');
+        contenido += '<span class="detalle-valor">' + horas + ':' + minutos + '</span>';
+        contenido += '</div>';
+        
+        contenido += '<div class="detalle-item">';
+        contenido += '<span class="detalle-icono">🏟️</span>';
+        contenido += '<span class="detalle-label">Sede:</span>';
+        contenido += '<span class="detalle-valor">' + (props.sede || 'No especificada') + '</span>';
+        contenido += '</div>';
+        
+        contenido += '<div class="detalle-item">';
+        contenido += '<span class="detalle-icono">🏆</span>';
+        contenido += '<span class="detalle-label">Torneo:</span>';
+        contenido += '<span class="detalle-valor">' + (props.torneo || 'Sin torneo') + '</span>';
+        contenido += '</div>';
+        
+        contenido += '<div class="detalle-item">';
+        contenido += '<span class="detalle-icono">📊</span>';
+        contenido += '<span class="detalle-label">Estado:</span>';
+        contenido += '<span class="detalle-valor">' + (props.estado || 'No especificado') + '</span>';
+        contenido += '</div>';
+        
+        if (props.descripcion) {
+            contenido += '<div class="detalle-item">';
+            contenido += '<span class="detalle-icono">📝</span>';
+            contenido += '<span class="detalle-label">Descripción:</span>';
+            contenido += '<span class="detalle-valor">' + props.descripcion + '</span>';
+            contenido += '</div>';
+        }
+        
+        document.getElementById('contenidoModal').innerHTML = contenido;
+        document.getElementById('modalDetalles').style.display = 'block';
+    }
+
+    // Cerrar modal
+    function cerrarModal() {
+        document.getElementById('modalDetalles').style.display = 'none';
+    }
+
+    // Cerrar modal al hacer click fuera de él
+    window.onclick = function(event) {
+        var modal = document.getElementById('modalDetalles');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    // Aplicar los filtros seleccionados
+    function aplicarFiltros() {
+        var torneoId = document.getElementById('filtroTorneo').value;
+        var fechaInicio = document.getElementById('filtroFechaInicio').value;
+        var fechaFin = document.getElementById('filtroFechaFin').value;
+
+        // Crear la URL con los filtros
+        var url = '/eventos';
+        var parametros = [];
+        
+        if (torneoId != '') {
+            parametros.push('torneoId=' + torneoId);
+        }
+        if (fechaInicio != '') {
+            parametros.push('fechaInicio=' + fechaInicio);
+        }
+        if (fechaFin != '') {
+            parametros.push('fechaFin=' + fechaFin);
+        }
+
+        if (parametros.length > 0) {
+            url = url + '?' + parametros.join('&');
+        }
+
+        // Recargar el calendario con los filtros
+        calendar.removeAllEvents();
+        
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var eventos = JSON.parse(xhr.responseText);
+                calendar.addEventSource(eventos);
+            }
+        };
+        xhr.send();
+    }
+
+    // Limpiar todos los filtros
+    function limpiarFiltros() {
+        document.getElementById('filtroTorneo').value = '';
+        document.getElementById('filtroFechaInicio').value = '';
+        document.getElementById('filtroFechaFin').value = '';
+        
+        // Recargar el calendario sin filtros
+        calendar.removeAllEvents();
+        
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/eventos', true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var eventos = JSON.parse(xhr.responseText);
+                calendar.addEventSource(eventos);
+            }
+        };
+        xhr.send();
+    }
+
+    // Cargar la lista de torneos para los filtros
+    function cargarTorneos() {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '/calendario/torneos', true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var torneos = JSON.parse(xhr.responseText);
+                
+                // Llenar el select de filtros
+                var select = document.getElementById('filtroTorneo');
+                select.innerHTML = '<option value="">Todos mis torneos</option>';
+                
+                for (var i = 0; i < torneos.length; i++) {
+                    var torneo = torneos[i];
+                    
+                    // Agregar opción al select
+                    var option = document.createElement('option');
+                    option.value = torneo.id;
+                    option.textContent = torneo.nombre + ' (' + torneo.estado + ')';
+                    select.appendChild(option);
+                }
+            } else if (xhr.readyState === 4) {
+                console.log('Error al cargar torneos');
+                var select = document.getElementById('filtroTorneo');
+                select.innerHTML = '<option value="">Error al cargar torneos</option>';
+            }
+        };
+        xhr.send();
+    }
+</script>
+</body>
+</html>

@@ -20,8 +20,8 @@
             <a th:href="@{/arbitro/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
         </div>
         <div class="user-info">
-            <a th:href="@{/admin/perfil}" class="profile-link">
-                <span th:text="${#authentication.name}">Administrador</span>
+            <a th:href="@{/arbitro/perfil}" class="profile-link">
+                <span th:text="${#authentication.name}">Árbitro</span>
             </a>
             <form th:action="@{/logout}" method="post" style="display: inline;">
                 <button type="submit" class="logout-btn">Salir</button>

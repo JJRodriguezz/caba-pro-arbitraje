@@ -1,7 +1,7 @@
 /**
- * Archivo: Arbitro.java Autores: Diego.Gonzalez Fecha última modificación: [06.09.2025]
- * Descripción: Modelo para la gestión de árbitros en la aplicación Proyecto: CABA Pro - Sistema de
- * Gestión Integral de Arbitraje
+ * Archivo: Arbitro.java Autores: Isabella.Idarraga & Diego.Gonzalez Fecha última modificación:
+ * [06.09.2025] Descripción: Modelo para la gestión de árbitros en la aplicación Proyecto: CABA Pro
+ * - Sistema de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.models;
 
