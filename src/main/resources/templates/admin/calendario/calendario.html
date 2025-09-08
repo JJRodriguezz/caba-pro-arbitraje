@@ -9,7 +9,7 @@
     <!-- Estilos generales del dashboard -->
     <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
     
-    <!-- Estilos del calendario (unificado) -->
+    <!-- Estilos del calendario -->
     <link rel="stylesheet" th:href="@{/css/calendario.css}" />
 
     <!-- FullCalendar CSS -->
@@ -225,7 +225,6 @@
         document.getElementById('filtroFechaInicio').value = '';
         document.getElementById('filtroFechaFin').value = '';
         
-        // Recargar el calendario sin filtros
         calendar.removeAllEvents();
         
         var xhr = new XMLHttpRequest();
@@ -247,7 +246,6 @@
             if (xhr.readyState === 4 && xhr.status === 200) {
                 var torneos = JSON.parse(xhr.responseText);
                 
-                // Llenar el select de filtros
                 var select = document.getElementById('filtroTorneo');
                 select.innerHTML = '<option value="">Todos los torneos</option>';
                 

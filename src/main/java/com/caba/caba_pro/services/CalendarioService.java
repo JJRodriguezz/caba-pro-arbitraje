@@ -1,5 +1,5 @@
 /**
- * Archivo: CalendarioService.java Autores: Sistema CABA Pro Fecha última modificación: 07.09.2025
+ * Archivo: CalendarioService.java Autores: Diego.Gonzalez Fecha última modificación: 07.09.2025
  * Descripción: Servicio para generar eventos del calendario según el rol del usuario Proyecto: CABA
  * Pro - Sistema de Gestión Integral de Arbitraje
  */

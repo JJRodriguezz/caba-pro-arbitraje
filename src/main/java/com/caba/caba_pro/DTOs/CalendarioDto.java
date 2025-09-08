@@ -1,7 +1,7 @@
 /**
- * Archivo: CalendarioDto.java Autores: Diego.Gonzalez Sistema CABA Pro Fecha última modificación:
- * 07.09.2025 Descripción: DTO para representar eventos en el calendario FullCalendar.js Proyecto:
- * CABA Pro - Sistema de Gestión Integral de Arbitraje
+ * Archivo: CalendarioDto.java Autores: Diego.Gonzalez Fecha última modificación: [07.09.2025]
+ * Descripción: DTO para representar eventos en el calendario FullCalendar.js Proyecto: CABA Pro -
+ * Sistema de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.DTOs;
 
@@ -77,7 +77,7 @@ public class CalendarioDto {
 
   public void setBackgroundColor(String backgroundColor) {
     this.backgroundColor = backgroundColor;
-    this.borderColor = backgroundColor; // Mantener coherencia
+    this.borderColor = backgroundColor;
   }
 
   public String getBorderColor() {

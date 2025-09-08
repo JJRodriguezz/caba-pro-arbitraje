@@ -1,6 +1,6 @@
 /**
- * Archivo: CalendarioController.java Autores: Sistema CABA Pro Fecha última modificación:
- * 07.09.2025 Descripción: Controlador para las vistas del calendario y API de eventos Proyecto:
+ * Archivo: CalendarioController.java Autores: Diego.Gonzalez Fecha última modificación:
+ * [07.09.2025] Descripción: Controlador para las vistas del calendario y API de eventos Proyecto:
  * CABA Pro - Sistema de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.controllers;
@@ -30,7 +30,7 @@ public class CalendarioController {
 
   @Autowired private TorneoService torneoService;
 
-  /** Vista del calendario para administradores */
+  // Vista del calendario para admins
   @GetMapping("/admin/calendario")
   public String calendarioAdmin(Model model, Authentication authentication) {
     model.addAttribute("rol", "ADMIN");
@@ -38,7 +38,8 @@ public class CalendarioController {
     return "admin/calendario/calendario";
   }
 
-  /** Vista del calendario para árbitros */
+  // Vista del calendario para árbitros
+
   @GetMapping("/arbitro/calendario")
   public String calendarioArbitro(Model model, Authentication authentication) {
     model.addAttribute("rol", "ARBITRO");
@@ -46,7 +47,7 @@ public class CalendarioController {
     return "arbitro/calendario/calendario";
   }
 
-  /** API para obtener eventos en formato JSON para FullCalendar */
+  // Obtener eventos (Partidos y asignaciones) en formato JSON para FullCalendar
   @GetMapping("/eventos")
   @ResponseBody
   public ResponseEntity<List<CalendarioDto>> obtenerEventos(
@@ -82,7 +83,7 @@ public class CalendarioController {
     return ResponseEntity.ok(eventos);
   }
 
-  /** API para obtener eventos específicos de un árbitro (solo para admins) */
+  // Obtener eventos específicos de un árbitro (solo para admins)
   @GetMapping("/admin/eventos/arbitro")
   @ResponseBody
   public ResponseEntity<List<CalendarioDto>> obtenerEventosDeArbitro(
@@ -97,7 +98,6 @@ public class CalendarioController {
     return ResponseEntity.ok(eventos);
   }
 
-  /** Endpoint para obtener lista de torneos disponibles para filtros */
   @GetMapping("/calendario/torneos")
   @ResponseBody
   public ResponseEntity<List<Map<String, Object>>> obtenerTorneosParaFiltros() {
