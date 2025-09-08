@@ -1,0 +1,33 @@
+<!--
+Archivo: notificaciones.html
+Autores: JJRodriguezz
+Fecha última modificación: 07.09.2025
+Descripción: Vista de notificaciones para árbitros y administradores.
+Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Notificaciones</title>
+  <link rel="stylesheet" th:href="@{/css/notificaciones.css}" />
+</head>
+<body>
+  <div class="notificaciones-container">
+    <h2>Notificaciones</h2>
+    <div th:if="${notificaciones.size() == 0}" class="no-notificaciones">
+      No tienes notificaciones.
+    </div>
+    <div th:each="notificacion : ${notificaciones}" class="notificacion-card">
+      <div class="notificacion-mensaje" th:text="${notificacion.mensaje}"></div>
+      <div class="notificacion-fecha" th:text="${#dates.format(notificacion.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></div>
+      <div th:if="${notificacion.tipo == 'ARBITRO'}">
+        <a th:href="@{/arbitro/asignaciones}" class="btn-ver">Ver partido</a>
+      </div>
+      <div th:if="${notificacion.tipo == 'ADMIN'}">
+        <!-- El admin solo ve el mensaje, no botón -->
+      </div>
+    </div>
+  </div>
+</body>
+</html>

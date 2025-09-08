@@ -1,7 +1,7 @@
 /**
- * Archivo: AsignacionDto.java Autores: Juan José Fecha última modificación: 05.09.2025 Descripción:
- * DTO para asignar un árbitro a un partido. Proyecto: CABA Pro - Sistema de Gestión Integral de
- * Arbitraje
+ * Archivo: AsignacionDto.java Autores: JJRodriguezz Fecha última modificación: 05.09.2025
+ * Descripción: DTO para asignar un árbitro a un partido. Proyecto: CABA Pro - Sistema de Gestión
+ * Integral de Arbitraje
  */
 package com.caba.caba_pro.DTOs;
 
@@ -15,6 +15,9 @@ public class AsignacionDto {
 
   @NotBlank(message = "La posición es obligatoria")
   private String posicion;
+
+  // Nuevo: admin asignador
+  private String adminUsername;
 
   public AsignacionDto() {}
 
@@ -32,5 +35,13 @@ public class AsignacionDto {
 
   public void setPosicion(String posicion) {
     this.posicion = posicion;
+  }
+
+  public String getAdminUsername() {
+    return adminUsername;
+  }
+
+  public void setAdminUsername(String adminUsername) {
+    this.adminUsername = adminUsername;
   }
 }

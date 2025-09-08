@@ -16,6 +16,7 @@
       <a th:href="@{/arbitro/asignaciones}">Mis Asignaciones</a>
       <a th:href="@{/arbitro/calendario}">Calendario</a>
       <a th:href="@{/arbitro/disponibilidad}">Disponibilidad</a>
+      <a th:href="@{/arbitro/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
     </div>
     <div class="user-section">
       <a th:href="@{/arbitro/perfil}" class="profile-link">
@@ -45,9 +46,14 @@
       </a>
     </div>
 
-    <!-- Icono flotante -->
-    <div class="floating-icons" title="Reportes" onclick="location.href='/arbitro/reportes'">
-      🧠
+    <!-- Iconos flotantes -->
+    <div class="floating-icons">
+      <div class="float-icon" title="Reportes" onclick="location.href='/arbitro/reportes'">
+        🧠
+      </div>
+      <div class="float-icon" title="chat" onclick="location.href='/arbitro/chat'">
+        💬
+      </div>
     </div>
   </div>
 </div>

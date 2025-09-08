@@ -17,11 +17,11 @@
             <a th:href="@{/admin/partidos}">Partidos</a>
             <a th:href="@{/admin/torneos}">Torneos</a>
             <a th:href="@{/admin/calendario}">Calendario</a>
-            <a th:href="@{/arbitro/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
+            <a th:href="@{/admin/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
         </div>
         <div class="user-info">
-            <a th:href="@{/arbitro/perfil}" class="profile-link">
-                <span th:text="${#authentication.name}">Árbitro</span>
+            <a th:href="@{/admin/perfil}" class="profile-link">
+                <span th:text="${#authentication.name}">Administrador</span>
             </a>
             <form th:action="@{/logout}" method="post" style="display: inline;">
                 <button type="submit" class="logout-btn">Salir</button>

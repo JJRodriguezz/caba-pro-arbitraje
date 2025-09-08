@@ -1,5 +1,5 @@
 /**
- * Archivo: PartidoController.java Autores: Juan José Fecha última modificación: 05.09.2025
+ * Archivo: PartidoController.java Autores: JJRodriguezz Fecha última modificación: 05.09.2025
  * Descripción: Controlador HTTP para administración de partidos. Proyecto: CABA Pro - Sistema de
  * Gestión Integral de Arbitraje
  */
@@ -134,6 +134,12 @@ public class PartidoController {
     }
 
     try {
+      // Obtener el username del admin autenticado
+      org.springframework.security.core.Authentication auth =
+          org.springframework.security.core.context.SecurityContextHolder.getContext()
+              .getAuthentication();
+      String adminUsername = auth.getName();
+      asignacionDto.setAdminUsername(adminUsername);
       partidoService.asignarArbitro(id, asignacionDto);
     } catch (BusinessException e) {
       model.addAttribute("error", e.getMessage());

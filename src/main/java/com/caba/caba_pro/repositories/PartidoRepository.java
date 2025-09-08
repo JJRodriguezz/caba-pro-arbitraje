@@ -1,5 +1,5 @@
 /**
- * Archivo: PartidoRepository.java Autores: Juan José Fecha última modificación: 05.09.2025
+ * Archivo: PartidoRepository.java Autores: JJRodriguezz Fecha última modificación: 05.09.2025
  * Descripción: Acceso a datos para partidos. Proyecto: CABA Pro - Sistema de Gestión Integral de
  * Arbitraje
  */

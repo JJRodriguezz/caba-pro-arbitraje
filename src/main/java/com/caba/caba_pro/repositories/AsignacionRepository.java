@@ -1,5 +1,5 @@
 /**
- * Archivo: AsignacionRepository.java Autores: Juan José Fecha última modificación: 06.09.2025
+ * Archivo: AsignacionRepository.java Autores: JJRodriguezz Fecha última modificación: 06.09.2025
  * Descripción: Acceso a datos para asignaciones de árbitros. Proyecto: CABA Pro - Sistema de
  * Gestión Integral de Arbitraje
  */
@@ -13,6 +13,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AsignacionRepository extends JpaRepository<Asignacion, Long> {
 
   List<Asignacion> findByPartidoIdAndActivoTrue(Long partidoId);
+
+  // Buscar asignaciones por árbitro
+  List<Asignacion> findByArbitroIdAndActivoTrue(Long arbitroId);
 
   boolean existsByPartidoIdAndArbitroIdAndActivoTrue(Long partidoId, Long arbitroId);
 

@@ -1,0 +1,65 @@
+<!--
+Archivo: admin/notificaciones.html
+Autores: JJRodriguezz
+Fecha última modificación: 07.09.2025
+Descripción: Vista de notificaciones para administradores.
+Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Mis Notificaciones</title>
+  <link rel="stylesheet" th:href="@{/css/arbitro-dashboard.css}" />
+  <link rel="stylesheet" th:href="@{/css/asignaciones.css}" />
+  <link rel="stylesheet" th:href="@{/css/notificaciones.css}" />
+</head>
+
+<body>
+<div class="dashboard-container">
+  <nav class="header-nav">
+    <div class="nav-links">
+      <a th:href="@{/admin/dashboard}">Dashboard</a>
+      <a th:href="@{/admin/arbitros}">Árbitros</a>
+      <a th:href="@{/admin/partidos}">Partidos</a>
+      <a th:href="@{/admin/torneos}">Torneos</a>
+      <a th:href="@{/admin/calendario}">Calendario</a>
+      <a th:href="@{/admin/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
+    </div>
+    <div class="user-section">
+      <a th:href="@{/admin/perfil}" class="profile-link">
+        <span th:text="${#authentication.name}">Administrador</span>
+      </a>
+      <form th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit" class="logout-btn">Salir</button>
+      </form>
+    </div>
+  </nav>
+  <div class="main-panel">
+    <h1 class="welcome-title">Mis Notificaciones</h1>
+    <table class="asignaciones-table" th:if="${notificaciones != null and notificaciones.size() > 0}">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Mensaje</th>
+          <th>Leída</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="notificacion : ${notificaciones}">
+          <td th:text="${notificacion['fechaFormateada']}"></td>
+          <td th:text="${notificacion.mensaje != null ? notificacion.mensaje : '-'}"></td>
+          <td>
+            <span th:if="${notificacion.leida}" class="estado-label aceptada">Sí</span>
+            <span th:unless="${notificacion.leida}" class="estado-label rechazada">No</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div th:if="${notificaciones == null or notificaciones.size() == 0}" class="empty-message">
+      <p>No tienes notificaciones.</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

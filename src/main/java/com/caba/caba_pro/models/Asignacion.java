@@ -1,5 +1,5 @@
 /**
- * Archivo: Asignacion.java Autores: Juan José Fecha última modificación: 05.09.2025 Descripción:
+ * Archivo: Asignacion.java Autores: JJRodriguezz Fecha última modificación: 05.09.2025 Descripción:
  * Entidad JPA para la asignación de árbitros a un partido. Proyecto: CABA Pro - Sistema de Gestión
  * Integral de Arbitraje
  */
@@ -57,6 +57,18 @@ public class Asignacion {
   @Column(length = 250)
   private String notasAdmin;
 
+  // Nuevo: registrar el administrador asignador
+  @Column(name = "admin_username", length = 30)
+  private String adminUsername;
+
+  public String getAdminUsername() {
+    return adminUsername;
+  }
+
+  public void setAdminUsername(String adminUsername) {
+    this.adminUsername = adminUsername;
+  }
+
   @Column(nullable = false)
   private Boolean activo;
 
@@ -98,6 +110,15 @@ public class Asignacion {
 
   public AsignacionEstado getEstado() {
     return estado;
+  }
+
+  // Métodos de utilidad para estadísticas
+  public boolean isAceptada() {
+    return estado == com.caba.caba_pro.enums.AsignacionEstado.ACEPTADA;
+  }
+
+  public boolean isRechazada() {
+    return estado == com.caba.caba_pro.enums.AsignacionEstado.RECHAZADA;
   }
 
   public void setEstado(AsignacionEstado estado) {

@@ -1,0 +1,67 @@
+/*
+Archivo: notificaciones.css
+Autores: JJRodriguezz
+Fecha última modificación: 07.09.2025
+Descripción: Estilos para la vista de notificaciones.
+Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
+*/
+
+.notificaciones-container {
+  max-width: 700px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 32px 24px;
+}
+
+h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 24px;
+}
+
+.no-notificaciones {
+  text-align: center;
+  color: #888;
+  font-size: 1.1em;
+  margin-top: 32px;
+}
+
+.notificacion-card {
+  background: #f7f7fa;
+  border-left: 4px solid #3498db;
+  margin-bottom: 18px;
+  padding: 18px 20px;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(44,62,80,0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+.leida {
+  color: #27ae60;
+  font-weight: bold;
+}
+  color: #34495e;
+}
+
+.notificacion-fecha {
+  font-size: 0.95em;
+  color: #888;
+}
+
+.btn-ver {
+  display: inline-block;
+  background: #3498db;
+  color: #fff;
+  padding: 7px 18px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.2s;
+  margin-top: 6px;
+}
+
+.btn-ver:hover {
+  background: #217dbb;
+}

@@ -1,0 +1,267 @@
+.top-table {
+  width: 350px;
+  margin: 0 auto;
+  font-size: 1rem;
+}
+/* Centrado universal para tablas y elementos con la clase text-center */
+.text-center {
+  text-align: center;
+}
+.estadisticas-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.estadisticas-section h2,
+.estadisticas-section h3 {
+  text-align: center;
+}
+
+.estadisticas-section ul {
+  margin: 0 auto 1rem auto;
+  padding: 0;
+  list-style: none;
+  text-align: center;
+}
+
+.estadisticas-section p {
+  text-align: center;
+}
+/* Centrado y estilo para título y filtros */
+.estadisticas-titulo {
+  text-align: center;
+  font-size: 2.3rem;
+  font-weight: 800;
+  color: #1a355e;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.5px;
+}
+
+.estadisticas-filtros {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 2.2rem;
+}
+
+.estadisticas-filtros label {
+  color: #1a355e;
+  font-weight: 600;
+}
+
+.estadisticas-filtros input[type="date"] {
+  border: 1px solid #b6c7e3;
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  background: #fff;
+  color: #1a355e;
+}
+
+.estadisticas-filtros button {
+  background: #1a355e;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(26,53,94,0.07);
+  transition: background 0.2s;
+}
+
+.estadisticas-filtros button:hover {
+  background: #274a7d;
+}
+/* estadisticas.css - Estilos exclusivos para la vista de estadísticas de árbitros */
+
+.estadisticas-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem;
+  background: #f4f8fc;
+  border-radius: 18px;
+  box-shadow: 0 4px 24px rgba(26,53,94,0.08);
+}
+
+.estadisticas-section {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(26,53,94,0.05);
+  padding: 2rem 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.estadisticas-section h2, .estadisticas-section h3 {
+  color: #1a355e;
+  margin-top: 0;
+  font-weight: 700;
+}
+
+.no-data-message {
+  display: flex;
+  align-items: center;
+  background: #eaf0fa;
+  color: #1a355e;
+  border-radius: 8px;
+  padding: 0.75rem 1.25rem;
+  margin: 1rem 0;
+  font-size: 1rem;
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(26,53,94,0.07);
+}
+
+.no-data-message svg {
+  margin-right: 0.5em;
+  width: 1.2em;
+  height: 1.2em;
+  fill: #1a355e;
+}
+
+.estadisticas-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: #f8fafd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(26,53,94,0.07);
+}
+
+.estadisticas-table th, .estadisticas-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eaf0fa;
+}
+
+.estadisticas-table th {
+  background: #eaf0fa;
+  color: #1a355e;
+  font-weight: 600;
+}
+
+.estadisticas-table tr:last-child td {
+  border-bottom: none;
+}
+
+.estadisticas-graficos {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 1rem;
+}
+
+.estadisticas-graficos canvas {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(26,53,94,0.07);
+  padding: 1rem;
+}
+
+.filter-form {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 2rem;
+  background: #eaf0fa;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(26,53,94,0.04);
+}
+
+.filter-form label {
+  color: #1a355e;
+  font-weight: 500;
+}
+
+.filter-form input[type="date"] {
+  border: 1px solid #b6c7e3;
+  border-radius: 6px;
+  padding: 0.4rem 0.7rem;
+  background: #fff;
+  color: #1a355e;
+}
+
+.filter-form button {
+  background: #1a355e;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.filter-form button:hover {
+  background: #274a7d;
+}
+
+    .estadisticas-section {
+      background: #f8fafd;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .estadisticas-section h2, .estadisticas-section h3 {
+      color: #1a355e;
+      margin-top: 0;
+    }
+    .no-data-message {
+      display: flex;
+      align-items: center;
+      background: #eaf0fa;
+      color: #1a355e;
+      border-radius: 8px;
+      padding: 0.75rem 1.25rem;
+      margin: 1rem 0;
+      font-size: 1rem;
+      font-weight: 500;
+      box-shadow: 0 1px 4px rgba(26,53,94,0.07);
+    }
+    .no-data-message svg {
+      margin-right: 0.5em;
+      width: 1.2em;
+      height: 1.2em;
+      fill: #1a355e;
+    }
+    .estadisticas-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(26,53,94,0.07);
+    }
+    .estadisticas-table th, .estadisticas-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #eaf0fa;
+    }
+    .estadisticas-table th {
+      background: #eaf0fa;
+      color: #1a355e;
+      font-weight: 600;
+    }
+    .estadisticas-table tr:last-child td {
+      border-bottom: none;
+    }
+    .estadisticas-graficos {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      align-items: flex-start;
+      margin-top: 1rem;
+    }
+    .estadisticas-graficos canvas {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(26,53,94,0.07);
+      padding: 1rem;
+    }

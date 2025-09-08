@@ -16,6 +16,8 @@
             <a th:href="@{/admin/partidos}">Partidos</a>
             <a th:href="@{/admin/torneos}">Torneos</a>
             <a th:href="@{/admin/calendario}">Calendario</a>
+            <a th:href="@{/admin/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
+
         </div>
         <div class="user-section">
             <a th:href="@{/admin/perfil}" class="profile-link">
@@ -38,11 +40,11 @@
 
         <!-- Floating Icons -->
         <div class="floating-icons">
-            <div class="float-icon" title="Reportes">
-                📊
-            </div>
             <div class="float-icon" title="Tarifas" onclick="location.href='/admin/tarifas'">
                 💰
+            </div>
+            <div class="float-icon" title="chat" onclick="location.href='/admin/chat'">
+                💬
             </div>
         </div>
     </div>
