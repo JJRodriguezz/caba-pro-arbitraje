@@ -1,5 +1,5 @@
 /**
- * Archivo: PartidoService.java Autores: Juan José Fecha última modificación: 05.09.2025
+ * Archivo: PartidoService.java Autores: JJRodriguezz Fecha última modificación: 05.09.2025
  * Descripción: Lógica de negocio para gestión de partidos y asignaciones. Proyecto: CABA Pro -
  * Sistema de Gestión Integral de Arbitraje
  */
@@ -13,6 +13,7 @@ import com.caba.caba_pro.models.Arbitro;
 import com.caba.caba_pro.models.Asignacion;
 import com.caba.caba_pro.models.Partido;
 import com.caba.caba_pro.models.Torneo;
+import com.caba.caba_pro.repositories.AdministradorRepository;
 import com.caba.caba_pro.repositories.ArbitroRepository;
 import com.caba.caba_pro.repositories.AsignacionRepository;
 import com.caba.caba_pro.repositories.PartidoRepository;
@@ -36,6 +37,7 @@ public class PartidoService {
   private final AsignacionRepository asignacionRepository;
   private final TarifaService tarifaService;
   private final TorneoRepository torneoRepository;
+  private final NotificacionService notificacionService;
 
   // 3. Constructores
   public PartidoService(
@@ -43,12 +45,15 @@ public class PartidoService {
       ArbitroRepository arbitroRepository,
       AsignacionRepository asignacionRepository,
       TarifaService tarifaService,
-      TorneoRepository torneoRepository) {
+      TorneoRepository torneoRepository,
+      NotificacionService notificacionService,
+      AdministradorRepository administradorRepository) {
     this.partidoRepository = partidoRepository;
     this.arbitroRepository = arbitroRepository;
     this.asignacionRepository = asignacionRepository;
     this.tarifaService = tarifaService;
     this.torneoRepository = torneoRepository;
+    this.notificacionService = notificacionService;
   }
 
   // 4. Métodos públicos
@@ -198,6 +203,15 @@ public class PartidoService {
         arbitro.getId(),
         dto.getPosicion(),
         monto);
+    // Notificación para el árbitro
+    String mensaje = "El administrador te ha asignado el partido '" + partido.getNombre() + "'";
+    com.caba.caba_pro.models.Notificacion notificacion =
+        new com.caba.caba_pro.models.Notificacion();
+    notificacion.setMensaje(mensaje);
+    notificacion.setTipo("ARBITRO");
+    notificacion.setUsuarioId(arbitro.getId());
+    notificacion.setAsignacionId(guardada.getId());
+    notificacionService.crearNotificacion(notificacion);
     return guardada;
   }
 

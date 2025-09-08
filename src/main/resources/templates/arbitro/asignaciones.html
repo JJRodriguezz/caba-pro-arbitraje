@@ -1,0 +1,75 @@
+<!--
+  Archivo: asignaciones.html
+  Autores: Juan José
+  Fecha última modificación: 07.09.2025
+  Descripción: Vista para que el árbitro gestione sus asignaciones (aceptar/rechazar).
+  Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Mis Asignaciones - CABA Pro</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" th:href="@{/css/asignaciones.css}" />
+  <link rel="stylesheet" th:href="@{/css/arbitro-dashboard.css}" />
+</head>
+<body>
+<div class="dashboard-container">
+  <nav class="header-nav">
+    <div class="nav-links">
+      <a th:href="@{/arbitro/dashboard}">Dashboard</a>
+      <a href="#" class="active">Mis Asignaciones</a>
+      <a th:href="@{/arbitro/calendario}">Calendario</a>
+      <a th:href="@{/arbitro/disponibilidad}">Disponibilidad</a>
+  <a th:href="@{/admin/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
+    </div>
+    <div class="user-section">
+      <a th:href="@{/arbitro/perfil}">👤</a>
+      <span sec:authentication="name">Árbitro</span>
+      <form th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit" class="logout-btn">🔓 Salir</button>
+      </form>
+    </div>
+  </nav>
+  <div class="main-panel">
+    <h1 class="welcome-title">Mis Asignaciones</h1>
+    <div th:if="${success}" class="alert success" th:text="${success}"></div>
+    <div th:if="${error}" class="alert error" th:text="${error}"></div>
+    <table class="asignaciones-table">
+      <thead>
+        <tr>
+          <th>Partido</th>
+          <th>Fecha</th>
+          <th>Posición</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="asignacion : ${asignaciones}">
+          <td th:text="${asignacion.partido.nombre}"></td>
+          <td th:text="${#temporals.format(asignacion.partido.fechaHora, 'dd/MM/yyyy HH:mm')}"></td>
+          <td th:text="${asignacion.posicion}"></td>
+          <td>
+            <span th:class="'estado-label ' + (${asignacion.estado.name() == 'ACEPTADA'} ? 'aceptada' : (${asignacion.estado.name() == 'RECHAZADA'} ? 'rechazada' : ''))"
+                  th:text="${asignacion.estado}"></span>
+          </td>
+          <td>
+            <div class="action-links">
+              <form th:action="@{'/arbitro/asignaciones/' + ${asignacion.id} + '/aceptar'}" method="post" th:if="${asignacion.estado.name() == 'PENDIENTE'}">
+                <button type="submit" class="btn btn-secondary">Aceptar</button>
+              </form>
+              <form th:action="@{'/arbitro/asignaciones/' + ${asignacion.id} + '/rechazar'}" method="post" th:if="${asignacion.estado.name() == 'PENDIENTE'}">
+                <button type="submit" class="btn delete-btn">Rechazar</button>
+              </form>
+              <span th:if="${asignacion.estado.name() != 'PENDIENTE'}">No disponible</span>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

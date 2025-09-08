@@ -1,5 +1,5 @@
 /**
- * Archivo: Partido.java Autores: Juan José Fecha última modificación: 05.09.2025 Descripción:
+ * Archivo: Partido.java Autores: JJRodriguezz Fecha última modificación: 05.09.2025 Descripción:
  * Entidad JPA que representa un partido programado. Proyecto: CABA Pro - Sistema de Gestión
  * Integral de Arbitraje
  */

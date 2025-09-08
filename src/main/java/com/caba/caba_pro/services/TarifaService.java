@@ -1,7 +1,7 @@
 /**
- * Archivo: TarifaService.java Autores: Juan José Fecha última modificación: 06.09.2025 Descripción:
- * Lógica de negocio para gestionar tarifas por escalafón. Proyecto: CABA Pro - Sistema de Gestión
- * Integral de Arbitraje
+ * Archivo: TarifaService.java Autores: JJRodriguezz Fecha última modificación: 06.09.2025
+ * Descripción: Lógica de negocio para gestionar tarifas por escalafón. Proyecto: CABA Pro - Sistema
+ * de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.services;
 

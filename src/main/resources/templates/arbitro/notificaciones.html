@@ -1,0 +1,74 @@
+<!--
+Archivo: notificaciones.html
+Autores: JJRodriguezz
+Fecha última modificación: 07.09.2025
+Descripción: Vista de notificaciones para árbitros.
+Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
+-->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Mis Notificaciones</title>
+  <link rel="stylesheet" th:href="@{/css/arbitro-dashboard.css}" />
+  <link rel="stylesheet" th:href="@{/css/asignaciones.css}" />
+  <link rel="stylesheet" th:href="@{/css/notificaciones.css}" />
+</head>
+
+<body>
+<div class="dashboard-container">
+  <nav class="header-nav">
+    <div class="nav-links">
+      <a th:href="@{/arbitro/dashboard}">Dashboard</a>
+      <a th:href="@{/arbitro/asignaciones}">Mis Asignaciones</a>
+      <a th:href="@{/arbitro/calendario}">Calendario</a>
+      <a th:href="@{/arbitro/disponibilidad}">Disponibilidad</a>
+      <a th:href="@{/admin/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
+    </div>
+    <div class="user-section">
+      <a th:href="@{/arbitro/perfil}">👤</a>
+      <span sec:authentication="name">Árbitro</span>
+      <form th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit" class="logout-btn">🔓 Salir</button>
+      </form>
+    </div>
+  </nav>
+  <div class="main-panel">
+    <h1 class="welcome-title">Mis Notificaciones</h1>
+    <div class="action-buttons" style="margin-bottom: 24px; text-align: right;">
+      <a th:href="@{/arbitro/asignaciones}" class="btn btn-secondary">Ver Mis Asignaciones</a>
+    </div>
+    <table class="asignaciones-table" th:if="${notificaciones != null and notificaciones.size() > 0}">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Mensaje</th>
+          <th>Leída</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="notificacion : ${notificaciones}">
+          <td th:text="${notificacion['fechaFormateada']}"></td>
+          <td th:text="${notificacion.mensaje != null ? notificacion.mensaje : '-'}"></td>
+          <td>
+            <span th:if="${notificacion.leida}" class="estado-label aceptada">Sí</span>
+            <span th:unless="${notificacion.leida}" class="estado-label rechazada">No</span>
+          </td>
+          <td>
+            <a th:href="@{/arbitro/asignaciones}" class="btn btn-secondary">Ver Asignación</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div th:if="${notificaciones == null or notificaciones.size() == 0}" class="empty-state">
+      <h3>No tienes notificaciones.</h3>
+      <p>Cuando recibas una asignación o respuesta aparecerá aquí.</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

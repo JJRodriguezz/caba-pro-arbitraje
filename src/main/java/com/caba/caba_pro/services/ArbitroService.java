@@ -1,5 +1,5 @@
 /**
- * Archivo: ArbitroService.java Autores:Isabella.Idarraga & Diego.Gonzalez Fecha última
+ * Archivo: ArbitroService.java Autores:Isabella.Idarraga, Diego.Gonzalez, JJRodriguezz Fecha última
  * modificación: [06.09.2025] Descripción: Servicio para la gestión de árbitros en la aplicación
  * Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
  */
@@ -41,6 +41,15 @@ public class ArbitroService {
   }
 
   // 4. Métodos públicos
+  /** Buscar árbitro por username (email). */
+  @Transactional(readOnly = true)
+  public Arbitro buscarPorUsername(String username) {
+    Arbitro arbitro = arbitroRepository.findByEmail(username);
+    if (arbitro == null || Boolean.FALSE.equals(arbitro.getActivo())) {
+      throw new BusinessException("Árbitro no encontrado o inactivo");
+    }
+    return arbitro;
+  }
 
   @Transactional(readOnly = true)
   public List<Arbitro> buscarTodosActivos() {

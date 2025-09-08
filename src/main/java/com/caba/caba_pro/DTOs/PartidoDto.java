@@ -1,5 +1,5 @@
 /**
- * Archivo: PartidoDto.java Autores: Juan José Fecha última modificación: 05.09.2025 Descripción:
+ * Archivo: PartidoDto.java Autores: JJRodriguezz Fecha última modificación: 05.09.2025 Descripción:
  * DTO para crear/editar partidos con validaciones. Proyecto: CABA Pro - Sistema de Gestión Integral
  * de Arbitraje
  */

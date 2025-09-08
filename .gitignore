@@ -44,3 +44,6 @@ hs_err_pid*
 
 # Local Data
 data/
+# H2 local
+/data/*.mv.db
+/data/*.trace.db
