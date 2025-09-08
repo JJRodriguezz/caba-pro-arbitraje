@@ -1,3 +1,12 @@
+.top-table {
+  width: 350px;
+  margin: 0 auto;
+  font-size: 1rem;
+}
+/* Centrado universal para tablas y elementos con la clase text-center */
+.text-center {
+  text-align: center;
+}
 .estadisticas-section {
   display: flex;
   flex-direction: column;

@@ -134,6 +134,12 @@ public class PartidoController {
     }
 
     try {
+      // Obtener el username del admin autenticado
+      org.springframework.security.core.Authentication auth =
+          org.springframework.security.core.context.SecurityContextHolder.getContext()
+              .getAuthentication();
+      String adminUsername = auth.getName();
+      asignacionDto.setAdminUsername(adminUsername);
       partidoService.asignarArbitro(id, asignacionDto);
     } catch (BusinessException e) {
       model.addAttribute("error", e.getMessage());

@@ -44,7 +44,7 @@ public class ArbitroService {
   /** Buscar árbitro por username (email). */
   @Transactional(readOnly = true)
   public Arbitro buscarPorUsername(String username) {
-    Arbitro arbitro = arbitroRepository.findByEmail(username);
+    Arbitro arbitro = arbitroRepository.findByUsername(username);
     if (arbitro == null || Boolean.FALSE.equals(arbitro.getActivo())) {
       throw new BusinessException("Árbitro no encontrado o inactivo");
     }

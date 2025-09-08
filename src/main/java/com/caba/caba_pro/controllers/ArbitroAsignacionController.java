@@ -80,25 +80,38 @@ public class ArbitroAsignacionController {
       // Suponiendo que el partido tiene un campo para el admin asignador (debería agregarse en el
       // modelo si no existe)
       // Aquí se busca el admin por algún criterio, por ahora se toma el primero activo
+      // Notificación para el admin asignador real
+      String adminUsername = asignacion.getAdminUsername();
       com.caba.caba_pro.models.Administrador admin =
-          administradorRepository.findAll().stream()
-              .filter(a -> a.getActivo())
-              .findFirst()
-              .orElse(null);
+          administradorRepository.findByUsername(adminUsername);
       if (admin != null) {
-        String mensaje =
+        String mensajeAdmin =
             "El árbitro '"
                 + arbitro.getNombreCompleto()
                 + "' ha aceptado la asignación al partido '"
                 + asignacion.getPartido().getNombre()
-                + "'";
+                + "'.";
         com.caba.caba_pro.models.Notificacion notificacion =
             new com.caba.caba_pro.models.Notificacion();
-        notificacion.setMensaje(mensaje);
+        notificacion.setMensaje(mensajeAdmin);
         notificacion.setTipo("ADMIN");
         notificacion.setUsuarioId(admin.getId());
         notificacion.setAsignacionId(asignacion.getId());
         notificacionService.crearNotificacion(notificacion);
+        // Notificación para el árbitro, personalizada con el nombre del admin
+        String mensajeArbitro =
+            "Has aceptado la asignación al partido '"
+                + asignacion.getPartido().getNombre()
+                + "'. Asignado por el administrador '"
+                + adminUsername
+                + "'.";
+        com.caba.caba_pro.models.Notificacion notificacionArbitro =
+            new com.caba.caba_pro.models.Notificacion();
+        notificacionArbitro.setMensaje(mensajeArbitro);
+        notificacionArbitro.setTipo("ARBITRO");
+        notificacionArbitro.setUsuarioId(arbitro.getId());
+        notificacionArbitro.setAsignacionId(asignacion.getId());
+        notificacionService.crearNotificacion(notificacionArbitro);
       }
     } catch (BusinessException e) {
       ra.addFlashAttribute("error", e.getMessage());
@@ -122,30 +135,53 @@ public class ArbitroAsignacionController {
       if (asignacion.getEstado() != AsignacionEstado.PENDIENTE) {
         throw new BusinessException("La asignación ya fue respondida");
       }
+      // Regla de negocio: solo puede rechazar si faltan 48 horas o más
+      java.time.LocalDateTime ahora = java.time.LocalDateTime.now();
+      java.time.LocalDateTime fechaPartido = asignacion.getPartido().getFechaHora();
+      java.time.Duration diferencia = java.time.Duration.between(ahora, fechaPartido);
+      if (diferencia.toHours() < 48) {
+        ra.addFlashAttribute(
+            "error",
+            "Solo puedes rechazar asignaciones con al menos 48 horas de anticipación al partido.");
+        return "redirect:/arbitro/asignaciones";
+      }
       asignacion.setEstado(AsignacionEstado.RECHAZADA);
-      asignacion.setRespondidoEn(java.time.LocalDateTime.now());
+      asignacion.setRespondidoEn(ahora);
       asignacionRepository.save(asignacion);
       ra.addFlashAttribute("success", "Asignación rechazada correctamente");
       // Notificación para el admin que asignó
+      // Notificación para el admin asignador real
+      String adminUsername = asignacion.getAdminUsername();
       com.caba.caba_pro.models.Administrador admin =
-          administradorRepository.findAll().stream()
-              .filter(a -> a.getActivo())
-              .findFirst()
-              .orElse(null);
+          administradorRepository.findByUsername(adminUsername);
       if (admin != null) {
-        String mensaje =
+        String mensajeAdmin =
             "El árbitro '"
                 + arbitro.getNombreCompleto()
                 + "' ha rechazado la asignación al partido '"
                 + asignacion.getPartido().getNombre()
-                + "'";
+                + "'.";
         com.caba.caba_pro.models.Notificacion notificacion =
             new com.caba.caba_pro.models.Notificacion();
-        notificacion.setMensaje(mensaje);
+        notificacion.setMensaje(mensajeAdmin);
         notificacion.setTipo("ADMIN");
         notificacion.setUsuarioId(admin.getId());
         notificacion.setAsignacionId(asignacion.getId());
         notificacionService.crearNotificacion(notificacion);
+        // Notificación para el árbitro, personalizada con el nombre del admin
+        String mensajeArbitro =
+            "Has rechazado la asignación al partido '"
+                + asignacion.getPartido().getNombre()
+                + "'. Asignado por el administrador '"
+                + adminUsername
+                + "'.";
+        com.caba.caba_pro.models.Notificacion notificacionArbitro =
+            new com.caba.caba_pro.models.Notificacion();
+        notificacionArbitro.setMensaje(mensajeArbitro);
+        notificacionArbitro.setTipo("ARBITRO");
+        notificacionArbitro.setUsuarioId(arbitro.getId());
+        notificacionArbitro.setAsignacionId(asignacion.getId());
+        notificacionService.crearNotificacion(notificacionArbitro);
       }
     } catch (BusinessException e) {
       ra.addFlashAttribute("error", e.getMessage());

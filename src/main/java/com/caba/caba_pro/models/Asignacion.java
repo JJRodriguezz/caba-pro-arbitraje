@@ -57,6 +57,18 @@ public class Asignacion {
   @Column(length = 250)
   private String notasAdmin;
 
+  // Nuevo: registrar el administrador asignador
+  @Column(name = "admin_username", length = 30)
+  private String adminUsername;
+
+  public String getAdminUsername() {
+    return adminUsername;
+  }
+
+  public void setAdminUsername(String adminUsername) {
+    this.adminUsername = adminUsername;
+  }
+
   @Column(nullable = false)
   private Boolean activo;
 

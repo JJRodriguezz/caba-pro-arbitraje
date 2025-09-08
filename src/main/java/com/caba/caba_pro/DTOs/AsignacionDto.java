@@ -16,6 +16,9 @@ public class AsignacionDto {
   @NotBlank(message = "La posición es obligatoria")
   private String posicion;
 
+  // Nuevo: admin asignador
+  private String adminUsername;
+
   public AsignacionDto() {}
 
   public Long getArbitroId() {
@@ -32,5 +35,13 @@ public class AsignacionDto {
 
   public void setPosicion(String posicion) {
     this.posicion = posicion;
+  }
+
+  public String getAdminUsername() {
+    return adminUsername;
+  }
+
+  public void setAdminUsername(String adminUsername) {
+    this.adminUsername = adminUsername;
   }
 }
