@@ -195,16 +195,25 @@ public class PartidoService {
     asignacion.setArbitro(arbitro);
     asignacion.setPosicion(dto.getPosicion());
     asignacion.setMontoPago(monto); // ← AQUÍ aplicamos la tarifa
+    // Registrar el administrador asignador
+    String adminUsername = dto.getAdminUsername();
+    asignacion.setAdminUsername(adminUsername);
 
     Asignacion guardada = asignacionRepository.save(asignacion);
     logger.info(
-        "Asignación creada: partido={} árbitro={} posición={} monto={}",
+        "Asignación creada: partido={} árbitro={} posición={} monto={} admin={}",
         partido.getId(),
         arbitro.getId(),
         dto.getPosicion(),
-        monto);
+        monto,
+        adminUsername);
     // Notificación para el árbitro
-    String mensaje = "El administrador te ha asignado el partido '" + partido.getNombre() + "'";
+    String mensaje =
+        "El administrador "
+            + adminUsername
+            + " te ha asignado el partido '"
+            + partido.getNombre()
+            + "'";
     com.caba.caba_pro.models.Notificacion notificacion =
         new com.caba.caba_pro.models.Notificacion();
     notificacion.setMensaje(mensaje);

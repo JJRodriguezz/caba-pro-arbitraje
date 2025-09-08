@@ -62,9 +62,9 @@
 
     <section class="estadisticas-section">
       <h2>Asignaciones</h2>
-      <p>Total: <span th:text="${asignacionesStats.totalAsignaciones}"></span></p>
-      <p>Aceptadas: <span th:text="${asignacionesStats.aceptadas}"></span> (<span th:text="${asignacionesStats.porcentajeAceptadas}"></span>%)</p>
-      <p>Rechazadas: <span th:text="${asignacionesStats.rechazadas}"></span> (<span th:text="${asignacionesStats.porcentajeRechazadas}"></span>%)</p>
+  <p>Total: <span th:text="${asignacionesStats.totalAsignaciones}"></span></p>
+  <p>Aceptadas: <span th:text="${asignacionesStats.aceptadas}"></span> (<span th:text="${#numbers.formatDecimal(asignacionesStats.porcentajeAceptadas, 1, 1)}"></span>%)</p>
+  <p>Rechazadas: <span th:text="${asignacionesStats.rechazadas}"></span> (<span th:text="${#numbers.formatDecimal(asignacionesStats.porcentajeRechazadas, 1, 1)}"></span>%)</p>
       <div th:if="${asignacionesStats.totalAsignaciones == null or asignacionesStats.totalAsignaciones == 0}" class="no-data-message">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="12" fill="#fff">i</text></svg>
         No hay datos de asignaciones disponibles.
@@ -73,12 +73,16 @@
 
     <section class="estadisticas-section">
       <h2>Top 5 Árbitros más activos</h2>
-      <table class="estadisticas-table" th:if="${topArbitros.topArbitros != null and !#lists.isEmpty(topArbitros.topArbitros)}">
+      <div style="display: flex; justify-content: center;">
+        <table class="estadisticas-table top-table" th:if="${topArbitros.topArbitros != null and !#lists.isEmpty(topArbitros.topArbitros)}">
         <thead>
-          <tr><th>Nombre</th><th>Asignaciones</th></tr>
+          <tr class="text-center">
+            <th>Nombre</th>
+            <th>Asignaciones Aceptadas</th>
+          </tr>
         </thead>
         <tbody>
-          <tr th:each="arbitro : ${topArbitros.topArbitros}">
+          <tr th:each="arbitro : ${topArbitros.topArbitros}" class="text-center">
             <td th:text="${arbitro.nombreCompleto}"></td>
             <td th:text="${arbitro.cantidadAsignaciones}"></td>
           </tr>

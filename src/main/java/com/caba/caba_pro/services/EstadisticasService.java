@@ -96,12 +96,15 @@ public class EstadisticasService {
       fin = mesActual.atEndOfMonth().atTime(23, 59, 59);
     }
     asignaciones = filtrarPorFecha(asignaciones, inicio, fin);
+    // Solo contar asignaciones aceptadas
     Map<Long, Integer> conteoPorArbitro = new HashMap<>();
     Map<Long, String> nombres = new HashMap<>();
     for (Asignacion a : asignaciones) {
-      Long id = a.getArbitro().getId();
-      conteoPorArbitro.put(id, conteoPorArbitro.getOrDefault(id, 0) + 1);
-      nombres.put(id, a.getArbitro().getNombreCompleto());
+      if (a.isAceptada()) {
+        Long id = a.getArbitro().getId();
+        conteoPorArbitro.put(id, conteoPorArbitro.getOrDefault(id, 0) + 1);
+        nombres.put(id, a.getArbitro().getNombreCompleto());
+      }
     }
     List<TopArbitrosDto.ArbitroActividadDto> lista = new ArrayList<>();
     for (Map.Entry<Long, Integer> entry : conteoPorArbitro.entrySet()) {
