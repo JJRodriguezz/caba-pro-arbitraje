@@ -17,6 +17,11 @@
 
         <h2>Crear Cuenta</h2>
 
+        <!-- Mensaje de error general -->
+        <div th:if="${error}" class="alert alert-error">
+            <p th:text="${error}"></p>
+        </div>
+
         <div class="input-group">
             <label for="username">Nombre de Usuario</label>
             <input type="text"

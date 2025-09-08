@@ -463,3 +463,28 @@ body::before {
 .registro-form::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, #265b52, #4ea1a5);
 }
+
+/* Estilos para alertas */
+.alert {
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f1aeb5;
+}
+
+.alert-success {
+    background-color: #d1edff;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.alert p {
+    margin: 0;
+}
