@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -61,6 +63,7 @@ public class ArbitroController {
   public String crearArbitro(
       @Valid @ModelAttribute("arbitroDto") ArbitroDto arbitroDto,
       BindingResult result,
+      @RequestParam(value = "fotoPerfil", required = false) MultipartFile fotoPerfil,
       RedirectAttributes flash,
       Model model) {
 
@@ -70,7 +73,7 @@ public class ArbitroController {
     }
 
     try {
-      Arbitro arbitroCreado = arbitroService.crearArbitro(arbitroDto);
+      Arbitro arbitroCreado = arbitroService.crearArbitro(arbitroDto, fotoPerfil);
       logger.info("Árbitro creado exitosamente: {}", arbitroCreado.getNombreCompleto());
 
       flash.addFlashAttribute(
@@ -117,22 +120,43 @@ public class ArbitroController {
       @PathVariable Long id,
       @Valid @ModelAttribute("arbitroDto") ArbitroDto arbitroDto,
       BindingResult result,
+      @RequestParam(value = "fotoPerfil", required = false) MultipartFile fotoPerfil,
       RedirectAttributes flash,
       Model model) {
 
+    logger.info("=== INICIANDO ACTUALIZACIÓN DE ÁRBITRO ===");
+    logger.info("ID del árbitro: {}", id);
+    logger.info(
+        "Datos recibidos - Nombre: {}, Apellidos: {}, Username: {}",
+        arbitroDto.getNombre(),
+        arbitroDto.getApellidos(),
+        arbitroDto.getUsername());
+    logger.info(
+        "Foto recibida: {}",
+        fotoPerfil != null ? fotoPerfil.getOriginalFilename() : "No se envió foto");
+
     if (result.hasErrors()) {
+      logger.error("Errores de validación: {}", result.getAllErrors());
       model.addAttribute("arbitroId", id);
       model.addAttribute("especialidades", Especialidad.values());
       return "arbitro/editar-arbitro";
     }
 
     try {
-      arbitroService.actualizarArbitro(id, arbitroDto);
+      Arbitro arbitroActualizado = arbitroService.actualizarArbitro(id, arbitroDto, fotoPerfil);
+      logger.info("Árbitro actualizado exitosamente con ID: {}", arbitroActualizado.getId());
       flash.addFlashAttribute("success", "Árbitro actualizado exitosamente");
       return "redirect:/admin/arbitros";
 
     } catch (BusinessException e) {
+      logger.error("Error de negocio al actualizar árbitro: {}", e.getMessage());
       model.addAttribute("error", e.getMessage());
+      model.addAttribute("arbitroId", id);
+      model.addAttribute("especialidades", Especialidad.values());
+      return "arbitro/editar-arbitro";
+    } catch (Exception e) {
+      logger.error("Error inesperado al actualizar árbitro: ", e);
+      model.addAttribute("error", "Error interno del sistema");
       model.addAttribute("arbitroId", id);
       model.addAttribute("especialidades", Especialidad.values());
       return "arbitro/editar-arbitro";
@@ -162,6 +186,7 @@ public class ArbitroController {
     dto.setEspecialidad(arbitro.getEspecialidad());
     dto.setEscalafon(arbitro.getEscalafon());
     dto.setFechaNacimiento(arbitro.getFechaNacimiento());
+    dto.setUrlFotoPerfil(arbitro.getUrlFotoPerfil());
     // No incluir password por seguridad
     return dto;
   }

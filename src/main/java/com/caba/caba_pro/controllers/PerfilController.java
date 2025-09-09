@@ -17,6 +17,11 @@ import com.caba.caba_pro.repositories.ArbitroRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -28,6 +33,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -157,7 +164,8 @@ public class PerfilController {
       @Valid @ModelAttribute("editarPerfil") EditarPerfilDto editarDto,
       BindingResult result,
       RedirectAttributes flash,
-      HttpServletRequest request) {
+      HttpServletRequest request,
+      @RequestParam(value = "fotoPerfil", required = false) MultipartFile fotoPerfil) {
 
     if (result.hasErrors()) {
       return "editar-perfil";
@@ -172,40 +180,22 @@ public class PerfilController {
         throw new BusinessException("Administrador no encontrado");
       }
 
-      boolean usernameChanged = false;
-      String nuevoUsername = editarDto.getUsername();
-
-      // Verificar si el username cambió
-      if (nuevoUsername != null
-          && !nuevoUsername.trim().isEmpty()
-          && !nuevoUsername.equals(administrador.getUsername())) {
-
-        // Verificar que el nuevo username no exista
-        Administrador existente = administradorRepository.findByUsername(nuevoUsername);
-        if (existente != null && !existente.getId().equals(administrador.getId())) {
-          flash.addFlashAttribute("error", "El nombre de usuario ya está en uso");
-          return "redirect:/admin/perfil/editar";
-        }
-
-        administrador.setUsername(nuevoUsername);
-        usernameChanged = true;
+      boolean usernameChanged = validarYActualizarUsername(editarDto, administrador, flash);
+      if (flash.containsAttribute("error")) {
+        return "redirect:/admin/perfil/editar";
       }
 
       administrador.setActivo(editarDto.getActivo());
+
+      // Procesar foto de perfil si se envió
+      procesarFotoPerfil(
+          fotoPerfil, administrador.getUrlFotoPerfil(), url -> administrador.setUrlFotoPerfil(url));
 
       administradorRepository.save(administrador);
 
       // Si cambió el username, invalidar sesión para forzar nuevo login
       if (usernameChanged) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-          session.invalidate();
-        }
-        SecurityContextHolder.clearContext();
-        flash.addFlashAttribute(
-            "success",
-            "Perfil actualizado. Por favor, inicie sesión nuevamente con su nuevo nombre de usuario.");
-        return "redirect:/login";
+        return invalidarSesionYRedireccionar(request, flash);
       }
 
       flash.addFlashAttribute("success", "Perfil actualizado exitosamente");
@@ -224,7 +214,8 @@ public class PerfilController {
       BindingResult result,
       RedirectAttributes flash,
       Model model,
-      HttpServletRequest request) {
+      HttpServletRequest request,
+      @RequestParam(value = "fotoPerfil", required = false) MultipartFile fotoPerfil) {
 
     if (result.hasErrors()) {
       model.addAttribute("especialidades", Especialidad.values());
@@ -242,34 +233,18 @@ public class PerfilController {
       }
 
       // Verificar y actualizar email si cambió
-      String nuevoEmail = editarDto.getEmail();
-      if (nuevoEmail != null
-          && !nuevoEmail.trim().isEmpty()
-          && !nuevoEmail.equals(arbitro.getEmail())) {
-
-        // Verificar que el nuevo email no exista
-        Arbitro existente = arbitroRepository.findByEmail(nuevoEmail);
-        if (existente != null && !existente.getId().equals(arbitro.getId())) {
-          model.addAttribute("error", "El email ya está en uso");
-          model.addAttribute("especialidades", Especialidad.values());
-          model.addAttribute("esAdmin", false);
-          return "editar-perfil";
-        }
-
-        arbitro.setEmail(nuevoEmail);
+      if (!validarYActualizarEmailArbitro(editarDto, arbitro, model)) {
+        model.addAttribute("especialidades", Especialidad.values());
+        model.addAttribute("esAdmin", false);
+        return "editar-perfil";
       }
 
-      // Actualizar otros campos del árbitro
-      if (editarDto.getNombre() != null) arbitro.setNombre(editarDto.getNombre());
-      if (editarDto.getApellidos() != null) arbitro.setApellidos(editarDto.getApellidos());
-      if (editarDto.getNumeroIdentificacion() != null)
-        arbitro.setNumeroIdentificacion(editarDto.getNumeroIdentificacion());
-      if (editarDto.getTelefono() != null) arbitro.setTelefono(editarDto.getTelefono());
-      if (editarDto.getEspecialidad() != null) arbitro.setEspecialidad(editarDto.getEspecialidad());
-      if (editarDto.getEscalafon() != null) arbitro.setEscalafon(editarDto.getEscalafon());
-      if (editarDto.getFechaNacimiento() != null)
-        arbitro.setFechaNacimiento(editarDto.getFechaNacimiento());
-      arbitro.setActivo(editarDto.getActivo());
+      // Actualizar campos del árbitro
+      actualizarCamposArbitro(editarDto, arbitro);
+
+      // Procesar foto de perfil si se envió
+      procesarFotoPerfil(
+          fotoPerfil, arbitro.getUrlFotoPerfil(), url -> arbitro.setUrlFotoPerfil(url));
 
       arbitroRepository.save(arbitro);
 
@@ -395,7 +370,7 @@ public class PerfilController {
     }
   }
 
-  // Métodos de mapeo privados
+  // 5. Métodos de mapeo privados
   private PerfilDto mapearAdministradorADto(Administrador administrador) {
     PerfilDto dto = new PerfilDto();
     dto.setId(administrador.getId());
@@ -403,6 +378,7 @@ public class PerfilController {
     dto.setRole(administrador.getRole());
     dto.setFechaCreacion(administrador.getFechaCreacion());
     dto.setActivo(administrador.getActivo());
+    dto.setUrlFotoPerfil(administrador.getUrlFotoPerfil());
     return dto;
   }
 
@@ -420,6 +396,7 @@ public class PerfilController {
     dto.setEscalafon(arbitro.getEscalafon());
     dto.setFechaNacimiento(arbitro.getFechaNacimiento());
     dto.setFotoPerfil(arbitro.getFotoPerfil());
+    dto.setUrlFotoPerfil(arbitro.getUrlFotoPerfil());
     dto.setRole(arbitro.getRole());
     dto.setFechaCreacion(arbitro.getFechaCreacion());
     dto.setActivo(arbitro.getActivo());
@@ -446,5 +423,187 @@ public class PerfilController {
     dto.setFechaNacimiento(arbitro.getFechaNacimiento());
     dto.setActivo(arbitro.getActivo());
     return dto;
+  }
+
+  // 6. Métodos de utilidad privados
+
+  /**
+   * Valida y actualiza el username de un administrador
+   *
+   * @param editarDto DTO con los datos de edición
+   * @param administrador Entidad del administrador
+   * @param flash Atributos de redirección
+   * @return true si el username cambió, false en caso contrario
+   */
+  private boolean validarYActualizarUsername(
+      EditarPerfilDto editarDto, Administrador administrador, RedirectAttributes flash) {
+    String nuevoUsername = editarDto.getUsername();
+
+    if (nuevoUsername != null
+        && !nuevoUsername.trim().isEmpty()
+        && !nuevoUsername.equals(administrador.getUsername())) {
+
+      // Verificar que el nuevo username no exista
+      Administrador existente = administradorRepository.findByUsername(nuevoUsername);
+      if (existente != null && !existente.getId().equals(administrador.getId())) {
+        flash.addFlashAttribute("error", "El nombre de usuario ya está en uso");
+        return false;
+      }
+
+      administrador.setUsername(nuevoUsername);
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Procesa la foto de perfil: elimina la anterior y guarda la nueva
+   *
+   * @param fotoPerfil Archivo de la nueva foto
+   * @param urlFotoActual URL de la foto actual
+   * @param setUrlFoto Función para establecer la nueva URL
+   */
+  private void procesarFotoPerfil(
+      MultipartFile fotoPerfil,
+      String urlFotoActual,
+      java.util.function.Consumer<String> setUrlFoto) {
+    if (fotoPerfil == null || fotoPerfil.isEmpty()) {
+      return;
+    }
+
+    try {
+      // Eliminar foto anterior si existe
+      eliminarFotoAnterior(urlFotoActual);
+
+      // Guardar nueva foto
+      String nuevaUrl = guardarNuevaFoto(fotoPerfil);
+      setUrlFoto.accept(nuevaUrl);
+
+      logger.info("Nueva foto de perfil guardada: {}", nuevaUrl);
+
+    } catch (IOException e) {
+      logger.error("Error al guardar la foto de perfil: {}", e.getMessage(), e);
+      throw new BusinessException("No se pudo guardar la foto de perfil");
+    }
+  }
+
+  /**
+   * Elimina una foto anterior del sistema de archivos
+   *
+   * @param urlFotoActual URL de la foto a eliminar
+   */
+  private void eliminarFotoAnterior(String urlFotoActual) {
+    if (urlFotoActual != null && !urlFotoActual.isEmpty()) {
+      String nombreArchivoAnterior = urlFotoActual.replace("/uploads/perfiles/", "");
+      Path rutaArchivoAnterior =
+          Paths.get(System.getProperty("user.dir"), "uploads", "perfiles", nombreArchivoAnterior);
+
+      File archivoAnterior = rutaArchivoAnterior.toFile();
+      if (archivoAnterior.exists() && archivoAnterior.delete()) {
+        logger.info("Foto anterior eliminada: {}", nombreArchivoAnterior);
+      }
+    }
+  }
+
+  /**
+   * Guarda una nueva foto en el sistema de archivos
+   *
+   * @param fotoPerfil Archivo de la foto
+   * @return URL relativa de la foto guardada
+   * @throws IOException Si ocurre un error al guardar
+   */
+  private String guardarNuevaFoto(MultipartFile fotoPerfil) throws IOException {
+    String nombreArchivo = System.currentTimeMillis() + "_" + fotoPerfil.getOriginalFilename();
+    Path rutaDirectorio = Paths.get(System.getProperty("user.dir"), "uploads", "perfiles");
+
+    if (!Files.exists(rutaDirectorio)) {
+      Files.createDirectories(rutaDirectorio);
+    }
+
+    Path rutaArchivo = rutaDirectorio.resolve(nombreArchivo);
+    fotoPerfil.transferTo(rutaArchivo.toFile());
+
+    return "/uploads/perfiles/" + nombreArchivo;
+  }
+
+  /**
+   * Invalida la sesión actual y redirecciona al login
+   *
+   * @param request Petición HTTP
+   * @param flash Atributos de redirección
+   * @return Ruta de redirección
+   */
+  private String invalidarSesionYRedireccionar(
+      HttpServletRequest request, RedirectAttributes flash) {
+    HttpSession session = request.getSession(false);
+    if (session != null) {
+      session.invalidate();
+    }
+    SecurityContextHolder.clearContext();
+    flash.addFlashAttribute(
+        "success",
+        "Perfil actualizado. Por favor, inicie sesión nuevamente con su nuevo nombre de usuario.");
+    return "redirect:/login";
+  }
+
+  /**
+   * Valida y actualiza el email de un árbitro
+   *
+   * @param editarDto DTO con los datos de edición
+   * @param arbitro Entidad del árbitro
+   * @param model Modelo para agregar atributos de error
+   * @return true si la validación es exitosa, false si hay errores
+   */
+  private boolean validarYActualizarEmailArbitro(
+      EditarPerfilDto editarDto, Arbitro arbitro, Model model) {
+    String nuevoEmail = editarDto.getEmail();
+
+    if (nuevoEmail != null
+        && !nuevoEmail.trim().isEmpty()
+        && !nuevoEmail.equals(arbitro.getEmail())) {
+
+      // Verificar que el nuevo email no exista
+      Arbitro existente = arbitroRepository.findByEmail(nuevoEmail);
+      if (existente != null && !existente.getId().equals(arbitro.getId())) {
+        model.addAttribute("error", "El email ya está en uso");
+        return false;
+      }
+
+      arbitro.setEmail(nuevoEmail);
+    }
+
+    return true;
+  }
+
+  /**
+   * Actualiza todos los campos editables de un árbitro
+   *
+   * @param editarDto DTO con los nuevos valores
+   * @param arbitro Entidad del árbitro a actualizar
+   */
+  private void actualizarCamposArbitro(EditarPerfilDto editarDto, Arbitro arbitro) {
+    if (editarDto.getNombre() != null) {
+      arbitro.setNombre(editarDto.getNombre());
+    }
+    if (editarDto.getApellidos() != null) {
+      arbitro.setApellidos(editarDto.getApellidos());
+    }
+    if (editarDto.getNumeroIdentificacion() != null) {
+      arbitro.setNumeroIdentificacion(editarDto.getNumeroIdentificacion());
+    }
+    if (editarDto.getTelefono() != null) {
+      arbitro.setTelefono(editarDto.getTelefono());
+    }
+    if (editarDto.getEspecialidad() != null) {
+      arbitro.setEspecialidad(editarDto.getEspecialidad());
+    }
+    if (editarDto.getEscalafon() != null) {
+      arbitro.setEscalafon(editarDto.getEscalafon());
+    }
+    if (editarDto.getFechaNacimiento() != null) {
+      arbitro.setFechaNacimiento(editarDto.getFechaNacimiento());
+    }
+    arbitro.setActivo(editarDto.getActivo());
   }
 }

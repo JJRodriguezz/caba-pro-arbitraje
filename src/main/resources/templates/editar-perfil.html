@@ -27,12 +27,17 @@
     <!-- Formulario de edición -->
     <form th:action="${esAdmin ? '/admin/perfil/editar' : '/arbitro/perfil/editar'}" 
           th:object="${editarPerfil}" 
-          method="post">
+          method="post" enctype="multipart/form-data">
 
         <!-- Información para Administrador -->
         <div th:if="${esAdmin}" class="info-section">
             <div class="info-title">
                 <span>🔧</span> Información del Administrador
+            </div>
+            
+            <div class="form-group">
+                <label for="fotoPerfil">Foto de Perfil</label>
+                <input type="file" id="fotoPerfil" name="fotoPerfil" accept="image/*">
             </div>
             
             <div class="form-group">
@@ -50,6 +55,10 @@
 
         <!-- Información para Árbitro -->
         <div th:if="${!esAdmin}" class="perfil-info">
+            <div class="form-group">
+                <label for="fotoPerfil">Foto de Perfil</label>
+                <input type="file" id="fotoPerfil" name="fotoPerfil" accept="image/*">
+            </div>
             <!-- Información Personal -->
             <div class="info-section">
                 <div class="info-title">
