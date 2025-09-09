@@ -23,6 +23,8 @@ public class PerfilDto {
   private String escalafon;
   private LocalDate fechaNacimiento;
   private String fotoPerfil;
+  // URL de la foto de perfil
+  private String urlFotoPerfil;
   private String role;
   private LocalDateTime fechaCreacion;
   private Boolean activo;
@@ -31,6 +33,15 @@ public class PerfilDto {
   public PerfilDto() {}
 
   // Getters y Setters
+
+  public String getUrlFotoPerfil() {
+    return urlFotoPerfil;
+  }
+
+  public void setUrlFotoPerfil(String urlFotoPerfil) {
+    this.urlFotoPerfil = urlFotoPerfil;
+  }
+
   public Long getId() {
     return id;
   }

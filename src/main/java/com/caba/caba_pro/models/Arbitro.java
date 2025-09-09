@@ -60,6 +60,18 @@ public class Arbitro {
   @Column(name = "fecha_nacimiento")
   private LocalDate fechaNacimiento;
 
+  // URL de la foto de perfil (opcional)
+  @Column(name = "url_foto_perfil")
+  private String urlFotoPerfil;
+
+  public String getUrlFotoPerfil() {
+    return urlFotoPerfil;
+  }
+
+  public void setUrlFotoPerfil(String urlFotoPerfil) {
+    this.urlFotoPerfil = urlFotoPerfil;
+  }
+
   @Column(name = "foto_perfil")
   private String fotoPerfil;
 

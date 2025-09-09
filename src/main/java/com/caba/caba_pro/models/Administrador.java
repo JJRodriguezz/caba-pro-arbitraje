@@ -46,6 +46,10 @@ public class Administrador {
   @Column(nullable = false)
   private Boolean activo = true;
 
+  // URL de la foto de perfil (opcional)
+  @Column(name = "url_foto_perfil")
+  private String urlFotoPerfil;
+
   // Constructor por defecto
   public Administrador() {}
 
@@ -108,6 +112,14 @@ public class Administrador {
 
   public void setActivo(Boolean activo) {
     this.activo = activo;
+  }
+
+  public String getUrlFotoPerfil() {
+    return urlFotoPerfil;
+  }
+
+  public void setUrlFotoPerfil(String urlFotoPerfil) {
+    this.urlFotoPerfil = urlFotoPerfil;
   }
 
   public boolean isActivo() {
