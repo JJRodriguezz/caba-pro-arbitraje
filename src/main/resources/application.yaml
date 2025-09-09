@@ -16,3 +16,7 @@ spring:
       path: /h2-console
 server:
   port: 8080
+
+# Ruta de almacenamiento de fotos de perfil de árbitros
+caba-pro:
+  fotos-perfil-path: uploads/perfiles/

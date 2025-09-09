@@ -23,9 +23,13 @@
     <div th:if="${error}" class="message error" th:text="${error}"></div>
 
     <!-- Form -->
-    <form th:action="@{/admin/arbitros}" method="post" th:object="${arbitroDto}">
+    <form th:action="@{/admin/arbitros}" method="post" th:object="${arbitroDto}" enctype="multipart/form-data">
 
         <div class="form-grid">
+            <div class="form-group">
+                <label for="fotoPerfil">Foto de Perfil</label>
+                <input type="file" id="fotoPerfil" name="fotoPerfil" accept="image/*">
+            </div>
             <div class="form-group">
                 <label for="nombre">Nombre *</label>
                 <input type="text" id="nombre" th:field="*{nombre}" required>

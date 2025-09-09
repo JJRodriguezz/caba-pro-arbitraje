@@ -33,6 +33,13 @@ public interface ArbitroRepository extends JpaRepository<Arbitro, Long> {
 
   boolean existsByUsername(String username);
 
+  // Validaciones para edición (excluyendo el ID actual)
+  boolean existsByNumeroIdentificacionAndIdNot(String numeroIdentificacion, Long id);
+
+  boolean existsByEmailAndActivoTrueAndIdNot(String email, Long id);
+
+  boolean existsByUsernameAndActivoTrueAndIdNot(String username, Long id);
+
   // Búsqueda para autenticación
   Arbitro findByEmail(String email);
 

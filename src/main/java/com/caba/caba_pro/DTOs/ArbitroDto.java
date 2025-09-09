@@ -47,10 +47,22 @@ public class ArbitroDto {
 
   private LocalDate fechaNacimiento;
 
+  // URL de la foto de perfil (opcional)
+  private String urlFotoPerfil;
+
   // Constructores
   public ArbitroDto() {}
 
   // Getters y Setters
+
+  public String getUrlFotoPerfil() {
+    return urlFotoPerfil;
+  }
+
+  public void setUrlFotoPerfil(String urlFotoPerfil) {
+    this.urlFotoPerfil = urlFotoPerfil;
+  }
+
   public String getNombre() {
     return nombre;
   }

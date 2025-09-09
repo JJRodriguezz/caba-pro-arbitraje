@@ -23,8 +23,14 @@
         </div>
         
         <div class="perfil-avatar">
-            <span th:if="${perfil.isArbitro()}" th:text="${perfil.nombre != null ? #strings.substring(perfil.nombre, 0, 1) + #strings.substring(perfil.apellidos, 0, 1) : '👤'}"></span>
-            <span th:if="${perfil.isAdmin()}" th:text="${perfil.username != null ? #strings.substring(perfil.username, 0, 1) : '🔧'}"></span>
+            <span th:if="${perfil.isArbitro() and perfil.urlFotoPerfil != null}" style="display: flex; justify-content: center; align-items: center;">
+                <img th:src="${perfil.urlFotoPerfil}" alt="Foto de perfil" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 3px solid #eee; background: #fff;" />
+            </span>
+            <span th:if="${perfil.isAdmin() and perfil.urlFotoPerfil != null}" style="display: flex; justify-content: center; align-items: center;">
+                <img th:src="${perfil.urlFotoPerfil}" alt="Foto de perfil" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 3px solid #eee; background: #fff;" />
+            </span>
+            <span th:if="${perfil.isArbitro() and perfil.urlFotoPerfil == null}" th:text="${perfil.nombre != null ? #strings.substring(perfil.nombre, 0, 1) + #strings.substring(perfil.apellidos, 0, 1) : '👤'}"></span>
+            <span th:if="${perfil.isAdmin() and perfil.urlFotoPerfil == null}" th:text="${perfil.username != null ? #strings.substring(perfil.username, 0, 1) : '🔧'}"></span>
         </div>
         <h1 th:if="${perfil.isArbitro()}" th:text="${perfil.nombreCompleto}"></h1>
         <h1 th:if="${perfil.isAdmin()}" th:text="${perfil.username}"></h1>
