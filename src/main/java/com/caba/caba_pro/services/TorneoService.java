@@ -35,6 +35,11 @@ public class TorneoService {
   }
 
   @Transactional(readOnly = true)
+  public List<Torneo> buscarTodos() {
+    return torneoRepository.findAll();
+  }
+
+  @Transactional(readOnly = true)
   public Torneo buscarPorId(Long id) {
     return torneoRepository
         .findById(id)
