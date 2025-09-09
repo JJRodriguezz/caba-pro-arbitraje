@@ -49,7 +49,7 @@ public class ArbitroController {
   public String listarArbitros(Model model) {
     List<Arbitro> arbitros = arbitroService.buscarTodosActivos();
     model.addAttribute("arbitros", arbitros);
-    return "arbitro/arbitros";
+    return "admin/arbitros";
   }
 
   @GetMapping("/nuevo")

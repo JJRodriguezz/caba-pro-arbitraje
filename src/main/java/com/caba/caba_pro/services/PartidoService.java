@@ -64,6 +64,11 @@ public class PartidoService {
   }
 
   @Transactional(readOnly = true)
+  public List<Partido> buscarTodos() {
+    return partidoRepository.findAll();
+  }
+
+  @Transactional(readOnly = true)
   public Partido buscarPorId(Long id) {
     return partidoRepository
         .findByIdAndActivoTrue(id)
