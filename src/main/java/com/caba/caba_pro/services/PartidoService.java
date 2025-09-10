@@ -5,13 +5,6 @@
  */
 package com.caba.caba_pro.services;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.caba.caba_pro.DTOs.AsignacionDto;
 import com.caba.caba_pro.DTOs.PartidoDto;
 import com.caba.caba_pro.enums.PartidoEstado;
@@ -25,6 +18,11 @@ import com.caba.caba_pro.repositories.ArbitroRepository;
 import com.caba.caba_pro.repositories.AsignacionRepository;
 import com.caba.caba_pro.repositories.PartidoRepository;
 import com.caba.caba_pro.repositories.TorneoRepository;
+import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional

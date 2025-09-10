@@ -1,5 +1,5 @@
 /**
- * Archivo: Disponibilidad.java Autores: JJRodriguezz Fecha última modificación: 10.09.2025
+ * Archivo: Disponibilidad.java Autores: Diego.Gonzalez Fecha última modificación: [10.09.2025]
  * Descripción: Modelo para la gestión de disponibilidad de árbitros Proyecto: CABA Pro - Sistema de
  * Gestión Integral de Arbitraje
  */
@@ -103,7 +103,7 @@ public class Disponibilidad {
     this.observaciones = observaciones;
   }
 
-  // Métodos de utilidad
+  // Métodos
   public boolean esDisponible() {
     return tipoDisponibilidad == TipoDisponibilidad.SIEMPRE
         || tipoDisponibilidad == TipoDisponibilidad.HORARIO_ESPECIFICO;

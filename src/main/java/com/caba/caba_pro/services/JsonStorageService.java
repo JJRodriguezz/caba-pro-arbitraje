@@ -1,5 +1,5 @@
 /**
- * Archivo: JsonStorageService.java Autores: Sistema de Chat Fecha última modificación: 09.09.2025
+ * Archivo: JsonStorageService.java Autores: Diego.Gonzalez Fecha última modificación: [10.09.2025]
  * Descripción: Servicio para manejar el almacenamiento de mensajes en archivos JSON Proyecto: CABA
  * Pro - Sistema de Gestión Integral de Arbitraje
  */
@@ -35,17 +35,17 @@ public class JsonStorageService {
     }
   }
 
-  /** Genera el nombre del archivo basado en el admin y árbitro */
+  // Genera el nombre del archivo basado en el admin y árbitro
   private String generateFileName(Long adminId, Long arbitroId) {
     return String.format("chat_admin%d_arbitro%d.json", adminId, arbitroId);
   }
 
-  /** Obtiene la ruta completa del archivo de chat */
+  // Obtiene la ruta completa del archivo de chat
   private String getFilePath(Long adminId, Long arbitroId) {
     return chatDirectory + "/" + generateFileName(adminId, arbitroId);
   }
 
-  /** Guarda un mensaje en el archivo JSON correspondiente */
+  // Guarda un mensaje en el archivo JSON correspondiente
   public void saveMessage(Long adminId, Long arbitroId, ChatMessageDto message) {
     try {
       String filePath = getFilePath(adminId, arbitroId);
@@ -62,7 +62,7 @@ public class JsonStorageService {
     }
   }
 
-  /** Carga todos los mensajes de un chat específico */
+  // Carga todos los mensajes de un chat específico
   public List<ChatMessageDto> loadMessages(Long adminId, Long arbitroId) {
     try {
       String filePath = getFilePath(adminId, arbitroId);
@@ -84,13 +84,13 @@ public class JsonStorageService {
     }
   }
 
-  /** Verifica si existe un chat entre el admin y árbitro */
+  // Verifica si existe un chat entre el admin y árbitro
   public boolean chatExists(Long adminId, Long arbitroId) {
     String filePath = getFilePath(adminId, arbitroId);
     return new File(filePath).exists();
   }
 
-  /** Obtiene la lista de chats existentes para un administrador */
+  // Obtiene la lista de chats existentes para un administrador
   public List<String> getExistingChatsForAdmin(Long adminId) {
     List<String> chats = new ArrayList<>();
     File directory = new File(chatDirectory);

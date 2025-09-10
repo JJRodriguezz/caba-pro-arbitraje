@@ -1,21 +1,15 @@
-/* ========================================
-   CABA Pro - Chat Widget Styles
-   Archivo: chat.css
-   Descripción: Estilos para el sistema de chat
-   ======================================== */
 
-/* Variables de colores - Esquema azul mejorado */
 :root {
-    --chat-primary: #2563eb;        /* Azul primario vibrante */
-    --chat-primary-dark: #1d4ed8;   /* Azul más oscuro para hover */
-    --chat-primary-light: #3b82f6;  /* Azul claro para acentos */
-    --chat-secondary: #1e40af;      /* Azul profundo */
-    --chat-accent: #60a5fa;         /* Azul suave para detalles */
-    --chat-bg-light: #eff6ff;       /* Fondo azul muy claro */
-    --chat-bg-white: #ffffff;       /* Blanco puro */
-    --chat-border: #e0e7ff;         /* Borde azul suave */
-    --chat-text-dark: #1e293b;      /* Texto oscuro */
-    --chat-text-light: #64748b;     /* Texto gris claro */
+    --chat-primary: #575779c2;        
+    --chat-primary-dark: #3f4147;
+    --chat-primary-light: #3b83f680;
+    --chat-secondary: #1e40af;      
+    --chat-accent: #358cf5;        
+    --chat-bg-light: #eff6ff;     
+    --chat-bg-white: #ffffff;      
+    --chat-border: #e0e7ff;       
+    --chat-text-dark: #1e293b;      
+    --chat-text-light: #64748b;   
     --shadow-strong: 0 20px 25px -5px rgba(37, 99, 235, 0.3), 0 10px 10px -5px rgba(37, 99, 235, 0.15);
     --shadow-medium: 0 10px 15px -3px rgba(37, 99, 235, 0.2), 0 4px 6px -2px rgba(37, 99, 235, 0.1);
     --shadow-soft: 0 4px 6px -1px rgba(37, 99, 235, 0.15), 0 2px 4px -1px rgba(37, 99, 235, 0.1);
@@ -25,9 +19,6 @@
     --radius-xl: 20px;
 }
 
-/* ========================================
-   Widget flotante principal
-   ======================================== */
 .chat-widget {
     position: fixed;
     bottom: 2rem;
@@ -38,14 +29,13 @@
 #chat-toggle {
     background: linear-gradient(135deg, var(--chat-primary), var(--chat-primary-light));
     color: white;
-    width: 4.5rem;          /* Más grande */
-    height: 4.5rem;         /* Más grande */
-    border: none;           /* Sin borde por defecto */
+    width: 4.5rem;         
+    border: none;          
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;        /* Icono más grande */
+    font-size: 2rem;      
     cursor: pointer;
     box-shadow: var(--shadow-strong);
     transition: var(--transition-smooth);
@@ -63,15 +53,12 @@
     transform: translateY(-1px) scale(1.02);
 }
 
-/* ========================================
-   Ventana del chat
-   ======================================== */
 #chat-window {
     display: none;
     position: fixed;
-    bottom: 7.5rem;         /* Ajustado para el botón más grande */
+    bottom: 7.5rem;       
     right: 2rem;
-    width: 24rem;           /* Ligeramente más ancho */
+    width: 24rem;           
     background: var(--chat-bg-white);
     border-radius: var(--radius-xl);
     overflow: hidden;
@@ -93,9 +80,6 @@
     box-shadow: var(--shadow-soft);
 }
 
-/* ========================================
-   Lista de contactos
-   ======================================== */
 #chat-list {
     max-height: 22rem;
     overflow-y: auto;
@@ -130,9 +114,7 @@
     font-style: italic;
 }
 
-/* ========================================
-   Chat activo
-   ======================================== */
+
 #chat-active {
     padding: 1.25rem;
     display: none;
@@ -174,9 +156,6 @@
     border-color: var(--chat-border);
 }
 
-/* ========================================
-   Controles del chat
-   ======================================== */
     .chat-controls {
         display: flex;
         gap: 0.5rem;
@@ -231,9 +210,8 @@
 
     .btn-back:hover {
         background: linear-gradient(135deg, #475569, #334155);
-    }/* ========================================
-   Estados especiales
-   ======================================== */
+    }
+
 .no-contacts {
     text-align: center;
     padding: 2.5rem;
@@ -244,9 +222,7 @@
     margin: 1rem;
 }
 
-/* ========================================
-   Scrollbars personalizados
-   ======================================== */
+
 #chat-messages::-webkit-scrollbar,
 #chat-list::-webkit-scrollbar {
     width: 6px;
@@ -269,9 +245,7 @@
     background: var(--chat-primary);
 }
 
-/* ========================================
-   Responsive Design
-   ======================================== */
+
 @media (max-width: 768px) {
     .chat-widget {
         bottom: 1rem;

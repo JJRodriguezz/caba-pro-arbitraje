@@ -1,5 +1,5 @@
 /**
- * Archivo: DisponibilidadDto.java Autores: JJRodriguezz Fecha última modificación: 10.09.2025
+ * Archivo: DisponibilidadDto.java Autores: Diego.Gonzalez Fecha última modificación: [10.09.2025]
  * Descripción: DTO para la gestión de disponibilidad de árbitros Proyecto: CABA Pro - Sistema de
  * Gestión Integral de Arbitraje
  */
