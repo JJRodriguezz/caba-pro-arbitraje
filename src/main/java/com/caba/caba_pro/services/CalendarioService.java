@@ -1,5 +1,5 @@
 /**
- * Archivo: CalendarioService.java Autores: Diego.Gonzalez Fecha última modificación: 07.09.2025
+ * Archivo: CalendarioService.java Autores: Diego.Gonzalez Fecha última modificación: [10.09.2025]
  * Descripción: Servicio para generar eventos del calendario según el rol del usuario Proyecto: CABA
  * Pro - Sistema de Gestión Integral de Arbitraje
  */
@@ -25,16 +25,16 @@ public class CalendarioService {
 
   @Autowired private ArbitroRepository arbitroRepository;
 
-  private static final DateTimeFormatter FORMATTER =
-      DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+  private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
-  /** Obtiene todos los eventos para el administrador */
+  // Obtiene todos los eventos para el administrador
   public List<CalendarioDto> obtenerEventosAdmin() {
     List<Partido> partidos = partidoRepository.findByActivoTrue();
     return partidos.stream().map(this::convertirPartidoAEvento).collect(Collectors.toList());
   }
 
-  /** Obtiene solo los eventos asignados a un árbitro específico */
+  // Obtiene solo los eventos asignados a un árbitro específico
+  
   public List<CalendarioDto> obtenerEventosArbitro(String username) {
     // Buscar árbitro por username
     Arbitro arbitro = arbitroRepository.findByUsername(username);
@@ -58,7 +58,7 @@ public class CalendarioService {
         .collect(Collectors.toList());
   }
 
-  /** Convierte un Partido en CalendarioDto para FullCalendar */
+  // Convierte un Partido en CalendarioDto para FullCalendar
   private CalendarioDto convertirPartidoAEvento(Partido partido) {
     String id = "partido_" + partido.getId();
     String title = partido.getEquipoLocal() + " vs " + partido.getEquipoVisitante();
@@ -84,7 +84,7 @@ public class CalendarioService {
     return new CalendarioDto(id, title, start, end, color, extendedProps);
   }
 
-  /** Obtiene eventos filtrados por fecha y torneo */
+  // Obtiene eventos filtrados por fecha y torneo
   public List<CalendarioDto> obtenerEventosConFiltros(
       String username, String rol, String fechaInicio, String fechaFin, Long torneoId) {
     List<CalendarioDto> eventos;
@@ -111,20 +111,14 @@ public class CalendarioService {
 
     try {
       // Inputs: yyyy-MM-dd
-      java.time.LocalDate inicio =
-          (fechaInicio == null || fechaInicio.isBlank())
-              ? null
-              : java.time.LocalDate.parse(fechaInicio);
-      java.time.LocalDate fin =
-          (fechaFin == null || fechaFin.isBlank()) ? null : java.time.LocalDate.parse(fechaFin);
+      java.time.LocalDate inicio = (fechaInicio == null || fechaInicio.isBlank())?null:java.time.LocalDate.parse(fechaInicio);
+      java.time.LocalDate fin = (fechaFin == null || fechaFin.isBlank()) ? null : java.time.LocalDate.parse(fechaFin);
 
-      // Evento.start: yyyy-MM-dd'T'HH:mm:ss
+      // Evento empieza en: yyyy-MM-dd'T'HH:mm:ss
       String start = evento.getStart();
-      java.time.LocalDate fechaEvento =
-          java.time.LocalDate.parse(start.substring(0, Math.min(start.length(), 10)));
+      java.time.LocalDate fechaEvento = java.time.LocalDate.parse(start.substring(0, Math.min(start.length(), 10)));
 
-      return ((inicio == null) || !fechaEvento.isBefore(inicio))
-          && ((fin == null) || !fechaEvento.isAfter(fin));
+      return ((inicio == null) || !fechaEvento.isBefore(inicio)) && ((fin == null) || !fechaEvento.isAfter(fin));
     } catch (Exception e) {
       // Si hay cualquier problema de parseo, no filtrar ese evento
       return true;
