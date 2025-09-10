@@ -1,5 +1,5 @@
 /**
- * Archivo: ChatService.java Autores: Sistema de Chat Fecha última modificación: 09.09.2025
+ * Archivo: ChatService.java Autores: Diego.Gonzalez Fecha última modificación: [10.09.2025]
  * Descripción: Servicio principal para manejar la lógica del chat Proyecto: CABA Pro - Sistema de
  * Gestión Integral de Arbitraje
  */
@@ -29,18 +29,14 @@ public class ChatService {
   private final AdministradorRepository administradorRepository;
   private final ArbitroRepository arbitroRepository;
 
-  public ChatService(
-      JsonStorageService jsonStorageService,
-      SimpMessagingTemplate messagingTemplate,
-      AdministradorRepository administradorRepository,
-      ArbitroRepository arbitroRepository) {
+  public ChatService(JsonStorageService jsonStorageService, SimpMessagingTemplate messagingTemplate, AdministradorRepository administradorRepository, ArbitroRepository arbitroRepository) {
     this.jsonStorageService = jsonStorageService;
     this.messagingTemplate = messagingTemplate;
     this.administradorRepository = administradorRepository;
     this.arbitroRepository = arbitroRepository;
   }
 
-  /** Procesa y envía un mensaje de chat */
+  // Procesa y envía un mensaje de chat
   public void processMessage(ChatMessageDto message, String senderUsername, Long targetUserId) {
     try {
       // Establecer timestamp si no está presente
@@ -53,7 +49,7 @@ public class ChatService {
         message.setContent(message.getContenido());
       }
 
-      // Determinar IDs de admin y árbitro para el almacenamiento
+      // Determinar ID de admin y árbitro para el almacenamiento
       Long adminId = null;
       Long arbitroId = null;
 
@@ -70,7 +66,8 @@ public class ChatService {
         message.setSenderId(admin.getId());
         message.setSenderUsername(admin.getUsername());
 
-      } else if (arbitro != null) {
+      } 
+      else if (arbitro != null) {
         // El remitente es árbitro
         arbitroId = arbitro.getId();
         adminId = targetUserId; // El target debe ser un admin específico
@@ -100,7 +97,7 @@ public class ChatService {
     }
   }
 
-  /** Envía mensaje al usuario específico usando WebSocket */
+  // Envía mensaje al usuario específico usando WebSocket
   private void sendMessageToUser(ChatMessageDto message, Long adminId, Long arbitroId) {
     try {
       if ("ADMIN".equals(message.getRemitente())) {
@@ -121,7 +118,7 @@ public class ChatService {
     }
   }
 
-  /** Obtiene el historial de mensajes entre un admin y árbitro */
+  // Obtiene el historial de mensajes entre un admin y árbitro
   public List<ChatMessageDto> getChatHistory(String currentUsername, Long userId) {
     try {
       // Determinar quién es el usuario actual y quién es el otro
@@ -154,13 +151,15 @@ public class ChatService {
     }
   }
 
-  /** Obtiene información del usuario actual autenticado */
+  // Obtiene información del usuario actual autenticado
+  
   public String getCurrentUsername() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     return auth != null ? auth.getName() : null;
   }
 
-  /** Verifica si el usuario actual es administrador */
+  // Verifica si el usuario actual es administrador
+  
   public boolean isCurrentUserAdmin() {
     String username = getCurrentUsername();
     if (username != null) {
