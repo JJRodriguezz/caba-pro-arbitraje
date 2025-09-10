@@ -5,6 +5,13 @@
  */
 package com.caba.caba_pro.services;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.caba.caba_pro.DTOs.AsignacionDto;
 import com.caba.caba_pro.DTOs.PartidoDto;
 import com.caba.caba_pro.enums.PartidoEstado;
@@ -18,11 +25,6 @@ import com.caba.caba_pro.repositories.ArbitroRepository;
 import com.caba.caba_pro.repositories.AsignacionRepository;
 import com.caba.caba_pro.repositories.PartidoRepository;
 import com.caba.caba_pro.repositories.TorneoRepository;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -38,6 +40,7 @@ public class PartidoService {
   private final TarifaService tarifaService;
   private final TorneoRepository torneoRepository;
   private final NotificacionService notificacionService;
+  private final DisponibilidadService disponibilidadService;
 
   // 3. Constructores
   public PartidoService(
@@ -47,6 +50,7 @@ public class PartidoService {
       TarifaService tarifaService,
       TorneoRepository torneoRepository,
       NotificacionService notificacionService,
+      DisponibilidadService disponibilidadService,
       AdministradorRepository administradorRepository) {
     this.partidoRepository = partidoRepository;
     this.arbitroRepository = arbitroRepository;
@@ -54,6 +58,7 @@ public class PartidoService {
     this.tarifaService = tarifaService;
     this.torneoRepository = torneoRepository;
     this.notificacionService = notificacionService;
+    this.disponibilidadService = disponibilidadService;
   }
 
   // 4. Métodos públicos
@@ -161,6 +166,14 @@ public class PartidoService {
     if (Boolean.FALSE.equals(arbitro.getActivo())) {
       throw new BusinessException("El árbitro no está activo");
     }
+
+    // ─────────────────────────────────────────────────────────────
+    // Verificar disponibilidad del árbitro
+    if (!disponibilidadService.esArbitroDisponibleEnFechaHora(
+        arbitro.getUsername(), partido.getFechaHora())) {
+      throw new BusinessException("El árbitro no está disponible en el horario del partido");
+    }
+    // ─────────────────────────────────────────────────────────────
 
     // Regla previa: no duplicar árbitro ni posición en el mismo partido
     boolean yaAsignado =
