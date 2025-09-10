@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
   <title>Tarifas por Escalafón - CABA Pro</title>
   <meta charset="UTF-8">
@@ -11,8 +12,11 @@
   <!-- Navigation -->
   <div class="nav-bar">
     <a th:href="@{/admin/dashboard}">Dashboard</a>
+    <a th:href="@{/admin/arbitros}">Árbitros</a>
     <a th:href="@{/admin/partidos}">Partidos</a>
-    <a href="#" style="background: rgba(255,255,255,0.3);">Tarifas</a>
+    <a th:href="@{/admin/torneos}">Torneos</a>
+    <a th:href="@{/admin/calendario}">Calendario</a>
+    <a th:href="@{/admin/notificaciones}" title="Notificaciones">🔔</a>
   </div>
 
   <h1>Tarifas por Escalafón</h1>

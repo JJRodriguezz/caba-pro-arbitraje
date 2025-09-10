@@ -6,6 +6,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
+    
+    <!-- SockJS y STOMP para WebSockets -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+    
+    <!-- Estilos del chat -->
+    <link rel="stylesheet" th:href="@{/css/chat.css}">
 </head>
 <body>
 <div class="dashboard-container">
@@ -43,11 +50,14 @@
             <div class="float-icon" title="Tarifas" onclick="location.href='/admin/tarifas'">
                 💰
             </div>
-            <div class="float-icon" title="chat" onclick="location.href='/admin/chat'">
-                💬
-            </div>
         </div>
     </div>
 </div>
+
+<!-- Icono de chat flotante -->
+<div th:replace="~{chat :: chatWidget}"></div>
+
+<!-- Scripts del chat -->
+<script th:replace="~{chat :: chatScripts}"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 /**
- * Archivo: DashboardController.java Autores: Isabella.Idarraga Fecha última modificación:
- * [04.09.2025] Descripción: Controlador para la gestión del dashboard en la aplicación Proyecto:
- * CABA Pro - Sistema de Gestión Integral de Arbitraje
+ * Archivo: DashboardController.java Autores: Isabella.Idarraga & Diego.Gonzalez Fecha última
+ * modificación: [10.09.2025] Descripción: Controlador para la gestión del dashboard en la
+ * aplicación Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.controllers;
 

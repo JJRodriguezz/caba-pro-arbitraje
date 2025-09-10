@@ -1,7 +1,7 @@
 /**
- * Archivo: SecurityConfig.java Autores: Isabella.Idarraga Fecha última modificación: [04.09.2025]
- * Descripción: Configuración de seguridad para la aplicación Proyecto: CABA Pro - Sistema de
- * Gestión Integral de Arbitraje
+ * Archivo: SecurityConfig.java Autores: Isabella.Idarraga & Diego.Gonzalez Fecha última
+ * modificación: [10.09.2025] Descripción: Configuración de seguridad para la aplicación Proyecto:
+ * CABA Pro - Sistema de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.config;
 
@@ -50,6 +50,10 @@ public class SecurityConfig {
                     // Rutas de árbitro - solo ROLE_ARBITRO
                     .requestMatchers("/arbitro/**")
                     .hasRole("ARBITRO")
+
+                    // Rutas de chat
+                    .requestMatchers("/chat/**", "/ws/**")
+                    .authenticated()
 
                     // Cualquier otra request requiere autenticación
                     .anyRequest()

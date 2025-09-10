@@ -6,17 +6,8 @@
 package com.caba.caba_pro.controllers;
 
 // 1. Java estándar
-import com.caba.caba_pro.DTOs.AsignacionDto;
-import com.caba.caba_pro.DTOs.PartidoDto;
-import com.caba.caba_pro.exceptions.BusinessException;
-import com.caba.caba_pro.models.Arbitro;
-import com.caba.caba_pro.models.Partido;
-import com.caba.caba_pro.models.Torneo;
-import com.caba.caba_pro.services.ArbitroService;
-import com.caba.caba_pro.services.PartidoService;
-import com.caba.caba_pro.services.TorneoService;
-import jakarta.validation.Valid;
 import java.util.List;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +18,18 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.caba.caba_pro.DTOs.AsignacionDto;
+import com.caba.caba_pro.DTOs.PartidoDto;
+import com.caba.caba_pro.exceptions.BusinessException;
+import com.caba.caba_pro.models.Arbitro;
+import com.caba.caba_pro.models.Partido;
+import com.caba.caba_pro.models.Torneo;
+import com.caba.caba_pro.services.ArbitroService;
+import com.caba.caba_pro.services.PartidoService;
+import com.caba.caba_pro.services.TorneoService;
+
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/admin/partidos")
@@ -39,13 +42,18 @@ public class PartidoController {
   private final PartidoService partidoService;
   private final ArbitroService arbitroService;
   private final TorneoService torneoService;
+  private final com.caba.caba_pro.services.DisponibilidadService disponibilidadService;
 
   // 3. Constructores
   public PartidoController(
-      PartidoService partidoService, ArbitroService arbitroService, TorneoService torneoService) {
+      PartidoService partidoService,
+      ArbitroService arbitroService,
+      TorneoService torneoService,
+      com.caba.caba_pro.services.DisponibilidadService disponibilidadService) {
     this.partidoService = partidoService;
     this.arbitroService = arbitroService;
     this.torneoService = torneoService;
+    this.disponibilidadService = disponibilidadService;
   }
 
   // 4. Métodos públicos
@@ -87,8 +95,49 @@ public class PartidoController {
   public String detalle(@PathVariable Long id, Model model) {
     Partido partido = partidoService.buscarPorId(id);
     List<Arbitro> arbitros = arbitroService.buscarTodosActivos();
+
+    // Crear mapa de disponibilidad para cada árbitro en la fecha/hora del partido
+    java.util.Map<Long, Boolean> disponibilidadArbitros = new java.util.HashMap<>();
+    java.util.Map<Long, String> motivosNoDisponible = new java.util.HashMap<>();
+
+    for (Arbitro arbitro : arbitros) {
+      boolean disponible =
+          disponibilidadService.esArbitroDisponibleEnFechaHora(
+              arbitro.getUsername(), partido.getFechaHora());
+      disponibilidadArbitros.put(arbitro.getId(), disponible);
+
+      if (!disponible) {
+        // Obtener motivo específico de no disponibilidad
+        var disponibilidadDto =
+            disponibilidadService.obtenerDisponibilidadPorUsername(arbitro.getUsername());
+        if (disponibilidadDto.isPresent()) {
+          switch (disponibilidadDto.get().getTipoDisponibilidad()) {
+            case NUNCA:
+              motivosNoDisponible.put(arbitro.getId(), "Configurado como no disponible");
+              break;
+            case HORARIO_ESPECIFICO:
+              java.time.LocalTime horaPartido = partido.getFechaHora().toLocalTime();
+              String horarioArbitro =
+                  disponibilidadDto.get().getHoraInicio()
+                      + " - "
+                      + disponibilidadDto.get().getHoraFin();
+              motivosNoDisponible.put(
+                  arbitro.getId(),
+                  "Disponible solo de " + horarioArbitro + " (partido a las " + horaPartido + ")");
+              break;
+            case SIEMPRE:
+              // No debería llegar aquí si disponible es false, pero por completitud
+              motivosNoDisponible.put(arbitro.getId(), "Error en configuración de disponibilidad");
+              break;
+          }
+        }
+      }
+    }
+
     model.addAttribute("partido", partido);
     model.addAttribute("arbitros", arbitros);
+    model.addAttribute("disponibilidadArbitros", disponibilidadArbitros);
+    model.addAttribute("motivosNoDisponible", motivosNoDisponible);
     model.addAttribute("asignacionDto", new AsignacionDto());
     return "admin/partidos/detalle";
   }

@@ -174,10 +174,9 @@ body {
 .floating-icons {
     position: absolute;
     bottom: 30px;
-    left: 30px;
     right: 30px;
     display: flex;
-    justify-content: space-between;
+    gap: 20px;
 }
 
 .float-icon {

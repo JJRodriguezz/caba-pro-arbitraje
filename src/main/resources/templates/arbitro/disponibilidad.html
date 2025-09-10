@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <title>Mi Disponibilidad - CABA Pro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/arbitro-dashboard.css}" />
+    <link rel="stylesheet" th:href="@{/css/perfil.css}" />
+    <link rel="stylesheet" th:href="@{/css/formularios.css}" />
+    <style>
+        .disponibilidad-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .disponibilidad-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .disponibilidad-header h1 {
+            color: #2c3e50;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .disponibilidad-header p {
+            color: #7f8c8d;
+            font-size: 18px;
+        }
+
+        .tipo-disponibilidad {
+            margin-bottom: 30px;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        .radio-option:hover {
+            border-color: #4ea1a5;
+            background: rgba(78, 161, 165, 0.05);
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 15px;
+            transform: scale(1.3);
+        }
+
+        .radio-option.selected,
+        .radio-option:has(input:checked) {
+            border-color: #4ea1a5;
+            background: rgba(78, 161, 165, 0.1);
+        }
+
+        .horario-section {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(78, 161, 165, 0.05);
+            border-radius: 10px;
+            border: 1px solid rgba(78, 161, 165, 0.2);
+        }
+
+        .horario-section.show {
+            display: block;
+        }
+
+        .horario-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .time-input {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .time-input label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .time-input input {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .time-input input:focus {
+            outline: none;
+            border-color: #4ea1a5;
+        }
+
+        .observaciones-section {
+            margin-top: 30px;
+        }
+
+        .observaciones-section label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .observaciones-section textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .observaciones-section textarea:focus {
+            outline: none;
+            border-color: #4ea1a5;
+        }
+
+        .buttons-section {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4ea1a5, #265b52);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .alert.success {
+            background: rgba(40, 167, 69, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+            color: #155724;
+        }
+
+        .alert.error {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #721c24;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+    <!-- Header Navigation -->
+    <nav class="header-nav">
+        <div class="nav-links">
+            <a th:href="@{/arbitro/dashboard}">Dashboard</a>
+            <a th:href="@{/arbitro/asignaciones}">Mis Asignaciones</a>
+            <a th:href="@{/arbitro/calendario}">Calendario</a>
+            <a href="#" class="active">Disponibilidad</a>
+            <a th:href="@{/arbitro/notificaciones}" title="Notificaciones">🔔</a>
+        </div>
+        <div class="user-section">
+            <a th:href="@{/arbitro/perfil}" class="profile-link">
+                <span sec:authentication="name">Árbitro</span>
+            </a>
+            <form th:action="@{/logout}" method="post" style="display: inline;">
+                <button type="submit" class="logout-btn">🔓 Salir</button>
+            </form>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="disponibilidad-container">
+        <!-- Header -->
+        <div class="disponibilidad-header">
+            <h1>⏰ Mi Disponibilidad</h1>
+            <p>Configura cuándo estás disponible para recibir asignaciones de partidos</p>
+        </div>
+
+        <!-- Messages -->
+        <div th:if="${success}" class="alert success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert error" th:text="${error}"></div>
+
+        <!-- Formulario -->
+        <form th:action="@{/arbitro/disponibilidad}" th:object="${disponibilidad}" method="post">
+            
+            <!-- Tipo de Disponibilidad -->
+            <div class="tipo-disponibilidad">
+                <h3>Tipo de Disponibilidad</h3>
+                <div class="radio-group">
+                    <label class="radio-option" th:each="tipo : ${tiposDisponibilidad}">
+                        <input type="radio" 
+                               th:field="*{tipoDisponibilidad}" 
+                               th:value="${tipo}"
+                               th:id="${'tipo_' + tipo.name()}"
+                               onchange="toggleHorarioSection()"/>
+                        <div>
+                            <strong th:text="${tipo.descripcion}">Siempre disponible</strong>
+                            <div th:switch="${tipo.name()}" style="font-size: 14px; color: #666; margin-top: 5px;">
+                                <p th:case="'SIEMPRE'">Podrás recibir asignaciones en cualquier momento</p>
+                                <p th:case="'NUNCA'">No recibirás asignaciones (modo ausente)</p>
+                                <p th:case="'HORARIO_ESPECIFICO'">Solo recibirás asignaciones en el horario que configures</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+                <span th:if="${#fields.hasErrors('tipoDisponibilidad')}" 
+                      th:errors="*{tipoDisponibilidad}" 
+                      class="error-message"></span>
+            </div>
+
+            <!-- Sección de Horario Específico -->
+            <div id="horarioSection" class="horario-section">
+                <h4>Configuración de Horario</h4>
+                <div class="horario-inputs">
+                    <div class="time-input">
+                        <label for="horaInicio">Hora de Inicio:</label>
+                        <input type="time" 
+                               id="horaInicio" 
+                               th:field="*{horaInicio}" 
+                               class="form-control"/>
+                        <span th:if="${#fields.hasErrors('horaInicio')}" 
+                              th:errors="*{horaInicio}" 
+                              class="error-message"></span>
+                    </div>
+                    <div class="time-input">
+                        <label for="horaFin">Hora de Fin:</label>
+                        <input type="time" 
+                               id="horaFin" 
+                               th:field="*{horaFin}" 
+                               class="form-control"/>
+                        <span th:if="${#fields.hasErrors('horaFin')}" 
+                              th:errors="*{horaFin}" 
+                              class="error-message"></span>
+                    </div>
+                </div>
+                <p style="font-size: 14px; color: #666; margin-top: 10px;">
+                    💡 Solo recibirás asignaciones de partidos que se desarrollen dentro de este horario
+                </p>
+            </div>
+
+            <!-- Observaciones -->
+            <div class="observaciones-section">
+                <label for="observaciones">Observaciones (Opcional):</label>
+                <textarea id="observaciones" 
+                          th:field="*{observaciones}" 
+                          placeholder="Puedes agregar comentarios adicionales sobre tu disponibilidad..."></textarea>
+            </div>
+
+            <!-- Botones -->
+            <div class="buttons-section">
+                <a th:href="@{/arbitro/dashboard}" class="btn btn-secondary">❌ Cancelar</a>
+                <button type="submit" class="btn btn-primary">💾 Guardar Disponibilidad</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function toggleHorarioSection() {
+    console.log('toggleHorarioSection called'); // Debug
+    const horarioSection = document.getElementById('horarioSection');
+    
+    // Buscar el radio seleccionado usando el atributo name que genera Thymeleaf
+    const selectedRadio = document.querySelector('input[type="radio"]:checked');
+    console.log('Selected radio:', selectedRadio); // Debug
+    
+    if (selectedRadio) {
+        const selectedValue = selectedRadio.value;
+        console.log('Selected value:', selectedValue); // Debug
+        
+        // Actualizar estilos visuales
+        const allOptions = document.querySelectorAll('.radio-option');
+        allOptions.forEach(option => {
+            const radio = option.querySelector('input[type="radio"]');
+            if (radio && radio.checked) {
+                option.classList.add('selected');
+            } else {
+                option.classList.remove('selected');
+            }
+        });
+        
+        // Mostrar/ocultar sección de horario
+        if (selectedValue === 'HORARIO_ESPECIFICO') {
+            horarioSection.classList.add('show');
+            console.log('Showing horario section'); // Debug
+        } else {
+            horarioSection.classList.remove('show');
+            console.log('Hiding horario section'); // Debug
+        }
+    }
+}
+
+// Inicializar al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded'); // Debug
+    
+    // Agregar event listeners a todos los radios
+    const radios = document.querySelectorAll('input[type="radio"]');
+    console.log('Found radios:', radios.length); // Debug
+    
+    radios.forEach((radio, index) => {
+        console.log(`Radio ${index}:`, radio.name, radio.value); // Debug
+        radio.addEventListener('change', toggleHorarioSection);
+        radio.addEventListener('click', toggleHorarioSection);
+    });
+    
+    // Llamar función inicial
+    setTimeout(toggleHorarioSection, 100);
+});
+</script>
+</body>
+</html>

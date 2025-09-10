@@ -1,6 +1,6 @@
 /**
  * Archivo: ExcelExportController.java Autores: Isabella.Idarraga Fecha última modificación:
- * [08.09.2025] Descripción: Controlador para manejar exportaciones a Excel Proyecto: CABA Pro -
+ * [09.09.2025] Descripción: Controlador para manejar exportaciones a Excel Proyecto: CABA Pro -
  * Sistema de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.controllers;
@@ -43,18 +43,6 @@ public class ExcelExportController {
     this.arbitroService = arbitroService;
     this.partidoService = partidoService;
     this.torneoService = torneoService;
-  }
-
-  @GetMapping("/test")
-  public ResponseEntity<String> test() {
-    logger.info("Test endpoint llamado");
-    return ResponseEntity.ok("ExcelExportController funcionando");
-  }
-
-  @GetMapping("")
-  public ResponseEntity<String> listEndpoints() {
-    logger.info("Lista de endpoints de exportación solicitada");
-    return ResponseEntity.ok("Endpoints disponibles: /arbitros, /partidos, /torneos, /test");
   }
 
   @GetMapping("/arbitros")
