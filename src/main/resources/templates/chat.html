@@ -1,0 +1,325 @@
+<!-- Fragmento del widget de chat flotante -->
+<div th:fragment="chatWidget" class="chat-widget" th:if="${usuarioActual != null}">
+    <button id="chat-toggle" onclick="toggleChat()" title="Chat">
+        💬
+    </button>
+    
+    <div id="chat-window">
+        <div id="chat-header">
+            <span id="chat-title">Mensajes</span>
+            <button onclick="toggleChat()" style="background: none; border: none; color: white; font-size: 1.2rem;">&times;</button>
+        </div>
+        
+        <!-- Lista de contactos (visible para ambos roles) -->
+        <div id="chat-list" th:if="${usuarioActual != null}">
+            <div class="loading-contacts">
+                <p>Cargando contactos...</p>
+            </div>
+        </div>
+        
+        <!-- Chat activo -->
+        <div id="chat-active">
+            <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                <strong id="chat-with"></strong>
+            </div>
+            <div id="chat-messages"></div>
+            <div class="chat-controls">
+                <input id="chat-input" type="text" placeholder="Escribe un mensaje..." />
+                <button onclick="sendMessage()" class="btn-chat">Enviar</button>
+                <button onclick="backToChatList()" class="btn-chat btn-back" th:if="${usuarioActual != null and usuarioActual.rol == 'ROLE_ADMIN'}">Atrás</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts JavaScript para el chat -->
+<script th:fragment="chatScripts" th:inline="javascript">
+    // Variables globales
+    let stompClient = null;
+    let currentChatUserId = null;
+    let currentUserRole = /*[[${usuarioActual != null ? usuarioActual.rol : 'GUEST'}]]*/ 'GUEST';
+    let currentUserId = /*[[${usuarioActual != null ? usuarioActual.id : null}]]*/ null;
+    let currentUserName = /*[[${usuarioActual != null ? usuarioActual.username : 'Usuario'}]]*/ 'Usuario';
+
+    // Función para alternar el chat
+    function toggleChat() {
+        const chatWindow = document.getElementById('chat-window');
+        const chatActive = document.getElementById('chat-active');
+        const chatList = document.getElementById('chat-list');
+        
+        if (chatWindow.style.display === 'none' || chatWindow.style.display === '') {
+            chatWindow.style.display = 'block';
+            connectWebSocket();
+            
+            // Si es árbitro, cargar lista de admins
+            if (currentUserRole === 'ROLE_ARBITRO') {
+                loadAdminsList();
+                if (chatList) {
+                    chatList.style.display = 'block';
+                }
+                if (chatActive) {
+                    chatActive.style.display = 'none';
+                }
+            } else if (currentUserRole === 'ROLE_ADMIN') {
+                // Cargar lista de árbitros
+                loadArbitrosList();
+                if (chatList) {
+                    chatList.style.display = 'block';
+                }
+                if (chatActive) {
+                    chatActive.style.display = 'none';
+                }
+            }
+        } else {
+            chatWindow.style.display = 'none';
+            disconnectWebSocket();
+        }
+    }
+
+    // Conectar WebSocket
+    function connectWebSocket() {
+        if (stompClient !== null) {
+            return;
+        }
+        
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        
+        stompClient.connect({}, function(frame) {
+            console.log('Conectado: ' + frame);
+            
+            // Suscribirse a mensajes privados (backend usa /queue/private)
+            stompClient.subscribe('/user/queue/private', function(message) {
+                const messageData = JSON.parse(message.body);
+                displayMessage(messageData);
+            });
+        });
+    }
+
+    // Desconectar WebSocket
+    function disconnectWebSocket() {
+        if (stompClient !== null) {
+            stompClient.disconnect();
+            stompClient = null;
+        }
+    }
+
+    // Cargar lista de árbitros (solo para admin)
+    function loadArbitrosList() {
+        if (currentUserRole !== 'ROLE_ADMIN') {
+            return;
+        }
+
+        fetch('/chat/arbitros')
+            .then(response => response.json())
+            .then(arbitros => {
+                const chatList = document.getElementById('chat-list');
+                if (!chatList) return;
+
+                if (arbitros.length === 0) {
+                    chatList.innerHTML = '<div class="no-contacts"><p>No hay árbitros disponibles</p></div>';
+                } else {
+                    let html = '';
+                    arbitros.forEach(arbitro => {
+                        html += `
+                            <div class="chat-contact" onclick="openChatWith('${arbitro.id}', '${arbitro.nombreCompleto}')">
+                                👤 <span>${arbitro.nombreCompleto}</span>
+                            </div>
+                        `;
+                    });
+                    chatList.innerHTML = html;
+                }
+            })
+            .catch(error => {
+                console.error('Error cargando lista de árbitros:', error);
+                const chatList = document.getElementById('chat-list');
+                if (chatList) {
+                    chatList.innerHTML = '<div class="no-contacts"><p>Error al cargar árbitros</p></div>';
+                }
+            });
+    }
+
+    // Cargar lista de administradores (solo para árbitros)
+    function loadAdminsList() {
+        if (currentUserRole !== 'ROLE_ARBITRO') {
+            return;
+        }
+
+        fetch('/chat/admins')
+            .then(response => response.json())
+            .then(admins => {
+                const chatList = document.getElementById('chat-list');
+                if (!chatList) return;
+
+                if (admins.length === 0) {
+                    chatList.innerHTML = '<div class="no-contacts"><p>No hay administradores disponibles</p></div>';
+                } else {
+                    let html = '';
+                    admins.forEach(admin => {
+                        html += `
+                            <div class="chat-contact" onclick="openChatWith('${admin.id}', '${admin.nombreCompleto}')">
+                                👨‍💼 <span>${admin.nombreCompleto}</span>
+                            </div>
+                        `;
+                    });
+                    chatList.innerHTML = html;
+                }
+            })
+            .catch(error => {
+                console.error('Error cargando lista de administradores:', error);
+                const chatList = document.getElementById('chat-list');
+                if (chatList) {
+                    chatList.innerHTML = '<div class="no-contacts"><p>Error al cargar administradores</p></div>';
+                }
+            });
+    }
+
+    // Abrir chat con usuario específico
+    function openChatWith(userId, userName) {
+        currentChatUserId = userId;
+        document.getElementById('chat-with').textContent = userName;
+        
+        // Mostrar chat activo
+        const chatList = document.getElementById('chat-list');
+        const chatActive = document.getElementById('chat-active');
+        
+        if (chatList) chatList.style.display = 'none';
+        if (chatActive) chatActive.style.display = 'block';
+        
+        // Cargar historial
+        loadChatHistory(userId);
+        
+        // Limpiar input
+        const chatInput = document.getElementById('chat-input');
+        if (chatInput) {
+            chatInput.value = '';
+            chatInput.focus();
+        }
+    }
+
+    // Cargar historial del chat
+    function loadChatHistory(userId) {
+        fetch(`/chat/history/${userId}`)
+            .then(response => response.json())
+            .then(messages => {
+                const chatMessages = document.getElementById('chat-messages');
+                if (!chatMessages) return;
+                
+                chatMessages.innerHTML = '';
+                
+                messages.forEach(message => {
+                    displayMessage(message, false);
+                });
+                
+                scrollToBottom();
+            })
+            .catch(error => {
+                console.error('Error cargando historial:', error);
+            });
+    }
+
+    // Mostrar mensaje en el chat
+    function displayMessage(message, isNew = true) {
+        const chatMessages = document.getElementById('chat-messages');
+        if (!chatMessages) return;
+        
+        const messageDiv = document.createElement('div');
+        
+        const isSent = (currentUserRole === 'ROLE_ADMIN' && message.remitente === 'ADMIN') ||
+                      (currentUserRole === 'ROLE_ARBITRO' && message.remitente === 'ARBITRO');
+        
+        messageDiv.className = `chat-message ${isSent ? 'sent' : 'received'}`;
+        
+        const timestamp = new Date(message.timestamp);
+        const timeString = timestamp.toLocaleTimeString('es-ES', {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
+        messageDiv.innerHTML = `
+            <div style="font-size: 0.8rem; margin-bottom: 0.2rem; opacity: 0.7;">
+                ${message.senderUsername || (message.remitente === 'ADMIN' ? 'Administrador' : 'Árbitro')}
+            </div>
+            <div>${(message.content || message.contenido)}</div>
+            <div style="font-size: 0.7rem; margin-top: 0.2rem; opacity: 0.5;">
+                ${timeString}
+            </div>
+        `;
+        
+        chatMessages.appendChild(messageDiv);
+        
+        if (isNew) {
+            scrollToBottom();
+        }
+    }
+
+    // Enviar mensaje
+    function sendMessage() {
+        const input = document.getElementById('chat-input');
+        if (!input) return;
+        
+    const message = input.value.trim();
+        
+        if (message && stompClient && currentChatUserId) {
+            const messageData = {
+                content: message,
+                remitente: currentUserRole === 'ROLE_ADMIN' ? 'ADMIN' : 'ARBITRO',
+                destinatario: currentChatUserId === 'admin' ? 'ADMIN' : 'ARBITRO',
+                timestamp: new Date().toISOString(),
+                senderUsername: currentUserName
+            };
+            
+            // Enviar por WebSocket
+            const destination = currentUserRole === 'ROLE_ADMIN' 
+                ? `/app/chat/arbitro/${currentChatUserId}`
+                : `/app/chat/admin/${currentChatUserId}`;
+            
+            stompClient.send(destination, {}, JSON.stringify(messageData));
+            
+            // Mostrar mensaje localmente
+            displayMessage(messageData);
+            
+            // Limpiar input
+            input.value = '';
+            input.focus();
+        }
+    }
+
+    // Volver a la lista de contactos
+    function backToChatList() {
+        const chatActive = document.getElementById('chat-active');
+        const chatList = document.getElementById('chat-list');
+        
+        if (chatActive) chatActive.style.display = 'none';
+        if (chatList) chatList.style.display = 'block';
+        
+        currentChatUserId = null;
+    }
+
+    // Scroll automático
+    function scrollToBottom() {
+        const chatMessages = document.getElementById('chat-messages');
+        if (chatMessages) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    }
+
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+        // Enter para enviar mensaje
+        const chatInput = document.getElementById('chat-input');
+        if (chatInput) {
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+        }
+    });
+
+    // Desconectar al salir de la página
+    window.addEventListener('beforeunload', function() {
+        disconnectWebSocket();
+    });
+</script>

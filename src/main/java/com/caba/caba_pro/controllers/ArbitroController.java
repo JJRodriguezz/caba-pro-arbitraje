@@ -1,7 +1,7 @@
 /**
- * Archivo: ArbitroController.java Autores: Isabella.Idarraga Fecha última modificación:
- * [04.09.2025] Descripción: Controlador para la gestión de árbitros en la aplicación Proyecto: CABA
- * Pro - Sistema de Gestión Integral de Arbitraje
+ * Archivo: ArbitroController.java Autores: Isabella.Idarraga & Diego.Gonzalez Fecha última
+ * modificación: [10.09.2025] Descripción: Controlador para la gestión de árbitros en la aplicación
+ * Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.controllers;
 
@@ -11,7 +11,10 @@ import com.caba.caba_pro.exceptions.BusinessException;
 import com.caba.caba_pro.models.Arbitro;
 import com.caba.caba_pro.services.ArbitroService;
 import jakarta.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -189,5 +193,30 @@ public class ArbitroController {
     dto.setUrlFotoPerfil(arbitro.getUrlFotoPerfil());
     // No incluir password por seguridad
     return dto;
+  }
+
+  // Endpoint para obtener lista de árbitros activos (para chat) GET /arbitros/list
+
+  @GetMapping("/list")
+  @PreAuthorize("hasRole('ADMIN')")
+  public @ResponseBody List<Map<String, Object>> getArbitrosList() {
+    try {
+      List<Arbitro> arbitros = arbitroService.buscarTodosActivos();
+
+      return arbitros.stream()
+          .map(
+              arbitro -> {
+                Map<String, Object> arbitroData = new HashMap<>();
+                arbitroData.put("id", arbitro.getId());
+                arbitroData.put("username", arbitro.getUsername());
+                arbitroData.put("nombre", arbitro.getNombre());
+                arbitroData.put("nombreCompleto", arbitro.getNombreCompleto());
+                return arbitroData;
+              })
+          .collect(Collectors.toList());
+    } catch (Exception e) {
+      logger.error("Error obteniendo lista de árbitros: {}", e.getMessage());
+      return List.of();
+    }
   }
 }
