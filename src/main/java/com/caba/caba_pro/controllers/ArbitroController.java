@@ -122,7 +122,7 @@ public class ArbitroController {
   @PostMapping("/{id}")
   public String actualizarArbitro(
       @PathVariable Long id,
-      @Valid @ModelAttribute("arbitroDto") ArbitroDto arbitroDto,
+      @ModelAttribute("arbitroDto") ArbitroDto arbitroDto,
       BindingResult result,
       @RequestParam(value = "fotoPerfil", required = false) MultipartFile fotoPerfil,
       RedirectAttributes flash,
@@ -138,13 +138,6 @@ public class ArbitroController {
     logger.info(
         "Foto recibida: {}",
         fotoPerfil != null ? fotoPerfil.getOriginalFilename() : "No se envió foto");
-
-    if (result.hasErrors()) {
-      logger.error("Errores de validación: {}", result.getAllErrors());
-      model.addAttribute("arbitroId", id);
-      model.addAttribute("especialidades", Especialidad.values());
-      return "arbitro/editar-arbitro";
-    }
 
     try {
       Arbitro arbitroActualizado = arbitroService.actualizarArbitro(id, arbitroDto, fotoPerfil);

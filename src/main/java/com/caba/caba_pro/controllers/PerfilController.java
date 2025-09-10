@@ -210,14 +210,45 @@ public class PerfilController {
 
   @PostMapping("/arbitro/perfil/editar")
   public String actualizarPerfilArbitro(
-      @Valid @ModelAttribute("editarPerfil") EditarPerfilDto editarDto,
+      @ModelAttribute("editarPerfil") EditarPerfilDto editarDto,
       BindingResult result,
       RedirectAttributes flash,
       Model model,
       HttpServletRequest request,
       @RequestParam(value = "fotoPerfil", required = false) MultipartFile fotoPerfil) {
 
-    if (result.hasErrors()) {
+    // Validación manual para edición de árbitros
+    boolean hasValidationErrors = false;
+
+    // Validar nombre si no está vacío
+    if (editarDto.getNombre() != null && !editarDto.getNombre().trim().isEmpty()) {
+      if (editarDto.getNombre().trim().length() < 2 || editarDto.getNombre().trim().length() > 50) {
+        result.rejectValue(
+            "nombre", "error.nombre", "El nombre debe tener entre 2 y 50 caracteres");
+        hasValidationErrors = true;
+      }
+    }
+
+    // Validar apellidos si no están vacíos
+    if (editarDto.getApellidos() != null && !editarDto.getApellidos().trim().isEmpty()) {
+      if (editarDto.getApellidos().trim().length() < 2
+          || editarDto.getApellidos().trim().length() > 100) {
+        result.rejectValue(
+            "apellidos", "error.apellidos", "Los apellidos deben tener entre 2 y 100 caracteres");
+        hasValidationErrors = true;
+      }
+    }
+
+    // Validar email si no está vacío
+    if (editarDto.getEmail() != null && !editarDto.getEmail().trim().isEmpty()) {
+      String emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+      if (!editarDto.getEmail().matches(emailPattern)) {
+        result.rejectValue("email", "error.email", "El email debe tener un formato válido");
+        hasValidationErrors = true;
+      }
+    }
+
+    if (hasValidationErrors) {
       model.addAttribute("especialidades", Especialidad.values());
       model.addAttribute("esAdmin", false);
       return "editar-perfil";
@@ -561,16 +592,16 @@ public class PerfilController {
 
     if (nuevoEmail != null
         && !nuevoEmail.trim().isEmpty()
-        && !nuevoEmail.equals(arbitro.getEmail())) {
+        && !nuevoEmail.trim().equals(arbitro.getEmail())) {
 
       // Verificar que el nuevo email no exista
-      Arbitro existente = arbitroRepository.findByEmail(nuevoEmail);
+      Arbitro existente = arbitroRepository.findByEmail(nuevoEmail.trim());
       if (existente != null && !existente.getId().equals(arbitro.getId())) {
         model.addAttribute("error", "El email ya está en uso");
         return false;
       }
 
-      arbitro.setEmail(nuevoEmail);
+      arbitro.setEmail(nuevoEmail.trim());
     }
 
     return true;
@@ -583,27 +614,30 @@ public class PerfilController {
    * @param arbitro Entidad del árbitro a actualizar
    */
   private void actualizarCamposArbitro(EditarPerfilDto editarDto, Arbitro arbitro) {
-    if (editarDto.getNombre() != null) {
-      arbitro.setNombre(editarDto.getNombre());
+    if (editarDto.getNombre() != null && !editarDto.getNombre().trim().isEmpty()) {
+      arbitro.setNombre(editarDto.getNombre().trim());
     }
-    if (editarDto.getApellidos() != null) {
-      arbitro.setApellidos(editarDto.getApellidos());
+    if (editarDto.getApellidos() != null && !editarDto.getApellidos().trim().isEmpty()) {
+      arbitro.setApellidos(editarDto.getApellidos().trim());
     }
-    if (editarDto.getNumeroIdentificacion() != null) {
-      arbitro.setNumeroIdentificacion(editarDto.getNumeroIdentificacion());
+    if (editarDto.getNumeroIdentificacion() != null
+        && !editarDto.getNumeroIdentificacion().trim().isEmpty()) {
+      arbitro.setNumeroIdentificacion(editarDto.getNumeroIdentificacion().trim());
     }
-    if (editarDto.getTelefono() != null) {
-      arbitro.setTelefono(editarDto.getTelefono());
+    if (editarDto.getTelefono() != null && !editarDto.getTelefono().trim().isEmpty()) {
+      arbitro.setTelefono(editarDto.getTelefono().trim());
     }
     if (editarDto.getEspecialidad() != null) {
       arbitro.setEspecialidad(editarDto.getEspecialidad());
     }
-    if (editarDto.getEscalafon() != null) {
-      arbitro.setEscalafon(editarDto.getEscalafon());
+    if (editarDto.getEscalafon() != null && !editarDto.getEscalafon().trim().isEmpty()) {
+      arbitro.setEscalafon(editarDto.getEscalafon().trim());
     }
     if (editarDto.getFechaNacimiento() != null) {
       arbitro.setFechaNacimiento(editarDto.getFechaNacimiento());
     }
-    arbitro.setActivo(editarDto.getActivo());
+    if (editarDto.getActivo() != null) {
+      arbitro.setActivo(editarDto.getActivo());
+    }
   }
 }
