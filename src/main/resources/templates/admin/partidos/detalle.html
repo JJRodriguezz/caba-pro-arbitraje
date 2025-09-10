@@ -130,9 +130,9 @@
               <option value="">Selecciona un árbitro</option>
               <option th:each="arb : ${arbitros}"
                       th:value="${arb.id}"
-                      th:text="${arb.nombre + ' ' + arb.apellidos + (${disponibilidadArbitros[arb.id]} ? ' ✓ (Disponible)' : ' ✗ (No disponible)')}"
+                      th:text="${arb.nombre + ' ' + arb.apellidos + (disponibilidadArbitros[arb.id] ? ' ✓ (Disponible)' : ' ✗ (No disponible)')}"
                       th:disabled="${!disponibilidadArbitros[arb.id]}"
-                      th:class="${disponibilidadArbitros[arb.id]} ? 'disponible' : 'no-disponible'">
+                      th:class="${disponibilidadArbitros[arb.id] ? 'disponible' : 'no-disponible'}">
               </option>
             </select>
             <span th:if="${#fields.hasErrors('arbitroId')}" th:errors="*{arbitroId}" class="error"></span>

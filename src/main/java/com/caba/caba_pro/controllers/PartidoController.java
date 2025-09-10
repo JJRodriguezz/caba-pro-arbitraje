@@ -1,13 +1,22 @@
 /**
- * Archivo: PartidoController.java Autores: JJRodriguezz Fecha última modificación: 05.09.2025
+ * Archivo: PartidoController.java Autores: JJRodriguezz Fecha última modificación: [10.09.2025]
  * Descripción: Controlador HTTP para administración de partidos. Proyecto: CABA Pro - Sistema de
  * Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.controllers;
 
 // 1. Java estándar
+import com.caba.caba_pro.DTOs.AsignacionDto;
+import com.caba.caba_pro.DTOs.PartidoDto;
+import com.caba.caba_pro.exceptions.BusinessException;
+import com.caba.caba_pro.models.Arbitro;
+import com.caba.caba_pro.models.Partido;
+import com.caba.caba_pro.models.Torneo;
+import com.caba.caba_pro.services.ArbitroService;
+import com.caba.caba_pro.services.PartidoService;
+import com.caba.caba_pro.services.TorneoService;
+import jakarta.validation.Valid;
 import java.util.List;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,18 +27,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import com.caba.caba_pro.DTOs.AsignacionDto;
-import com.caba.caba_pro.DTOs.PartidoDto;
-import com.caba.caba_pro.exceptions.BusinessException;
-import com.caba.caba_pro.models.Arbitro;
-import com.caba.caba_pro.models.Partido;
-import com.caba.caba_pro.models.Torneo;
-import com.caba.caba_pro.services.ArbitroService;
-import com.caba.caba_pro.services.PartidoService;
-import com.caba.caba_pro.services.TorneoService;
-
-import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/admin/partidos")
@@ -126,7 +123,6 @@ public class PartidoController {
                   "Disponible solo de " + horarioArbitro + " (partido a las " + horaPartido + ")");
               break;
             case SIEMPRE:
-              // No debería llegar aquí si disponible es false, pero por completitud
               motivosNoDisponible.put(arbitro.getId(), "Error en configuración de disponibilidad");
               break;
           }
@@ -163,7 +159,7 @@ public class PartidoController {
 
     model.addAttribute("partido", partido);
     model.addAttribute("partidoDto", dto);
-    model.addAttribute("partidoId", id); // Añadir ID explícitamente
+    model.addAttribute("partidoId", id);
     return "admin/partidos/editar";
   }
 
@@ -218,7 +214,6 @@ public class PartidoController {
       Model model) {
 
     if (result.hasErrors()) {
-      // Requiere el objeto partido para el header de la vista editar
       model.addAttribute("partido", partidoService.buscarPorId(id));
       // Si hay errores, se vuelve a cargar la lista de torneos
       List<Torneo> torneosActivos = torneoService.buscarTodosActivos();
