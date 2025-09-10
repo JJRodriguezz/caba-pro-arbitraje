@@ -1,6 +1,6 @@
 /**
  * Archivo: ArbitroService.java Autores: Isabella.Idarraga, Diego.Gonzalez, JJRodriguezz Fecha
- * última modificación: [06.09.2025] Descripción: Servicio para la gestión de árbitros en la
+ * última modificación: [10.09.2025] Descripción: Servicio para la gestión de árbitros en la
  * aplicación Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.services;
@@ -38,11 +38,7 @@ public class ArbitroService {
   private final FotoPerfilProperties fotoPerfilProperties;
 
   // 3. Constructor
-  public ArbitroService(
-      ArbitroRepository arbitroRepository,
-      AdministradorRepository administradorRepository,
-      PasswordEncoder passwordEncoder,
-      FotoPerfilProperties fotoPerfilProperties) {
+  public ArbitroService(ArbitroRepository arbitroRepository, AdministradorRepository administradorRepository, PasswordEncoder passwordEncoder, FotoPerfilProperties fotoPerfilProperties) {
     this.arbitroRepository = arbitroRepository;
     this.administradorRepository = administradorRepository;
     this.passwordEncoder = passwordEncoder;
@@ -272,12 +268,8 @@ public class ArbitroService {
   }
 
   private void actualizarDatosArbitro(Arbitro arbitro, ArbitroDto dto) {
-    logger.info(
-        "SERVICIO: Actualizando datos - Antes: Nombre={}, Username={}",
-        arbitro.getNombre(),
-        arbitro.getUsername());
-    logger.info(
-        "SERVICIO: Nuevos datos - Nombre={}, Username={}", dto.getNombre(), dto.getUsername());
+    logger.info("SERVICIO: Actualizando datos - Antes: Nombre={}, Username={}", arbitro.getNombre(), arbitro.getUsername());
+    logger.info("SERVICIO: Nuevos datos - Nombre={}, Username={}", dto.getNombre(), dto.getUsername());
 
     arbitro.setNombre(dto.getNombre());
     arbitro.setApellidos(dto.getApellidos());
@@ -289,9 +281,6 @@ public class ArbitroService {
     arbitro.setEscalafon(dto.getEscalafon());
     arbitro.setFechaNacimiento(dto.getFechaNacimiento());
 
-    logger.info(
-        "SERVICIO: Datos actualizados - Después: Nombre={}, Username={}",
-        arbitro.getNombre(),
-        arbitro.getUsername());
+    logger.info("SERVICIO: Datos actualizados - Después: Nombre={}, Username={}", arbitro.getNombre(), arbitro.getUsername());
   }
 }
