@@ -36,7 +36,6 @@
 </head>
 <body>
 <div class="container">
-  <!-- Nav -->
   <div class="nav-bar">
     <div class="nav-links">
       <a th:href="@{/admin/dashboard}">Dashboard</a>
@@ -56,11 +55,11 @@
     </div>
   </div>
 
-  <!-- Mensajes -->
+
   <div th:if="${success}" class="message success" th:text="${success}"></div>
   <div th:if="${error}" class="message error" th:text="${error}"></div>
 
-  <!-- Header -->
+
   <div class="header">
     <h1 th:text="${'Partido: ' + partido.nombre}">Partido</h1>
     <div class="action-buttons">
@@ -69,9 +68,8 @@
     </div>
   </div>
 
-  <!-- Contenido: dos columnas -->
   <div class="grid-2">
-    <!-- Columna izquierda: info + asignaciones -->
+
     <section class="card">
       <h2 style="margin-top:0;">Información</h2>
       <ul class="info-list">
@@ -117,10 +115,23 @@
       </table>
     </section>
 
-    <!-- Columna derecha: formulario de asignación -->
     <section class="card">
       <h2 id="asignar" style="margin-top:0;">Asignar Árbitro</h2>
-      <form th:action="@{'/admin/partidos/' + ${partido.id} + '/asignar'}"
+      
+      <!-- Verificar si hay árbitros y posiciones disponibles -->
+      <div th:if="${#lists.isEmpty(arbitros) || #lists.isEmpty(posicionesDisponibles)}">
+        <div class="message error">
+          <p th:if="${#lists.isEmpty(arbitros)}">
+            ⚠️ No hay árbitros disponibles para asignar. Todos los árbitros activos ya están asignados a este partido.
+          </p>
+          <p th:if="${#lists.isEmpty(posicionesDisponibles)}">
+            ⚠️ No hay posiciones disponibles. Todas las posiciones ya están ocupadas para este partido.
+          </p>
+        </div>
+      </div>
+      
+      <form th:if="${!#lists.isEmpty(arbitros) && !#lists.isEmpty(posicionesDisponibles)}"
+            th:action="@{'/admin/partidos/' + ${partido.id} + '/asignar'}"
             th:object="${asignacionDto}"
             method="post">
         <div class="form-grid">
@@ -145,10 +156,9 @@
             <label for="posicion">Posición *</label>
             <select id="posicion" th:field="*{posicion}" required>
               <option value="">Selecciona posición</option>
-              <option value="PRINCIPAL">PRINCIPAL</option>
-              <option value="ASISTENTE 1">ASISTENTE 1</option>
-              <option value="ASISTENTE 2">ASISTENTE 2</option>
-              <option value="ANOTADOR">ANOTADOR</option>
+              <option th:each="pos : ${posicionesDisponibles}" 
+                      th:value="${pos}" 
+                      th:text="${pos}">PRINCIPAL</option>
             </select>
             <span th:if="${#fields.hasErrors('posicion')}" th:errors="*{posicion}" class="error"></span>
           </div>
@@ -167,6 +177,12 @@
 document.addEventListener('DOMContentLoaded', function() {
   const arbitroSelect = document.getElementById('arbitroId');
   const arbitroInfo = document.getElementById('arbitro-info');
+  
+  // Verificar si los elementos existen antes de continuar
+
+  if (!arbitroSelect || !arbitroInfo) {
+    return;
+  }
   
   // Mapas de disponibilidad desde el controlador
   const disponibilidadArbitros = /*[[${disponibilidadArbitros}]]*/ {};

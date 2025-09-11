@@ -29,7 +29,11 @@ public class ChatService {
   private final AdministradorRepository administradorRepository;
   private final ArbitroRepository arbitroRepository;
 
-  public ChatService(JsonStorageService jsonStorageService, SimpMessagingTemplate messagingTemplate, AdministradorRepository administradorRepository, ArbitroRepository arbitroRepository) {
+  public ChatService(
+      JsonStorageService jsonStorageService,
+      SimpMessagingTemplate messagingTemplate,
+      AdministradorRepository administradorRepository,
+      ArbitroRepository arbitroRepository) {
     this.jsonStorageService = jsonStorageService;
     this.messagingTemplate = messagingTemplate;
     this.administradorRepository = administradorRepository;
@@ -66,8 +70,7 @@ public class ChatService {
         message.setSenderId(admin.getId());
         message.setSenderUsername(admin.getUsername());
 
-      } 
-      else if (arbitro != null) {
+      } else if (arbitro != null) {
         // El remitente es árbitro
         arbitroId = arbitro.getId();
         adminId = targetUserId; // El target debe ser un admin específico
@@ -152,14 +155,14 @@ public class ChatService {
   }
 
   // Obtiene información del usuario actual autenticado
-  
+
   public String getCurrentUsername() {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     return auth != null ? auth.getName() : null;
   }
 
   // Verifica si el usuario actual es administrador
-  
+
   public boolean isCurrentUserAdmin() {
     String username = getCurrentUsername();
     if (username != null) {

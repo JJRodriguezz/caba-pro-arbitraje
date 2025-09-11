@@ -1,7 +1,7 @@
 /**
- * Archivo: PartidoController.java Autores: JJRodriguezz Fecha última modificación: [10.09.2025]
- * Descripción: Controlador HTTP para administración de partidos. Proyecto: CABA Pro - Sistema de
- * Gestión Integral de Arbitraje
+ * Archivo: PartidoController.java Autores: JJRodriguezz & Diego.Gonzalez Fecha última modificación:
+ * [10.09.2025] Descripción: Controlador HTTP para administración de partidos. Proyecto: CABA Pro -
+ * Sistema de Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.controllers;
 
@@ -90,50 +90,7 @@ public class PartidoController {
 
   @GetMapping("/{id}")
   public String detalle(@PathVariable Long id, Model model) {
-    Partido partido = partidoService.buscarPorId(id);
-    List<Arbitro> arbitros = arbitroService.buscarTodosActivos();
-
-    // Crear mapa de disponibilidad para cada árbitro en la fecha/hora del partido
-    java.util.Map<Long, Boolean> disponibilidadArbitros = new java.util.HashMap<>();
-    java.util.Map<Long, String> motivosNoDisponible = new java.util.HashMap<>();
-
-    for (Arbitro arbitro : arbitros) {
-      boolean disponible =
-          disponibilidadService.esArbitroDisponibleEnFechaHora(
-              arbitro.getUsername(), partido.getFechaHora());
-      disponibilidadArbitros.put(arbitro.getId(), disponible);
-
-      if (!disponible) {
-        // Obtener motivo específico de no disponibilidad
-        var disponibilidadDto =
-            disponibilidadService.obtenerDisponibilidadPorUsername(arbitro.getUsername());
-        if (disponibilidadDto.isPresent()) {
-          switch (disponibilidadDto.get().getTipoDisponibilidad()) {
-            case NUNCA:
-              motivosNoDisponible.put(arbitro.getId(), "Configurado como no disponible");
-              break;
-            case HORARIO_ESPECIFICO:
-              java.time.LocalTime horaPartido = partido.getFechaHora().toLocalTime();
-              String horarioArbitro =
-                  disponibilidadDto.get().getHoraInicio()
-                      + " - "
-                      + disponibilidadDto.get().getHoraFin();
-              motivosNoDisponible.put(
-                  arbitro.getId(),
-                  "Disponible solo de " + horarioArbitro + " (partido a las " + horaPartido + ")");
-              break;
-            case SIEMPRE:
-              motivosNoDisponible.put(arbitro.getId(), "Error en configuración de disponibilidad");
-              break;
-          }
-        }
-      }
-    }
-
-    model.addAttribute("partido", partido);
-    model.addAttribute("arbitros", arbitros);
-    model.addAttribute("disponibilidadArbitros", disponibilidadArbitros);
-    model.addAttribute("motivosNoDisponible", motivosNoDisponible);
+    cargarDatosAsignacion(id, model);
     model.addAttribute("asignacionDto", new AsignacionDto());
     return "admin/partidos/detalle";
   }
@@ -173,8 +130,7 @@ public class PartidoController {
 
     if (result.hasErrors()) {
       // Cargamos datos necesarios de la vista
-      model.addAttribute("partido", partidoService.buscarPorId(id));
-      model.addAttribute("arbitros", arbitroService.buscarTodosActivos());
+      cargarDatosAsignacion(id, model);
       return "admin/partidos/detalle";
     }
 
@@ -189,12 +145,88 @@ public class PartidoController {
     } catch (BusinessException e) {
       model.addAttribute("error", e.getMessage());
       // Reponer datos de la pantalla y mantener el DTO con lo que el usuario eligió
-      model.addAttribute("partido", partidoService.buscarPorId(id));
-      model.addAttribute("arbitros", arbitroService.buscarTodosActivos());
+      cargarDatosAsignacion(id, model);
       return "admin/partidos/detalle";
     }
 
     return "redirect:/admin/partidos/{id}";
+  }
+
+  //  Función para cargar datos del formulario de asignación
+
+  private void cargarDatosAsignacion(Long partidoId, Model model) {
+    Partido partido = partidoService.buscarPorId(partidoId);
+
+    // Filtrar árbitros: excluir los ya asignados a este partido
+
+    List<Arbitro> todosArbitros = arbitroService.buscarTodosActivos();
+    List<Arbitro> arbitrosDisponibles =
+        todosArbitros.stream()
+            .filter(
+                arbitro ->
+                    partido.getAsignaciones().stream()
+                        .noneMatch(
+                            asignacion ->
+                                asignacion.getArbitro().getId().equals(arbitro.getId())
+                                    && asignacion.getActivo()))
+            .toList();
+
+    List<String> todasPosiciones = List.of("PRINCIPAL", "ASISTENTE 1", "ASISTENTE 2", "ANOTADOR");
+    List<String> posicionesOcupadas =
+        partido.getAsignaciones().stream()
+            .filter(asignacion -> asignacion.getActivo())
+            .map(asignacion -> asignacion.getPosicion())
+            .toList();
+
+    List<String> posicionesDisponibles =
+        todasPosiciones.stream()
+            .filter(posicion -> !posicionesOcupadas.contains(posicion))
+            .toList();
+
+    // Crear disponibilidad para cada árbitro en la fecha del partido
+
+    java.util.Map<Long, Boolean> disponibilidadArbitros = new java.util.HashMap<>();
+    java.util.Map<Long, String> motivosNoDisponible = new java.util.HashMap<>();
+
+    for (Arbitro arbitro : arbitrosDisponibles) {
+      boolean disponible =
+          disponibilidadService.esArbitroDisponibleEnFechaHora(
+              arbitro.getUsername(), partido.getFechaHora());
+
+      disponibilidadArbitros.put(arbitro.getId(), disponible);
+
+      if (!disponible) {
+
+        var disponibilidadDto =
+            disponibilidadService.obtenerDisponibilidadPorUsername(arbitro.getUsername());
+        if (disponibilidadDto.isPresent()) {
+          switch (disponibilidadDto.get().getTipoDisponibilidad()) {
+            case NUNCA:
+              motivosNoDisponible.put(arbitro.getId(), "Configurado como no disponible");
+              break;
+            case HORARIO_ESPECIFICO:
+              java.time.LocalTime horaPartido = partido.getFechaHora().toLocalTime();
+              String horarioArbitro =
+                  disponibilidadDto.get().getHoraInicio()
+                      + " - "
+                      + disponibilidadDto.get().getHoraFin();
+              motivosNoDisponible.put(
+                  arbitro.getId(),
+                  "Disponible solo de " + horarioArbitro + " (partido a las " + horaPartido + ")");
+              break;
+            case SIEMPRE:
+              motivosNoDisponible.put(arbitro.getId(), "Error en configuración de disponibilidad");
+              break;
+          }
+        }
+      }
+    }
+
+    model.addAttribute("partido", partido);
+    model.addAttribute("arbitros", arbitrosDisponibles);
+    model.addAttribute("posicionesDisponibles", posicionesDisponibles);
+    model.addAttribute("disponibilidadArbitros", disponibilidadArbitros);
+    model.addAttribute("motivosNoDisponible", motivosNoDisponible);
   }
 
   // Eliminar partido
@@ -202,7 +234,7 @@ public class PartidoController {
   public String eliminar(@PathVariable Long id, RedirectAttributes ra) {
     partidoService.eliminar(id); // activo=false
     ra.addFlashAttribute("success", "Partido eliminado correctamente.");
-    return "redirect:/admin/partidos"; // vuelve al listado
+    return "redirect:/admin/partidos";
   }
 
   @PostMapping("/{id}/editar")
