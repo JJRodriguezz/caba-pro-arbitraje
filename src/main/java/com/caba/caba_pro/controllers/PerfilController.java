@@ -416,7 +416,7 @@ public class PerfilController {
   private PerfilDto mapearArbitroADto(Arbitro arbitro) {
     PerfilDto dto = new PerfilDto();
     dto.setId(arbitro.getId());
-    dto.setUsername(arbitro.getUsername()); // Usar el campo username del árbitro
+    dto.setUsername(arbitro.getUsername());
     dto.setNombre(arbitro.getNombre());
     dto.setApellidos(arbitro.getApellidos());
     dto.setNombreCompleto(arbitro.getNombreCompleto());

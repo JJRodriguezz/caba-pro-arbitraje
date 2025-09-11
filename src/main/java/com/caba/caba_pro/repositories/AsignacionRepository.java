@@ -17,6 +17,9 @@ public interface AsignacionRepository extends JpaRepository<Asignacion, Long> {
   // Buscar asignaciones por árbitro
   List<Asignacion> findByArbitroIdAndActivoTrue(Long arbitroId);
 
+  // Buscar todas las asignaciones del árbitro (incluyendo rechazadas) para el historial
+  List<Asignacion> findByArbitroIdOrderByAsignadoEnDesc(Long arbitroId);
+
   boolean existsByPartidoIdAndArbitroIdAndActivoTrue(Long partidoId, Long arbitroId);
 
   boolean existsByPartidoIdAndPosicionAndActivoTrue(Long partidoId, String posicion);

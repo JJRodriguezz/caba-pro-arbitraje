@@ -50,8 +50,9 @@ public class ArbitroAsignacionController {
   public String verMisAsignaciones(Model model, Principal principal) {
     // Buscar árbitro autenticado
     Arbitro arbitro = arbitroService.buscarPorUsername(principal.getName());
+    // Obtener todas las asignaciones (incluyendo rechazadas) para mostrar el historial completo
     List<Asignacion> asignaciones =
-        asignacionRepository.findByArbitroIdAndActivoTrue(arbitro.getId());
+        asignacionRepository.findByArbitroIdOrderByAsignadoEnDesc(arbitro.getId());
     model.addAttribute("asignaciones", asignaciones);
     return "arbitro/asignaciones";
   }
@@ -145,8 +146,10 @@ public class ArbitroAsignacionController {
             "Solo puedes rechazar asignaciones con al menos 48 horas de anticipación al partido.");
         return "redirect:/arbitro/asignaciones";
       }
+
       asignacion.setEstado(AsignacionEstado.RECHAZADA);
       asignacion.setRespondidoEn(ahora);
+      asignacion.setActivo(false);
       asignacionRepository.save(asignacion);
       ra.addFlashAttribute("success", "Asignación rechazada correctamente");
       // Notificación para el admin que asignó

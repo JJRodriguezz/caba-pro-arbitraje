@@ -25,7 +25,8 @@ public class CalendarioService {
 
   @Autowired private ArbitroRepository arbitroRepository;
 
-  private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+  private static final DateTimeFormatter FORMATTER =
+      DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
   // Obtiene todos los eventos para el administrador
   public List<CalendarioDto> obtenerEventosAdmin() {
@@ -34,7 +35,7 @@ public class CalendarioService {
   }
 
   // Obtiene solo los eventos asignados a un árbitro específico
-  
+
   public List<CalendarioDto> obtenerEventosArbitro(String username) {
     // Buscar árbitro por username
     Arbitro arbitro = arbitroRepository.findByUsername(username);
@@ -111,14 +112,20 @@ public class CalendarioService {
 
     try {
       // Inputs: yyyy-MM-dd
-      java.time.LocalDate inicio = (fechaInicio == null || fechaInicio.isBlank())?null:java.time.LocalDate.parse(fechaInicio);
-      java.time.LocalDate fin = (fechaFin == null || fechaFin.isBlank()) ? null : java.time.LocalDate.parse(fechaFin);
+      java.time.LocalDate inicio =
+          (fechaInicio == null || fechaInicio.isBlank())
+              ? null
+              : java.time.LocalDate.parse(fechaInicio);
+      java.time.LocalDate fin =
+          (fechaFin == null || fechaFin.isBlank()) ? null : java.time.LocalDate.parse(fechaFin);
 
       // Evento empieza en: yyyy-MM-dd'T'HH:mm:ss
       String start = evento.getStart();
-      java.time.LocalDate fechaEvento = java.time.LocalDate.parse(start.substring(0, Math.min(start.length(), 10)));
+      java.time.LocalDate fechaEvento =
+          java.time.LocalDate.parse(start.substring(0, Math.min(start.length(), 10)));
 
-      return ((inicio == null) || !fechaEvento.isBefore(inicio)) && ((fin == null) || !fechaEvento.isAfter(fin));
+      return ((inicio == null) || !fechaEvento.isBefore(inicio))
+          && ((fin == null) || !fechaEvento.isAfter(fin));
     } catch (Exception e) {
       // Si hay cualquier problema de parseo, no filtrar ese evento
       return true;
