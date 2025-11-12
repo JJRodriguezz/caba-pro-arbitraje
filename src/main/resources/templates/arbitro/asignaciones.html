@@ -8,7 +8,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Mis Asignaciones - CABA Pro</title>
+  <title>[[#{asignaciones.titulo}]] - CABA Pro</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" th:href="@{/css/asignaciones.css}" />
@@ -18,33 +18,34 @@
 <div class="dashboard-container">
   <nav class="header-nav">
     <div class="nav-links">
-      <a th:href="@{/arbitro/dashboard}">Dashboard</a>
-      <a href="#" class="active">Mis Asignaciones</a>
-      <a th:href="@{/arbitro/calendario}">Calendario</a>
-      <a th:href="@{/arbitro/disponibilidad}">Disponibilidad</a>
-      <a th:href="@{/arbitro/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
+      <a th:href="@{/arbitro/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
+      <a href="#" class="active" th:text="#{nav.asignaciones}">Mis Asignaciones</a>
+      <a th:href="@{/arbitro/calendario}" th:text="#{nav.calendario}">Calendario</a>
+      <a th:href="@{/arbitro/disponibilidad}" th:text="#{nav.disponibilidad}">Disponibilidad</a>
+      <a th:href="@{/arbitro/liquidaciones}" th:text="#{nav.liquidaciones}">Liquidaciones</a>
+      <a th:href="@{/arbitro/notificaciones}" th:title="#{nav.notificaciones}" class="notificaciones-btn">🔔</a>
     </div>
     <div class="user-section">
       <a th:href="@{/arbitro/perfil}" class="profile-link">
         <span sec:authentication="name">Árbitro</span>
       </a>
       <form th:action="@{/logout}" method="post" style="display: inline;">
-        <button type="submit" class="logout-btn">🔓 Salir</button>
+        <button type="submit" class="logout-btn">🔓 <span th:text="#{nav.salir}">Salir</span></button>
       </form>
     </div>
   </nav>
   <div class="main-panel">
-    <h1 class="welcome-title">Mis Asignaciones</h1>
+    <h1 class="welcome-title" th:text="#{asignaciones.titulo}">Mis Asignaciones</h1>
     <div th:if="${success}" class="alert success" th:text="${success}"></div>
     <div th:if="${error}" class="alert error" th:text="${error}"></div>
     <table class="asignaciones-table">
       <thead>
         <tr>
-          <th>Partido</th>
-          <th>Fecha</th>
-          <th>Posición</th>
-          <th>Estado</th>
-          <th>Acciones</th>
+          <th th:text="#{asignaciones.partido}">Partido</th>
+          <th th:text="#{asignaciones.fecha}">Fecha</th>
+          <th th:text="#{asignaciones.posicion}">Posición</th>
+          <th th:text="#{asignaciones.estado}">Estado</th>
+          <th th:text="#{asignaciones.acciones}">Acciones</th>
         </tr>
       </thead>
       <tbody>
@@ -60,20 +61,20 @@
             <div class="action-links">
               <!-- Botones para asignaciones PENDIENTES -->
               <form th:action="@{'/arbitro/asignaciones/' + ${asignacion.id} + '/aceptar'}" method="post" th:if="${asignacion.estado.name() == 'PENDIENTE'}">
-                <button type="submit" class="btn btn-secondary">Aceptar</button>
+                <button type="submit" class="btn btn-secondary" th:text="#{asignaciones.aceptar}">Aceptar</button>
               </form>
               <form th:action="@{'/arbitro/asignaciones/' + ${asignacion.id} + '/rechazar'}" method="post" th:if="${asignacion.estado.name() == 'PENDIENTE'}">
-                <button type="submit" class="btn delete-btn">Rechazar</button>
+                <button type="submit" class="btn delete-btn" th:text="#{asignaciones.rechazar}">Rechazar</button>
               </form>
               
               <!-- Botón para marcar como COMPLETADA -->
               <form th:action="@{'/arbitro/asignaciones/' + ${asignacion.id} + '/completar'}" method="post" th:if="${asignacion.estado.name() == 'ACEPTADA'}">
-                <button type="submit" class="btn btn-success">✅ Completar</button>
+                <button type="submit" class="btn btn-success">✅ <span th:text="#{asignaciones.completar}">Completar</span></button>
               </form>
               
               <span th:if="${asignacion.estado.name() == 'RECHAZADA' or asignacion.estado.name() == 'COMPLETADA'}">
-                <span th:if="${asignacion.estado.name() == 'COMPLETADA'}" style="color: green; font-weight: bold;">✓ Completado</span>
-                <span th:if="${asignacion.estado.name() == 'RECHAZADA'}" style="color: red;">Rechazado</span>
+                <span th:if="${asignacion.estado.name() == 'COMPLETADA'}" style="color: green; font-weight: bold;">✓ <span th:text="#{asignaciones.completado}">Completado</span></span>
+                <span th:if="${asignacion.estado.name() == 'RECHAZADA'}" style="color: red;" th:text="#{asignaciones.rechazado}">Rechazado</span>
               </span>
             </div>
           </td>

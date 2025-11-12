@@ -272,55 +272,50 @@
   <!-- Header Navigation -->
   <nav class="header-nav">
     <div class="nav-links">
-      <a th:href="@{/arbitro/dashboard}">Dashboard</a>
-      <a th:href="@{/arbitro/asignaciones}">Mis Asignaciones</a>
-      <a th:href="@{/arbitro/calendario}">Calendario</a>
-      <a th:href="@{/arbitro/disponibilidad}">Disponibilidad</a>
-      <a href="#" class="active">Liquidaciones</a>
-      <a th:href="@{/arbitro/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
+      <a th:href="@{/arbitro/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
+      <a th:href="@{/arbitro/asignaciones}" th:text="#{nav.asignaciones}">Mis Asignaciones</a>
+      <a th:href="@{/arbitro/calendario}" th:text="#{nav.calendario}">Calendario</a>
+      <a th:href="@{/arbitro/disponibilidad}" th:text="#{nav.disponibilidad}">Disponibilidad</a>
+      <a href="#" class="active" th:text="#{nav.liquidaciones}">Liquidaciones</a>
+      <a th:href="@{/arbitro/notificaciones}" th:title="#{nav.notificaciones}" class="notificaciones-btn">🔔</a>
     </div>
     <div class="user-section">
       <a th:href="@{/arbitro/perfil}" class="profile-link">
         <span sec:authentication="name">Árbitro</span>
       </a>
       <form th:action="@{/logout}" method="post" style="display: inline;">
-        <button type="submit" class="logout-btn">🔓 Salir</button>
+        <button type="submit" class="logout-btn" th:text="'🔓 ' + #{nav.salir}">🔓 Salir</button>
       </form>
     </div>
   </nav>
 
   <div class="liquidacion-container">
-    <a th:href="@{/arbitro/dashboard}" class="back-btn">
-      ← Volver al Dashboard
-    </a>
 
-    <h1 class="liquidacion-titulo">💰 Mi Liquidación de Pagos</h1>
-    <p class="liquidacion-subtitulo">Consulta tus pagos por partidos arbitrados en un período específico</p>
+    <h1 class="liquidacion-titulo" th:text="#{liquidaciones.titulo}">💰 Mi Liquidación de Pagos</h1>
+    <p class="liquidacion-subtitulo" th:text="#{liquidaciones.subtitulo}">Consulta tus pagos por partidos arbitrados en un período específico</p>
 
     <!-- Formulario de Filtros -->
     <form th:action="@{/arbitro/liquidaciones}" method="get" class="filter-form">
       <div class="form-group">
-        <label for="fechaInicio">📅 Fecha Inicio</label>
-        <input type="date" 
-               id="fechaInicio" 
-               name="fechaInicio" 
-               th:value="${fechaInicio}"
-               required>
+   <label for="fechaInicio">📅 <span th:text="#{liquidaciones.fecha.inicio}">Fecha Inicio</span></label>
+   <input type="date" 
+     id="fechaInicio" 
+     name="fechaInicio" 
+     th:value="${fechaInicio}"
+     required>
       </div>
 
       <div class="form-group">
-        <label for="fechaFin">📅 Fecha Fin</label>
-        <input type="date" 
-               id="fechaFin" 
-               name="fechaFin" 
-               th:value="${fechaFin}"
-               required>
+   <label for="fechaFin">📅 <span th:text="#{liquidaciones.fecha.fin}">Fecha Fin</span></label>
+   <input type="date" 
+     id="fechaFin" 
+     name="fechaFin" 
+     th:value="${fechaFin}"
+     required>
       </div>
 
       <div class="btn-group">
-        <button type="submit" class="btn btn-primary">
-          🔍 Generar Liquidación
-        </button>
+        <button type="submit" class="btn btn-primary" th:text="#{liquidaciones.btn.generar}">🔍 Generar Liquidación</button>
       </div>
     </form>
 
@@ -333,7 +328,7 @@
     <!-- Mensaje Informativo cuando no hay búsqueda -->
     <div th:if="${mostrarResultados == null and error == null}" class="alert alert-info">
       <span>ℹ️</span>
-      <span>Selecciona un rango de fechas y haz clic en "Generar Liquidación" para ver tus pagos.</span>
+      <span th:text="#{liquidaciones.info.seleccion}">Selecciona un rango de fechas y haz clic en "Generar Liquidación" para ver tus pagos.</span>
     </div>
 
     <!-- Resultados de la Liquidación -->
@@ -341,9 +336,9 @@
       <!-- Información del Árbitro -->
       <div class="arbitro-info">
         <h2 th:text="${liquidacionArbitro.nombreCompleto}">Nombre Árbitro</h2>
-        <p><strong>Documento:</strong> <span th:text="${liquidacionArbitro.numeroIdentificacion}">123456789</span></p>
-        <p><strong>Escalafón:</strong> <span th:text="${liquidacionArbitro.escalafon}">Nacional</span></p>
-        <p><strong>Período:</strong> 
+        <p><strong th:text="#{perfil.identificacion}">Documento:</strong> <span th:text="${liquidacionArbitro.numeroIdentificacion}">123456789</span></p>
+        <p><strong th:text="#{perfil.escalafon}">Escalafón:</strong> <span th:text="${liquidacionArbitro.escalafon}">Nacional</span></p>
+        <p><strong th:text="#{liquidaciones.periodo}">Período:</strong> 
           <span th:text="${#temporals.format(fechaInicio, 'dd/MM/yyyy')}"></span> - 
           <span th:text="${#temporals.format(fechaFin, 'dd/MM/yyyy')}"></span>
         </p>
@@ -352,17 +347,17 @@
       <!-- Tarjetas de Estadísticas -->
       <div class="stats-cards">
         <div class="stat-card">
-          <div class="stat-label">💵 Total a Recibir</div>
+          <div class="stat-label" th:text="#{liquidaciones.total.label}">💵 Total a Recibir</div>
           <div class="stat-value" th:text="${'$' + #numbers.formatDecimal(liquidacionArbitro.totalAPagar, 0, 'COMMA', 2, 'POINT')}">$0.00</div>
         </div>
 
         <div class="stat-card">
-          <div class="stat-label">⚽ Partidos Arbitrados</div>
+          <div class="stat-label" th:text="#{liquidaciones.partidos.label}">⚽ Partidos Arbitrados</div>
           <div class="stat-value" th:text="${liquidacionArbitro.cantidadPartidos}">0</div>
         </div>
 
         <div class="stat-card">
-          <div class="stat-label">📊 Promedio por Partido</div>
+          <div class="stat-label" th:text="#{liquidaciones.promedio.label}">📊 Promedio por Partido</div>
           <div class="stat-value" 
                th:text="${liquidacionArbitro.cantidadPartidos > 0 ? '$' + #numbers.formatDecimal(liquidacionArbitro.totalAPagar / liquidacionArbitro.cantidadPartidos, 0, 'COMMA', 2, 'POINT') : '$0.00'}">
             $0.00
@@ -372,16 +367,16 @@
 
       <!-- Tabla de Partidos -->
       <div class="partidos-table">
-        <h3>📋 Detalle de Partidos</h3>
+        <h3 th:text="#{liquidaciones.detalle.titulo}">📋 Detalle de Partidos</h3>
         <table>
           <thead>
             <tr>
-              <th>Fecha</th>
-              <th>Partido</th>
-              <th>Torneo</th>
-              <th>Posición</th>
-              <th>Monto</th>
-              <th>Estado</th>
+              <th th:text="#{partido.fecha}">Fecha</th>
+              <th th:text="#{partido.titulo}">Partido</th>
+              <th th:text="#{calendario.torneo}">Torneo</th>
+              <th th:text="#{partido.posicion}">Posición</th>
+              <th th:text="#{liquidaciones.monto}">Monto</th>
+              <th th:text="#{asignaciones.estado}">Estado</th>
             </tr>
           </thead>
           <tbody>

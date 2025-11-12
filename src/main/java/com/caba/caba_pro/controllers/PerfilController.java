@@ -24,6 +24,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -47,15 +49,18 @@ public class PerfilController {
   private final AdministradorRepository administradorRepository;
   private final ArbitroRepository arbitroRepository;
   private final PasswordEncoder passwordEncoder;
+  private final MessageSource messageSource;
 
   // 3. Constructores
   public PerfilController(
       AdministradorRepository administradorRepository,
       ArbitroRepository arbitroRepository,
-      PasswordEncoder passwordEncoder) {
+      PasswordEncoder passwordEncoder,
+      MessageSource messageSource) {
     this.administradorRepository = administradorRepository;
     this.arbitroRepository = arbitroRepository;
     this.passwordEncoder = passwordEncoder;
+    this.messageSource = messageSource;
   }
 
   // 4. Métodos públicos
@@ -70,7 +75,10 @@ public class PerfilController {
     try {
       Administrador administrador = administradorRepository.findByUsername(username);
       if (administrador == null || !administrador.isActivo()) {
-        throw new BusinessException("Administrador no encontrado");
+        String mensaje =
+            messageSource.getMessage(
+                "perfil.admin.no.encontrado", null, LocaleContextHolder.getLocale());
+        throw new BusinessException(mensaje);
       }
 
       PerfilDto perfilDto = mapearAdministradorADto(administrador);
@@ -81,7 +89,9 @@ public class PerfilController {
 
     } catch (Exception e) {
       logger.error("Error al cargar perfil de administrador: {}", e.getMessage());
-      model.addAttribute("error", "Error al cargar el perfil");
+      String mensaje =
+          messageSource.getMessage("perfil.error.cargar", null, LocaleContextHolder.getLocale());
+      model.addAttribute("error", mensaje);
       return "redirect:/admin/dashboard";
     }
   }
@@ -96,7 +106,10 @@ public class PerfilController {
     try {
       Arbitro arbitro = arbitroRepository.findByUsername(username);
       if (arbitro == null || !arbitro.isActivo()) {
-        throw new BusinessException("Árbitro no encontrado");
+        String mensaje =
+            messageSource.getMessage(
+                "perfil.arbitro.no.encontrado", null, LocaleContextHolder.getLocale());
+        throw new BusinessException(mensaje);
       }
 
       PerfilDto perfilDto = mapearArbitroADto(arbitro);
@@ -107,7 +120,9 @@ public class PerfilController {
 
     } catch (Exception e) {
       logger.error("Error al cargar perfil de árbitro: {}", e.getMessage());
-      model.addAttribute("error", "Error al cargar el perfil");
+      String mensaje =
+          messageSource.getMessage("perfil.error.cargar", null, LocaleContextHolder.getLocale());
+      model.addAttribute("error", mensaje);
       return "redirect:/arbitro/dashboard";
     }
   }
@@ -120,7 +135,10 @@ public class PerfilController {
     try {
       Administrador administrador = administradorRepository.findByUsername(username);
       if (administrador == null || !administrador.isActivo()) {
-        throw new BusinessException("Administrador no encontrado");
+        String mensaje =
+            messageSource.getMessage(
+                "perfil.admin.no.encontrado", null, LocaleContextHolder.getLocale());
+        throw new BusinessException(mensaje);
       }
 
       EditarPerfilDto editarDto = mapearAdministradorAEditarDto(administrador);
@@ -143,7 +161,10 @@ public class PerfilController {
     try {
       Arbitro arbitro = arbitroRepository.findByUsername(username);
       if (arbitro == null || !arbitro.isActivo()) {
-        throw new BusinessException("Árbitro no encontrado");
+        String mensaje =
+            messageSource.getMessage(
+                "perfil.arbitro.no.encontrado", null, LocaleContextHolder.getLocale());
+        throw new BusinessException(mensaje);
       }
 
       EditarPerfilDto editarDto = mapearArbitroAEditarDto(arbitro);
@@ -177,7 +198,10 @@ public class PerfilController {
     try {
       Administrador administrador = administradorRepository.findByUsername(username);
       if (administrador == null) {
-        throw new BusinessException("Administrador no encontrado");
+        String mensaje =
+            messageSource.getMessage(
+                "perfil.admin.no.encontrado", null, LocaleContextHolder.getLocale());
+        throw new BusinessException(mensaje);
       }
 
       boolean usernameChanged = validarYActualizarUsername(editarDto, administrador, flash);
@@ -198,12 +222,18 @@ public class PerfilController {
         return invalidarSesionYRedireccionar(request, flash);
       }
 
-      flash.addFlashAttribute("success", "Perfil actualizado exitosamente");
+      String mensaje =
+          messageSource.getMessage(
+              "perfil.actualizado.exito", null, LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("success", mensaje);
       return "redirect:/admin/perfil";
 
     } catch (Exception e) {
       logger.error("Error al actualizar perfil de administrador: {}", e.getMessage());
-      flash.addFlashAttribute("error", "Error al actualizar el perfil");
+      String mensaje =
+          messageSource.getMessage(
+              "perfil.error.actualizar", null, LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("error", mensaje);
       return "redirect:/admin/perfil";
     }
   }
@@ -223,8 +253,10 @@ public class PerfilController {
     // Validar nombre si no está vacío
     if (editarDto.getNombre() != null && !editarDto.getNombre().trim().isEmpty()) {
       if (editarDto.getNombre().trim().length() < 2 || editarDto.getNombre().trim().length() > 50) {
-        result.rejectValue(
-            "nombre", "error.nombre", "El nombre debe tener entre 2 y 50 caracteres");
+        String mensaje =
+            messageSource.getMessage(
+                "perfil.nombre.validacion", null, LocaleContextHolder.getLocale());
+        result.rejectValue("nombre", "error.nombre", mensaje);
         hasValidationErrors = true;
       }
     }
@@ -233,8 +265,10 @@ public class PerfilController {
     if (editarDto.getApellidos() != null && !editarDto.getApellidos().trim().isEmpty()) {
       if (editarDto.getApellidos().trim().length() < 2
           || editarDto.getApellidos().trim().length() > 100) {
-        result.rejectValue(
-            "apellidos", "error.apellidos", "Los apellidos deben tener entre 2 y 100 caracteres");
+        String mensaje =
+            messageSource.getMessage(
+                "perfil.apellidos.validacion", null, LocaleContextHolder.getLocale());
+        result.rejectValue("apellidos", "error.apellidos", mensaje);
         hasValidationErrors = true;
       }
     }
@@ -243,7 +277,10 @@ public class PerfilController {
     if (editarDto.getEmail() != null && !editarDto.getEmail().trim().isEmpty()) {
       String emailPattern = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
       if (!editarDto.getEmail().matches(emailPattern)) {
-        result.rejectValue("email", "error.email", "El email debe tener un formato válido");
+        String mensaje =
+            messageSource.getMessage(
+                "perfil.email.validacion", null, LocaleContextHolder.getLocale());
+        result.rejectValue("email", "error.email", mensaje);
         hasValidationErrors = true;
       }
     }
@@ -260,7 +297,10 @@ public class PerfilController {
     try {
       Arbitro arbitro = arbitroRepository.findByUsername(username);
       if (arbitro == null) {
-        throw new BusinessException("Árbitro no encontrado");
+        String mensaje =
+            messageSource.getMessage(
+                "perfil.arbitro.no.encontrado", null, LocaleContextHolder.getLocale());
+        throw new BusinessException(mensaje);
       }
 
       // Verificar y actualizar email si cambió
@@ -279,12 +319,18 @@ public class PerfilController {
 
       arbitroRepository.save(arbitro);
 
-      flash.addFlashAttribute("success", "Perfil actualizado exitosamente");
+      String mensaje =
+          messageSource.getMessage(
+              "perfil.actualizado.exito", null, LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("success", mensaje);
       return "redirect:/arbitro/perfil";
 
     } catch (Exception e) {
       logger.error("Error al actualizar perfil de árbitro: {}", e.getMessage());
-      flash.addFlashAttribute("error", "Error al actualizar el perfil");
+      String mensaje =
+          messageSource.getMessage(
+              "perfil.error.actualizar", null, LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("error", mensaje);
       return "redirect:/arbitro/perfil";
     }
   }
@@ -316,7 +362,10 @@ public class PerfilController {
     }
 
     if (!passwordDto.getPasswordNueva().equals(passwordDto.getConfirmarPassword())) {
-      model.addAttribute("error", "Las contraseñas no coinciden");
+      String mensaje =
+          messageSource.getMessage(
+              "perfil.password.no.coinciden", null, LocaleContextHolder.getLocale());
+      model.addAttribute("error", mensaje);
       model.addAttribute("esAdmin", true);
       return "cambiar-password";
     }
@@ -327,12 +376,18 @@ public class PerfilController {
     try {
       Administrador administrador = administradorRepository.findByUsername(username);
       if (administrador == null) {
-        throw new BusinessException("Administrador no encontrado");
+        String mensaje =
+            messageSource.getMessage(
+                "perfil.admin.no.encontrado", null, LocaleContextHolder.getLocale());
+        throw new BusinessException(mensaje);
       }
 
       // Verificar contraseña actual
       if (!passwordEncoder.matches(passwordDto.getPasswordActual(), administrador.getPassword())) {
-        model.addAttribute("error", "La contraseña actual es incorrecta");
+        String mensaje =
+            messageSource.getMessage(
+                "perfil.password.actual.incorrecta", null, LocaleContextHolder.getLocale());
+        model.addAttribute("error", mensaje);
         model.addAttribute("esAdmin", true);
         return "cambiar-password";
       }
@@ -341,12 +396,17 @@ public class PerfilController {
       administrador.setPassword(passwordEncoder.encode(passwordDto.getPasswordNueva()));
       administradorRepository.save(administrador);
 
-      flash.addFlashAttribute("success", "Contraseña actualizada exitosamente");
+      String mensaje =
+          messageSource.getMessage(
+              "perfil.password.actualizada.exito", null, LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("success", mensaje);
       return "redirect:/admin/perfil";
 
     } catch (Exception e) {
       logger.error("Error al cambiar contraseña de administrador: {}", e.getMessage());
-      model.addAttribute("error", "Error al cambiar la contraseña");
+      String mensaje =
+          messageSource.getMessage("perfil.password.error", null, LocaleContextHolder.getLocale());
+      model.addAttribute("error", mensaje);
       model.addAttribute("esAdmin", true);
       return "cambiar-password";
     }
@@ -365,7 +425,10 @@ public class PerfilController {
     }
 
     if (!passwordDto.getPasswordNueva().equals(passwordDto.getConfirmarPassword())) {
-      model.addAttribute("error", "Las contraseñas no coinciden");
+      String mensaje =
+          messageSource.getMessage(
+              "perfil.password.no.coinciden", null, LocaleContextHolder.getLocale());
+      model.addAttribute("error", mensaje);
       model.addAttribute("esAdmin", false);
       return "cambiar-password";
     }
@@ -376,12 +439,18 @@ public class PerfilController {
     try {
       Arbitro arbitro = arbitroRepository.findByUsername(username);
       if (arbitro == null) {
-        throw new BusinessException("Árbitro no encontrado");
+        String mensaje =
+            messageSource.getMessage(
+                "perfil.arbitro.no.encontrado", null, LocaleContextHolder.getLocale());
+        throw new BusinessException(mensaje);
       }
 
       // Verificar contraseña actual
       if (!passwordEncoder.matches(passwordDto.getPasswordActual(), arbitro.getPassword())) {
-        model.addAttribute("error", "La contraseña actual es incorrecta");
+        String mensaje =
+            messageSource.getMessage(
+                "perfil.password.actual.incorrecta", null, LocaleContextHolder.getLocale());
+        model.addAttribute("error", mensaje);
         model.addAttribute("esAdmin", false);
         return "cambiar-password";
       }
@@ -390,12 +459,17 @@ public class PerfilController {
       arbitro.setPassword(passwordEncoder.encode(passwordDto.getPasswordNueva()));
       arbitroRepository.save(arbitro);
 
-      flash.addFlashAttribute("success", "Contraseña actualizada exitosamente");
+      String mensaje =
+          messageSource.getMessage(
+              "perfil.password.actualizada.exito", null, LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("success", mensaje);
       return "redirect:/arbitro/perfil";
 
     } catch (Exception e) {
       logger.error("Error al cambiar contraseña de árbitro: {}", e.getMessage());
-      model.addAttribute("error", "Error al cambiar la contraseña");
+      String mensaje =
+          messageSource.getMessage("perfil.password.error", null, LocaleContextHolder.getLocale());
+      model.addAttribute("error", mensaje);
       model.addAttribute("esAdmin", false);
       return "cambiar-password";
     }
@@ -477,7 +551,10 @@ public class PerfilController {
       // Verificar que el nuevo username no exista
       Administrador existente = administradorRepository.findByUsername(nuevoUsername);
       if (existente != null && !existente.getId().equals(administrador.getId())) {
-        flash.addFlashAttribute("error", "El nombre de usuario ya está en uso");
+        String mensaje =
+            messageSource.getMessage(
+                "perfil.username.en.uso", null, LocaleContextHolder.getLocale());
+        flash.addFlashAttribute("error", mensaje);
         return false;
       }
 
@@ -515,7 +592,9 @@ public class PerfilController {
 
     } catch (IOException e) {
       logger.error("Error al guardar la foto de perfil: {}", e.getMessage(), e);
-      throw new BusinessException("No se pudo guardar la foto de perfil");
+      String mensaje =
+          messageSource.getMessage("perfil.foto.error", null, LocaleContextHolder.getLocale());
+      throw new BusinessException(mensaje);
     }
   }
 
@@ -572,9 +651,9 @@ public class PerfilController {
       session.invalidate();
     }
     SecurityContextHolder.clearContext();
-    flash.addFlashAttribute(
-        "success",
-        "Perfil actualizado. Por favor, inicie sesión nuevamente con su nuevo nombre de usuario.");
+    String mensaje =
+        messageSource.getMessage("perfil.actualizado.login", null, LocaleContextHolder.getLocale());
+    flash.addFlashAttribute("success", mensaje);
     return "redirect:/login";
   }
 
@@ -597,7 +676,9 @@ public class PerfilController {
       // Verificar que el nuevo email no exista
       Arbitro existente = arbitroRepository.findByEmail(nuevoEmail.trim());
       if (existente != null && !existente.getId().equals(arbitro.getId())) {
-        model.addAttribute("error", "El email ya está en uso");
+        String mensaje =
+            messageSource.getMessage("perfil.email.en.uso", null, LocaleContextHolder.getLocale());
+        model.addAttribute("error", mensaje);
         return false;
       }
 

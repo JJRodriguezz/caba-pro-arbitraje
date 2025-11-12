@@ -1,18 +1,18 @@
 <div th:fragment="chatWidget" class="chat-widget" th:if="${usuarioActual != null}">
-    <button id="chat-toggle" onclick="toggleChat()" title="Chat">
+    <button id="chat-toggle" onclick="toggleChat()" th:title="#{chat.titulo}">
         💬
     </button>
     
     <div id="chat-window">
         <div id="chat-header">
-            <span id="chat-title">Mensajes</span>
+            <span id="chat-title" th:text="#{chat.titulo}">Mensajes</span>
             <button onclick="toggleChat()" style="background: none; border: none; color: white; font-size: 1.2rem;">&times;</button>
         </div>
         
         <!-- Lista de contactos (visible para ambos roles) -->
         <div id="chat-list" th:if="${usuarioActual != null}">
             <div class="loading-contacts">
-                <p>Cargando contactos...</p>
+                <p th:text="#{chat.cargando}">Cargando contactos...</p>
             </div>
         </div>
         
@@ -23,9 +23,9 @@
             </div>
             <div id="chat-messages"></div>
             <div class="chat-controls">
-                <input id="chat-input" type="text" placeholder="Escribe un mensaje..." />
-                <button onclick="sendMessage()" class="btn-chat">Enviar</button>
-                <button onclick="backToChatList()" class="btn-chat btn-back" th:if="${usuarioActual != null and usuarioActual.rol == 'ROLE_ADMIN'}">Atrás</button>
+                <input id="chat-input" type="text" th:placeholder="#{chat.placeholder}" />
+                <button onclick="sendMessage()" class="btn-chat" th:text="#{chat.btn.enviar}">Enviar</button>
+                <button onclick="backToChatList()" class="btn-chat btn-back" th:if="${usuarioActual != null and usuarioActual.rol == 'ROLE_ADMIN'}" th:text="#{chat.btn.atras}">Atrás</button>
             </div>
         </div>
     </div>
@@ -39,6 +39,16 @@
     let currentUserRole = /*[[${usuarioActual != null ? usuarioActual.rol : 'GUEST'}]]*/ 'GUEST';
     let currentUserId = /*[[${usuarioActual != null ? usuarioActual.id : null}]]*/ null;
     let currentUserName = /*[[${usuarioActual != null ? usuarioActual.username : 'Usuario'}]]*/ 'Usuario';
+    
+    // Textos i18n
+    const i18nMessages = {
+        noArbitros: /*[[#{chat.no.arbitros}]]*/ 'No hay árbitros disponibles',
+        noAdmins: /*[[#{chat.no.admins}]]*/ 'No hay administradores disponibles',
+        errorArbitros: /*[[#{chat.error.arbitros}]]*/ 'Error al cargar árbitros',
+        errorAdmins: /*[[#{chat.error.admins}]]*/ 'Error al cargar administradores',
+        remitenteAdmin: /*[[#{chat.remitente.admin}]]*/ 'Administrador',
+        remitenteArbitro: /*[[#{chat.remitente.arbitro}]]*/ 'Árbitro'
+    };
 
     // Función para alternar el chat
     function toggleChat() {
@@ -116,7 +126,7 @@
                 if (!chatList) return;
 
                 if (arbitros.length === 0) {
-                    chatList.innerHTML = '<div class="no-contacts"><p>No hay árbitros disponibles</p></div>';
+                    chatList.innerHTML = '<div class="no-contacts"><p>' + i18nMessages.noArbitros + '</p></div>';
                 } else {
                     let html = '';
                     arbitros.forEach(arbitro => {
@@ -133,7 +143,7 @@
                 console.error('Error cargando lista de árbitros:', error);
                 const chatList = document.getElementById('chat-list');
                 if (chatList) {
-                    chatList.innerHTML = '<div class="no-contacts"><p>Error al cargar árbitros</p></div>';
+                    chatList.innerHTML = '<div class="no-contacts"><p>' + i18nMessages.errorArbitros + '</p></div>';
                 }
             });
     }
@@ -151,7 +161,7 @@
                 if (!chatList) return;
 
                 if (admins.length === 0) {
-                    chatList.innerHTML = '<div class="no-contacts"><p>No hay administradores disponibles</p></div>';
+                    chatList.innerHTML = '<div class="no-contacts"><p>' + i18nMessages.noAdmins + '</p></div>';
                 } else {
                     let html = '';
                     admins.forEach(admin => {
@@ -168,7 +178,7 @@
                 console.error('Error cargando lista de administradores:', error);
                 const chatList = document.getElementById('chat-list');
                 if (chatList) {
-                    chatList.innerHTML = '<div class="no-contacts"><p>Error al cargar administradores</p></div>';
+                    chatList.innerHTML = '<div class="no-contacts"><p>' + i18nMessages.errorAdmins + '</p></div>';
                 }
             });
     }
@@ -237,7 +247,7 @@
         
         messageDiv.innerHTML = `
             <div style="font-size: 0.8rem; margin-bottom: 0.2rem; opacity: 0.7;">
-                ${message.senderUsername || (message.remitente === 'ADMIN' ? 'Administrador' : 'Árbitro')}
+                ${message.senderUsername || (message.remitente === 'ADMIN' ? i18nMessages.remitenteAdmin : i18nMessages.remitenteArbitro)}
             </div>
             <div>${(message.content || message.contenido)}</div>
             <div style="font-size: 0.7rem; margin-top: 0.2rem; opacity: 0.5;">

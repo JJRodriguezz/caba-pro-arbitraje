@@ -17,6 +17,8 @@ import com.caba.caba_pro.services.PartidoService;
 import com.caba.caba_pro.services.TorneoService;
 import jakarta.validation.Valid;
 import java.util.List;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,17 +42,20 @@ public class PartidoController {
   private final ArbitroService arbitroService;
   private final TorneoService torneoService;
   private final com.caba.caba_pro.services.DisponibilidadService disponibilidadService;
+  private final MessageSource messageSource;
 
   // 3. Constructores
   public PartidoController(
       PartidoService partidoService,
       ArbitroService arbitroService,
       TorneoService torneoService,
-      com.caba.caba_pro.services.DisponibilidadService disponibilidadService) {
+      com.caba.caba_pro.services.DisponibilidadService disponibilidadService,
+      MessageSource messageSource) {
     this.partidoService = partidoService;
     this.arbitroService = arbitroService;
     this.torneoService = torneoService;
     this.disponibilidadService = disponibilidadService;
+    this.messageSource = messageSource;
   }
 
   // 4. Métodos públicos
@@ -110,7 +115,10 @@ public class PartidoController {
         if (disponibilidadDto.isPresent()) {
           switch (disponibilidadDto.get().getTipoDisponibilidad()) {
             case NUNCA:
-              motivosNoDisponible.put(arbitro.getId(), "Configurado como no disponible");
+              String mensajeNunca =
+                  messageSource.getMessage(
+                      "partido.arbitro.no.disponible", null, LocaleContextHolder.getLocale());
+              motivosNoDisponible.put(arbitro.getId(), mensajeNunca);
               break;
             case HORARIO_ESPECIFICO:
               java.time.LocalTime horaPartido = partido.getFechaHora().toLocalTime();
@@ -118,12 +126,18 @@ public class PartidoController {
                   disponibilidadDto.get().getHoraInicio()
                       + " - "
                       + disponibilidadDto.get().getHoraFin();
-              motivosNoDisponible.put(
-                  arbitro.getId(),
-                  "Disponible solo de " + horarioArbitro + " (partido a las " + horaPartido + ")");
+              String mensajeHorario =
+                  messageSource.getMessage(
+                      "partido.arbitro.horario.especifico",
+                      new Object[] {horarioArbitro, horaPartido},
+                      LocaleContextHolder.getLocale());
+              motivosNoDisponible.put(arbitro.getId(), mensajeHorario);
               break;
             case SIEMPRE:
-              motivosNoDisponible.put(arbitro.getId(), "Error en configuración de disponibilidad");
+              String mensajeError =
+                  messageSource.getMessage(
+                      "partido.error.disponibilidad", null, LocaleContextHolder.getLocale());
+              motivosNoDisponible.put(arbitro.getId(), mensajeError);
               break;
           }
         }
@@ -201,7 +215,9 @@ public class PartidoController {
   @PostMapping("/{id}/eliminar")
   public String eliminar(@PathVariable Long id, RedirectAttributes ra) {
     partidoService.eliminar(id); // activo=false
-    ra.addFlashAttribute("success", "Partido eliminado correctamente.");
+    String mensaje =
+        messageSource.getMessage("partido.eliminado.exito", null, LocaleContextHolder.getLocale());
+    ra.addFlashAttribute("success", mensaje);
     return "redirect:/admin/partidos"; // vuelve al listado
   }
 
@@ -222,7 +238,10 @@ public class PartidoController {
     }
 
     partidoService.actualizar(id, partidoDto);
-    ra.addFlashAttribute("success", "Partido actualizado correctamente.");
+    String mensaje =
+        messageSource.getMessage(
+            "partido.actualizado.exito", null, LocaleContextHolder.getLocale());
+    ra.addFlashAttribute("success", mensaje);
     return "redirect:/admin/partidos";
   }
 }

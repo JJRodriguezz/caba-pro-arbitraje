@@ -267,57 +267,57 @@
 <body>
   <nav class="header-nav">
     <div class="nav-links">
-      <a th:href="@{/admin/dashboard}">Dashboard</a>
-      <a th:href="@{/admin/arbitros}">Árbitros</a>
-      <a th:href="@{/admin/partidos}">Partidos</a>
-      <a th:href="@{/admin/torneos}">Torneos</a>
-      <a th:href="@{/admin/estadisticas}">Estadísticas</a>
-      <a th:href="@{/admin/liquidaciones}" class="active">Liquidaciones</a>
+      <a th:href="@{/admin/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
+      <a th:href="@{/admin/arbitros}" th:text="#{nav.arbitros}">Árbitros</a>
+      <a th:href="@{/admin/partidos}" th:text="#{nav.partidos}">Partidos</a>
+      <a th:href="@{/admin/torneos}" th:text="#{nav.torneos}">Torneos</a>
+      <a th:href="@{/admin/estadisticas}" th:text="#{nav.estadisticas}">Estadísticas</a>
+      <a th:href="@{/admin/liquidaciones}" class="active" th:text="#{nav.liquidaciones}">Liquidaciones</a>
     </div>
     <div class="user-section">
       <a th:href="@{/admin/perfil}" class="profile-link">
         <span sec:authentication="name">Administrador</span>
       </a>
       <form th:action="@{/logout}" method="post" style="display: inline;">
-        <button type="submit" class="logout-btn"> Salir</button>
+        <button type="submit" class="logout-btn" th:text="#{nav.salir}">Salir</button>
       </form>
     </div>
   </nav>
 
   <div class="liquidacion-container">
-    <h1 class="liquidacion-titulo">💰 Liquidación de Pagos a Árbitros</h1>
-    <p class="liquidacion-subtitulo">Genera reportes de liquidación para el posterior pago a los árbitros</p>
+    <h1 class="liquidacion-titulo" th:text="#{admin.liquidaciones.titulo}"> Liquidación de Pagos a Árbitros</h1>
+    <p class="liquidacion-subtitulo" th:text="#{admin.liquidaciones.subtitulo}">Genera reportes de liquidación para el posterior pago a los árbitros</p>
 
     <!-- Formulario de filtros -->
     <form method="get" th:action="@{/admin/liquidaciones}" class="filter-form">
       <div class="form-group">
-        <label for="fechaInicio"> Fecha de Inicio</label>
+        <label for="fechaInicio"> <span th:text="#{admin.liquidaciones.fecha.inicio}">Fecha de Inicio</span></label>
         <input type="date" id="fechaInicio" name="fechaInicio" th:value="${fechaInicio}" required />
       </div>
       <div class="form-group">
-        <label for="fechaFin"> Fecha de Fin</label>
+        <label for="fechaFin"> <span th:text="#{admin.liquidaciones.fecha.fin}">Fecha de Fin</span></label>
         <input type="date" id="fechaFin" name="fechaFin" th:value="${fechaFin}" required />
       </div>
       <div class="btn-group">
-        <button type="submit" class="btn btn-primary">🔍 Generar Liquidación</button>
+        <button type="submit" class="btn btn-primary"> <span th:text="#{admin.liquidaciones.btn.generar}">Generar Liquidación</span></button>
         <a th:if="${mostrarResultados}" 
            th:href="@{/api/liquidaciones/excel(fechaInicio=${fechaInicio},fechaFin=${fechaFin})}" 
            class="btn btn-success">
-          📥 Descargar Excel
+           <span th:text="#{admin.liquidaciones.btn.descargar}">Descargar Excel</span>
         </a>
       </div>
     </form>
 
     <!-- Mensaje de error -->
     <div th:if="${error}" class="alert alert-danger">
-      <span>⚠️</span>
+      <span></span>
       <span th:text="${error}"></span>
     </div>
 
     <!-- Mensaje informativo si no hay resultados -->
     <div th:if="${mostrarResultados == null and error == null}" class="alert alert-info">
-      <span></span>
-      <span>Selecciona un rango de fechas y haz clic en "Generar Liquidación" para ver los resultados.</span>
+      <span>ℹ️</span>
+      <span th:text="#{admin.liquidaciones.info.seleccion}">Selecciona un rango de fechas y haz clic en "Generar Liquidación" para ver los resultados.</span>
     </div>
 
     <!-- Resultados de la liquidación -->
@@ -325,15 +325,15 @@
       <!-- Tarjetas de estadísticas -->
       <div class="stats-cards">
         <div class="stat-card">
-          <div class="stat-label">Total Árbitros</div>
+          <div class="stat-label" th:text="#{admin.liquidaciones.total.arbitros}">Total Árbitros</div>
           <div class="stat-value" th:text="${liquidacion.arbitros.size()}">0</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">Total Asignaciones</div>
+          <div class="stat-label" th:text="#{admin.liquidaciones.total.asignaciones}">Total Asignaciones</div>
           <div class="stat-value" th:text="${liquidacion.totalAsignaciones}">0</div>
         </div>
         <div class="stat-card total-amount">
-          <div class="stat-label">Monto Total a Pagar</div>
+          <div class="stat-label" th:text="#{admin.liquidaciones.total.pagar}">Monto Total a Pagar</div>
           <div class="stat-value money">
             $<span th:text="${#numbers.formatDecimal(liquidacion.totalGeneral, 1, 'COMMA', 2, 'POINT')}">0.00</span>
           </div>
@@ -342,25 +342,25 @@
 
       <!-- Tabla de liquidación por árbitro -->
       <div class="table-container">
-        <h2 style="margin-top: 0; color: #2c3e50;">📋 Detalle por Árbitro</h2>
+        <h2 style="margin-top: 0; color: #2c3e50;">📋 <span th:text="#{admin.liquidaciones.detalle.titulo}">Detalle por Árbitro</span></h2>
         
         <div th:if="${liquidacion.arbitros.isEmpty()}" class="no-data-message">
           <svg viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="10" stroke="#bdc3c7" stroke-width="2" fill="none"/>
             <text x="12" y="16" text-anchor="middle" font-size="12" fill="#95a5a6">!</text>
           </svg>
-          <p>No se encontraron asignaciones completadas en el período seleccionado.</p>
+          <p th:text="#{admin.liquidaciones.sin.datos}">No se encontraron asignaciones completadas en el período seleccionado.</p>
         </div>
 
         <table th:if="${!liquidacion.arbitros.isEmpty()}" class="liquidacion-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Árbitro</th>
-              <th>Número Identificación</th>
-              <th class="text-center">Escalafón</th>
-              <th class="text-center">Cantidad Partidos</th>
-              <th class="text-right">Total a Pagar</th>
+              <th th:text="#{admin.liquidaciones.tabla.id}">ID</th>
+              <th th:text="#{admin.liquidaciones.tabla.arbitro}">Árbitro</th>
+              <th th:text="#{admin.liquidaciones.tabla.numero.id}">Número Identificación</th>
+              <th class="text-center" th:text="#{admin.liquidaciones.tabla.escalafon}">Escalafón</th>
+              <th class="text-center" th:text="#{admin.liquidaciones.tabla.cantidad}">Cantidad Partidos</th>
+              <th class="text-right" th:text="#{admin.liquidaciones.tabla.total}">Total a Pagar</th>
             </tr>
           </thead>
           <tbody>
