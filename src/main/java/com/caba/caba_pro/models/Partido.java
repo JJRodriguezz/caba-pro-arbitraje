@@ -5,7 +5,12 @@
  */
 package com.caba.caba_pro.models;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.caba.caba_pro.enums.PartidoEstado;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,9 +22,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "partido")
@@ -44,6 +46,13 @@ public class Partido {
 
   @Column(nullable = false, length = 100)
   private String sede;
+
+  @Column(length = 200)
+  private String ubicacion; // Dirección completa (opcional)
+
+  @Column private Double latitud; // Coordenada latitud (opcional)
+
+  @Column private Double longitud; // Coordenada longitud (opcional)
 
   @Column(nullable = false, length = 80)
   private String equipoLocal;
@@ -106,6 +115,30 @@ public class Partido {
 
   public void setSede(String sede) {
     this.sede = sede;
+  }
+
+  public String getUbicacion() {
+    return ubicacion;
+  }
+
+  public void setUbicacion(String ubicacion) {
+    this.ubicacion = ubicacion;
+  }
+
+  public Double getLatitud() {
+    return latitud;
+  }
+
+  public void setLatitud(Double latitud) {
+    this.latitud = latitud;
+  }
+
+  public Double getLongitud() {
+    return longitud;
+  }
+
+  public void setLongitud(Double longitud) {
+    this.longitud = longitud;
   }
 
   public String getEquipoLocal() {

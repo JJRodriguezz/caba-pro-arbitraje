@@ -1,13 +1,5 @@
-# ============================================
-# DOCKERFILE MULTI-STAGE para CABA Pro
-# Spring Boot 3.5.5 + Java 17
-# ============================================
-
-# ========== STAGE 1: BUILD ==========
-# Usamos Maven para compilar la aplicación
 FROM maven:3.9.9-eclipse-temurin-17-alpine AS builder
 
-# Establecemos el directorio de trabajo
 WORKDIR /app
 
 # Copiamos los archivos de configuración de Maven
@@ -15,16 +7,15 @@ COPY pom.xml .
 COPY mvnw .
 COPY .mvn .mvn
 
-# Descargamos las dependencias (se cachea esta capa)
+# Descargamos las dependencias
 RUN mvn dependency:go-offline -B
 
-# Copiamos el código fuente
+# Copiamos el código
 COPY src ./src
 
-# Compilamos la aplicación (sin ejecutar tests ni verificar formato)
+# Compilamos la aplicación
 RUN mvn clean package -DskipTests -Dspotless.check.skip=true
 
-# ========== STAGE 2: RUNTIME ==========
 # Imagen ligera solo con JRE para ejecutar
 FROM eclipse-temurin:17-jre-alpine
 
@@ -33,7 +24,7 @@ LABEL maintainer="CABA Pro Team"
 LABEL description="Sistema de Gestión Integral de Arbitraje"
 LABEL version="1.0"
 
-# Creamos un usuario no-root por seguridad
+# Creamos un usuario
 RUN addgroup -S spring && adduser -S spring -G spring
 
 # Establecemos el directorio de trabajo
@@ -56,7 +47,6 @@ EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE=prod
 ENV JAVA_OPTS="-Xms256m -Xmx512m"
 
-# Health check para Docker y Kubernetes
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
 

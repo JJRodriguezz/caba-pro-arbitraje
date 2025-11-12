@@ -5,12 +5,14 @@
  */
 package com.caba.caba_pro.DTOs;
 
+import java.time.LocalDateTime;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDateTime;
-import org.springframework.format.annotation.DateTimeFormat;
 
 public class PartidoDto {
 
@@ -32,6 +34,12 @@ public class PartidoDto {
 
   @NotBlank(message = "La sede es obligatoria")
   private String sede;
+
+  private String ubicacion; // Dirección completa del mapa (opcional)
+
+  private Double latitud; // Coordenada latitud (opcional)
+
+  private Double longitud; // Coordenada longitud (opcional)
 
   @NotBlank(message = "El equipo local es obligatorio")
   private String equipoLocal;
@@ -76,6 +84,30 @@ public class PartidoDto {
 
   public void setSede(String sede) {
     this.sede = sede;
+  }
+
+  public String getUbicacion() {
+    return ubicacion;
+  }
+
+  public void setUbicacion(String ubicacion) {
+    this.ubicacion = ubicacion;
+  }
+
+  public Double getLatitud() {
+    return latitud;
+  }
+
+  public void setLatitud(Double latitud) {
+    this.latitud = latitud;
+  }
+
+  public Double getLongitud() {
+    return longitud;
+  }
+
+  public void setLongitud(Double longitud) {
+    this.longitud = longitud;
   }
 
   public String getEquipoLocal() {

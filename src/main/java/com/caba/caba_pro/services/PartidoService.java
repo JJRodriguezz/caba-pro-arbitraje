@@ -5,6 +5,13 @@
  */
 package com.caba.caba_pro.services;
 
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.caba.caba_pro.DTOs.AsignacionDto;
 import com.caba.caba_pro.DTOs.PartidoDto;
 import com.caba.caba_pro.enums.PartidoEstado;
@@ -18,11 +25,6 @@ import com.caba.caba_pro.repositories.ArbitroRepository;
 import com.caba.caba_pro.repositories.AsignacionRepository;
 import com.caba.caba_pro.repositories.PartidoRepository;
 import com.caba.caba_pro.repositories.TorneoRepository;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
@@ -39,6 +41,7 @@ public class PartidoService {
   private final TorneoRepository torneoRepository;
   private final NotificacionService notificacionService;
   private final DisponibilidadService disponibilidadService;
+  private final GoogleMapsService googleMapsService;
 
   // 3. Constructores
   public PartidoService(
@@ -49,7 +52,8 @@ public class PartidoService {
       TorneoRepository torneoRepository,
       NotificacionService notificacionService,
       DisponibilidadService disponibilidadService,
-      AdministradorRepository administradorRepository) {
+      AdministradorRepository administradorRepository,
+      GoogleMapsService googleMapsService) {
     this.partidoRepository = partidoRepository;
     this.arbitroRepository = arbitroRepository;
     this.asignacionRepository = asignacionRepository;
@@ -57,6 +61,7 @@ public class PartidoService {
     this.torneoRepository = torneoRepository;
     this.notificacionService = notificacionService;
     this.disponibilidadService = disponibilidadService;
+    this.googleMapsService = googleMapsService;
   }
 
   // 4. Métodos públicos
@@ -90,6 +95,20 @@ public class PartidoService {
     partido.setEquipoVisitante(dto.getEquipoVisitante());
     partido.setEstado(PartidoEstado.PROGRAMADO);
     partido.setActivo(true);
+
+    // Guardar ubicación de Google Maps (opcional)
+    if (dto.getUbicacion() != null && !dto.getUbicacion().isEmpty()) {
+      partido.setUbicacion(dto.getUbicacion());
+    }
+    if (dto.getLatitud() != null && dto.getLongitud() != null) {
+      partido.setLatitud(dto.getLatitud());
+      partido.setLongitud(dto.getLongitud());
+      logger.info(
+          "Ubicación guardada: {} (lat={}, lng={})",
+          dto.getUbicacion(),
+          dto.getLatitud(),
+          dto.getLongitud());
+    }
 
     // Asociar con torneo si se especifica
     if (dto.getTorneoId() != null) {

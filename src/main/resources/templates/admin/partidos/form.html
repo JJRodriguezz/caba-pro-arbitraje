@@ -6,6 +6,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Reutilizamos el mismo CSS para que sea visualmente idéntico -->
   <link rel="stylesheet" th:href="@{/css/crear-partidos.css}" />
+  <!-- Google Maps JavaScript API -->
+  <script th:if="${googleMapsApiKey != null and !googleMapsApiKey.isEmpty()}" 
+          th:src="'https://maps.googleapis.com/maps/api/js?key=' + ${googleMapsApiKey} + '&libraries=places&callback=initMap'" 
+          async defer></script>
+  <style>
+    #map {
+      width: 100%;
+      height: 400px;
+      border-radius: 8px;
+      margin-top: 10px;
+      border: 2px solid #ddd;
+    }
+    .map-container {
+      margin-bottom: 20px;
+    }
+    .map-info {
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+      font-size: 0.9em;
+      color: #6c757d;
+    }
+  </style>
 </head>
 <body>
 <div class="container">
@@ -50,7 +74,37 @@
         <input type="text" id="sede" th:field="*{sede}" required>
         <span th:if="${#fields.hasErrors('sede')}" th:errors="*{sede}" class="error"></span>
       </div>
+    </div>
 
+    <!-- Google Maps Section (Opcional) -->
+    <div class="map-container" th:if="${googleMapsApiKey != null and !googleMapsApiKey.isEmpty()}">
+      <h3 style="margin-bottom: 10px;">📍 Ubicación del Partido (Opcional)</h3>
+      <p style="color: #6c757d; margin-bottom: 10px;">
+        Busca y selecciona la ubicación exacta del partido en el mapa. Esto ayudará a los árbitros a encontrar el lugar.
+      </p>
+      
+      <!-- Campo de búsqueda -->
+      <input type="text" 
+             id="autocomplete" 
+             placeholder="🔍 Buscar ubicación en el mapa..."
+             style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px; margin-bottom: 10px; font-size: 1em;">
+      
+      <!-- Mapa -->
+      <div id="map"></div>
+      
+      <!-- Campos ocultos para guardar coordenadas -->
+      <input type="hidden" id="ubicacion" th:field="*{ubicacion}">
+      <input type="hidden" id="latitud" th:field="*{latitud}">
+      <input type="hidden" id="longitud" th:field="*{longitud}">
+      
+      <!-- Info de ubicación seleccionada -->
+      <div class="map-info" id="map-info" style="display: none;">
+        <strong>✓ Ubicación seleccionada:</strong> <span id="selected-location"></span><br>
+        <small>Coordenadas: <span id="selected-coords"></span></small>
+      </div>
+    </div>
+
+    <div class="form-grid">
       <div class="form-group">
         <label for="torneoId">Torneo (Opcional)</label>
         <select id="torneoId" th:field="*{torneoId}">
@@ -87,5 +141,127 @@
     </div>
   </form>
 </div>
+
+<script th:inline="javascript">
+/*<![CDATA[*/
+let map;
+let marker;
+let autocomplete;
+
+// Inicializar el mapa
+function initMap() {
+  // Coordenadas por defecto (Buenos Aires, Argentina)
+  const defaultLocation = { lat: -34.6037, lng: -58.3816 };
+  
+  // Crear el mapa
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: defaultLocation,
+    zoom: 12,
+    mapTypeControl: true,
+    streetViewControl: false,
+    fullscreenControl: true
+  });
+  
+  // Crear marcador
+  marker = new google.maps.Marker({
+    map: map,
+    draggable: true,
+    animation: google.maps.Animation.DROP
+  });
+  
+  // Configurar autocomplete para búsqueda
+  const input = document.getElementById('autocomplete');
+  autocomplete = new google.maps.places.Autocomplete(input);
+  autocomplete.bindTo('bounds', map);
+  
+  // Cuando se selecciona un lugar del autocomplete
+  autocomplete.addListener('place_changed', function() {
+    const place = autocomplete.getPlace();
+    
+    if (!place.geometry) {
+      return;
+    }
+    
+    // Centrar mapa y colocar marcador
+    if (place.geometry.viewport) {
+      map.fitBounds(place.geometry.viewport);
+    } else {
+      map.setCenter(place.geometry.location);
+      map.setZoom(17);
+    }
+    
+    marker.setPosition(place.geometry.location);
+    marker.setVisible(true);
+    
+    // Guardar información
+    updateLocationInfo(place.geometry.location, place.formatted_address || place.name);
+  });
+  
+  // Click en el mapa para colocar marcador
+  map.addListener('click', function(event) {
+    marker.setPosition(event.latLng);
+    marker.setVisible(true);
+    
+    // Geocoding inverso para obtener la dirección
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ location: event.latLng }, function(results, status) {
+      if (status === 'OK' && results[0]) {
+        updateLocationInfo(event.latLng, results[0].formatted_address);
+      } else {
+        updateLocationInfo(event.latLng, 'Ubicación personalizada');
+      }
+    });
+  });
+  
+  // Arrastrar marcador
+  marker.addListener('dragend', function(event) {
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ location: event.latLng }, function(results, status) {
+      if (status === 'OK' && results[0]) {
+        updateLocationInfo(event.latLng, results[0].formatted_address);
+      } else {
+        updateLocationInfo(event.latLng, 'Ubicación personalizada');
+      }
+    });
+  });
+}
+
+// Actualizar información de ubicación
+function updateLocationInfo(location, address) {
+  // Actualizar campos ocultos
+  document.getElementById('ubicacion').value = address;
+  document.getElementById('latitud').value = location.lat();
+  document.getElementById('longitud').value = location.lng();
+  
+  // Mostrar información
+  document.getElementById('selected-location').textContent = address;
+  document.getElementById('selected-coords').textContent = 
+    `${location.lat().toFixed(6)}, ${location.lng().toFixed(6)}`;
+  document.getElementById('map-info').style.display = 'block';
+}
+
+// Si hay errores de validación y ya hay coordenadas, restaurar el mapa
+window.addEventListener('load', function() {
+  const latitudInput = document.getElementById('latitud');
+  const longitudInput = document.getElementById('longitud');
+  const ubicacionInput = document.getElementById('ubicacion');
+  
+  if (latitudInput && longitudInput && latitudInput.value && longitudInput.value) {
+    setTimeout(function() {
+      const lat = parseFloat(latitudInput.value);
+      const lng = parseFloat(longitudInput.value);
+      const location = new google.maps.LatLng(lat, lng);
+      
+      map.setCenter(location);
+      map.setZoom(15);
+      marker.setPosition(location);
+      marker.setVisible(true);
+      
+      updateLocationInfo(location, ubicacionInput.value || 'Ubicación guardada');
+    }, 500);
+  }
+});
+/*]]>*/
+</script>
 </body>
 </html>

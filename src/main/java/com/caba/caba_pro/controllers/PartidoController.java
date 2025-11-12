@@ -6,17 +6,8 @@
 package com.caba.caba_pro.controllers;
 
 // 1. Java estándar
-import com.caba.caba_pro.DTOs.AsignacionDto;
-import com.caba.caba_pro.DTOs.PartidoDto;
-import com.caba.caba_pro.exceptions.BusinessException;
-import com.caba.caba_pro.models.Arbitro;
-import com.caba.caba_pro.models.Partido;
-import com.caba.caba_pro.models.Torneo;
-import com.caba.caba_pro.services.ArbitroService;
-import com.caba.caba_pro.services.PartidoService;
-import com.caba.caba_pro.services.TorneoService;
-import jakarta.validation.Valid;
 import java.util.List;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +18,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.caba.caba_pro.DTOs.AsignacionDto;
+import com.caba.caba_pro.DTOs.PartidoDto;
+import com.caba.caba_pro.exceptions.BusinessException;
+import com.caba.caba_pro.models.Arbitro;
+import com.caba.caba_pro.models.Partido;
+import com.caba.caba_pro.models.Torneo;
+import com.caba.caba_pro.services.ArbitroService;
+import com.caba.caba_pro.services.GoogleMapsService;
+import com.caba.caba_pro.services.PartidoService;
+import com.caba.caba_pro.services.TorneoService;
+
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/admin/partidos")
@@ -40,17 +44,20 @@ public class PartidoController {
   private final ArbitroService arbitroService;
   private final TorneoService torneoService;
   private final com.caba.caba_pro.services.DisponibilidadService disponibilidadService;
+  private final GoogleMapsService googleMapsService;
 
   // 3. Constructores
   public PartidoController(
       PartidoService partidoService,
       ArbitroService arbitroService,
       TorneoService torneoService,
-      com.caba.caba_pro.services.DisponibilidadService disponibilidadService) {
+      com.caba.caba_pro.services.DisponibilidadService disponibilidadService,
+      GoogleMapsService googleMapsService) {
     this.partidoService = partidoService;
     this.arbitroService = arbitroService;
     this.torneoService = torneoService;
     this.disponibilidadService = disponibilidadService;
+    this.googleMapsService = googleMapsService;
   }
 
   // 4. Métodos públicos
@@ -68,6 +75,8 @@ public class PartidoController {
     // Añadir lista de torneos activos para el formulario
     List<Torneo> torneosActivos = torneoService.buscarTodosActivos();
     model.addAttribute("torneos", torneosActivos);
+    // Añadir API key de Google Maps para el mapa
+    model.addAttribute("googleMapsApiKey", googleMapsService.getApiKey());
     return "admin/partidos/form";
   }
 
@@ -81,6 +90,7 @@ public class PartidoController {
       // Si hay errores, volvemos a cargar la lista de torneos
       List<Torneo> torneosActivos = torneoService.buscarTodosActivos();
       model.addAttribute("torneos", torneosActivos);
+      model.addAttribute("googleMapsApiKey", googleMapsService.getApiKey());
       return "admin/partidos/form";
     }
 
