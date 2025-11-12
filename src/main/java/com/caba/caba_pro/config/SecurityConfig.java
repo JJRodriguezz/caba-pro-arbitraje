@@ -49,16 +49,13 @@ public class SecurityConfig {
                         "/swagger-ui/**",
                         "/swagger-ui.html",
                         "/v3/api-docs/**",
-                        "/api-docs/**")
+                        "/api-docs/**",
+                        "/api/auth/**") // ✅ API de autenticación - pública
                     .permitAll()
 
                     // Rutas administrativas - solo ROLE_ADMIN
                     .requestMatchers("/admin/**")
                     .hasRole("ADMIN")
-
-                    // Rutas de API REST - autenticadas
-                    .requestMatchers("/api/**")
-                    .authenticated()
 
                     // Rutas de árbitro - solo ROLE_ARBITRO
                     .requestMatchers("/arbitro/**")
@@ -67,6 +64,10 @@ public class SecurityConfig {
                     // Rutas de chat
                     .requestMatchers("/chat/**", "/ws/**")
                     .authenticated()
+
+                    // Rutas de API REST - PÚBLICAS (la autenticación la maneja Node.js con JWT)
+                    .requestMatchers("/api/**")
+                    .permitAll()
 
                     // Cualquier otra request requiere autenticación
                     .anyRequest()

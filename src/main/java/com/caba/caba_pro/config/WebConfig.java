@@ -31,7 +31,15 @@ public class WebConfig implements WebMvcConfigurer {
 
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
-    registry.addInterceptor(userInfoInterceptor);
+    // Agregar UserInfoInterceptor pero excluir rutas de API REST
+    registry
+        .addInterceptor(userInfoInterceptor)
+        .excludePathPatterns(
+            "/api/**", // Excluir todas las rutas de API REST
+            "/h2-console/**", // Excluir consola H2
+            "/swagger-ui/**", // Excluir Swagger
+            "/v3/api-docs/**"); // Excluir API docs
+
     registry.addInterceptor(localeChangeInterceptor());
   }
 
