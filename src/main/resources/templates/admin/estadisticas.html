@@ -1,45 +1,68 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-  <title>Estadísticas de Árbitros - CABA Pro</title>
+  <title>[[#{estadisticas.titulo}]] - CABA Pro</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
+  <link rel="stylesheet" th:href="@{/css/language-selector.css}" />
   <link rel="stylesheet" th:href="@{/css/estadisticas.css}" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <nav class="header-nav">
-    <div class="nav-links">
-      <a th:href="@{/admin/arbitros}">Árbitros</a>
-      <a th:href="@{/admin/partidos}">Partidos</a>
-      <a th:href="@{/admin/torneos}">Torneos</a>
-      <a th:href="@{/admin/calendario}">Calendario</a>
-      <a th:href="@{/admin/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
-    </div>
-    <div class="user-section">
-      <a th:href="@{/admin/perfil}" class="profile-link">
-        <span sec:authentication="name">Administrador</span>
-      </a>
-      <form th:action="@{/logout}" method="post" style="display: inline;">
-        <button type="submit" class="logout-btn">🔓 Salir</button>
-      </form>
-    </div>
-  </nav>
-  <div class="estadisticas-container">
-    <h1 class="estadisticas-titulo">Estadísticas de Árbitros</h1>
+  <div class="dashboard-container">
+    <nav class="header-nav">
+      <div class="nav-links">
+        <a th:href="@{/admin/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
+        <a th:href="@{/admin/arbitros}" th:text="#{nav.arbitros}">Árbitros</a>
+        <a th:href="@{/admin/partidos}" th:text="#{nav.partidos}">Partidos</a>
+        <a th:href="@{/admin/torneos}" th:text="#{nav.torneos}">Torneos</a>
+        <a th:href="@{/admin/calendario}" th:text="#{nav.calendario}">Calendario</a>
+        <a th:href="@{/admin/notificaciones}" th:title="#{nav.notificaciones}" class="notificaciones-btn">🔔</a>
+      </div>
+      <div class="user-section">
+        <a th:href="@{/admin/perfil}" class="profile-link">
+          <span sec:authentication="name">Administrador</span>
+        </a>
+        
+        <!-- Selector de Idioma -->
+        <div class="language-selector">
+          <button class="language-btn" onclick="toggleLanguageDropdown()">🌐</button>
+          <div id="languageDropdown" class="language-dropdown">
+            <a th:href="@{''(lang='es')}">
+              <span class="flag-icon">🇪🇸</span>
+              <span th:text="#{lang.spanish}">Español</span>
+            </a>
+            <a th:href="@{''(lang='en')}">
+              <span class="flag-icon">🇺🇸</span>
+              <span th:text="#{lang.english}">English</span>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Botón de Cerrar Sesión -->
+        <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 10px;">
+          <button type="submit" style="background: #dc3545; border: 2px solid #dc3545; color: white; cursor: pointer; font-size: 16px; padding: 10px 15px; font-weight: bold; border-radius: 5px;" th:text="#{nav.salir}">Salir</button>
+        </form>
+      </div>
+    </nav>
+
+    <div class="content-wrapper">
+      <div class="estadisticas-container">
+    <h1 class="estadisticas-titulo" th:text="#{estadisticas.titulo}">Estadísticas de Árbitros</h1>
     <form method="get" th:action="@{/admin/estadisticas}" class="filter-form estadisticas-filtros">
-      <label for="desde">Desde:</label>
+      <label for="desde" th:text="#{estadisticas.desde}">Desde:</label>
       <input type="date" id="desde" name="desde" th:value="${desde}" />
-      <label for="hasta">Hasta:</label>
+      <label for="hasta" th:text="#{estadisticas.hasta}">Hasta:</label>
       <input type="date" id="hasta" name="hasta" th:value="${hasta}" />
-      <button type="submit">Filtrar</button>
+      <button type="submit" th:text="#{estadisticas.filtrar}">Filtrar</button>
     </form>
 
     <section class="estadisticas-section">
-      <h2>Árbitros activos</h2>
-      <p>Total: <span th:text="${arbitrosStats.totalActivos}"></span></p>
-      <h3>Por especialidad</h3>
+      <h2 th:text="#{estadisticas.arbitros.activos}">Árbitros activos</h2>
+      <p><span th:text="#{estadisticas.total}">Total:</span> <span th:text="${arbitrosStats.totalActivos}"></span></p>
+      <h3 th:text="#{estadisticas.por.especialidad}">Por especialidad</h3>
       <ul>
         <li th:each="entry : ${arbitrosStats.cantidadPorEspecialidad}">
           <span th:text="${entry.key}"></span>: <span th:text="${entry.value}"></span>
@@ -47,9 +70,9 @@
       </ul>
       <div th:if="${arbitrosStats.cantidadPorEspecialidad == null or #lists.isEmpty(arbitrosStats.cantidadPorEspecialidad)}" class="no-data-message">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="12" fill="#fff">i</text></svg>
-        No hay datos de especialidades disponibles.
+        <span th:text="#{estadisticas.sin.datos.especialidad}">No hay datos de especialidades disponibles.</span>
       </div>
-      <h3>Por escalafón</h3>
+      <h3 th:text="#{estadisticas.por.escalafon}">Por escalafón</h3>
       <ul>
         <li th:each="entry : ${arbitrosStats.cantidadPorEscalafon}">
           <span th:text="${entry.key}"></span>: <span th:text="${entry.value}"></span>
@@ -57,29 +80,29 @@
       </ul>
       <div th:if="${arbitrosStats.cantidadPorEscalafon == null or #lists.isEmpty(arbitrosStats.cantidadPorEscalafon)}" class="no-data-message">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="12" fill="#fff">i</text></svg>
-        No hay datos de escalafón disponibles.
+        <span th:text="#{estadisticas.sin.datos.escalafon}">No hay datos de escalafón disponibles.</span>
       </div>
     </section>
 
     <section class="estadisticas-section">
-      <h2>Asignaciones</h2>
-  <p>Total: <span th:text="${asignacionesStats.totalAsignaciones}"></span></p>
-  <p>Aceptadas: <span th:text="${asignacionesStats.aceptadas}"></span> (<span th:text="${#numbers.formatDecimal(asignacionesStats.porcentajeAceptadas, 1, 1)}"></span>%)</p>
-  <p>Rechazadas: <span th:text="${asignacionesStats.rechazadas}"></span> (<span th:text="${#numbers.formatDecimal(asignacionesStats.porcentajeRechazadas, 1, 1)}"></span>%)</p>
+      <h2 th:text="#{estadisticas.asignaciones}">Asignaciones</h2>
+  <p><span th:text="#{estadisticas.total}">Total:</span> <span th:text="${asignacionesStats.totalAsignaciones}"></span></p>
+  <p><span th:text="#{estadisticas.aceptadas}">Aceptadas:</span> <span th:text="${asignacionesStats.aceptadas}"></span> (<span th:text="${#numbers.formatDecimal(asignacionesStats.porcentajeAceptadas, 1, 1)}"></span>%)</p>
+  <p><span th:text="#{estadisticas.rechazadas}">Rechazadas:</span> <span th:text="${asignacionesStats.rechazadas}"></span> (<span th:text="${#numbers.formatDecimal(asignacionesStats.porcentajeRechazadas, 1, 1)}"></span>%)</p>
       <div th:if="${asignacionesStats.totalAsignaciones == null or asignacionesStats.totalAsignaciones == 0}" class="no-data-message">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="12" fill="#fff">i</text></svg>
-        No hay datos de asignaciones disponibles.
+        <span th:text="#{estadisticas.sin.datos.asignaciones}">No hay datos de asignaciones disponibles.</span>
       </div>
     </section>
 
     <section class="estadisticas-section">
-      <h2>Top 5 Árbitros más activos</h2>
+      <h2 th:text="#{estadisticas.top5}">Top 5 Árbitros más activos</h2>
       <div style="display: flex; justify-content: center;">
         <table class="estadisticas-table top-table" th:if="${topArbitros.topArbitros != null and !#lists.isEmpty(topArbitros.topArbitros)}">
         <thead>
           <tr class="text-center">
-            <th>Nombre</th>
-            <th>Asignaciones Aceptadas</th>
+            <th th:text="#{estadisticas.top5.nombre}">Nombre</th>
+            <th th:text="#{estadisticas.top5.asignaciones}">Asignaciones Aceptadas</th>
           </tr>
         </thead>
         <tbody>
@@ -91,25 +114,25 @@
       </table>
       <div th:if="${topArbitros.topArbitros == null or #lists.isEmpty(topArbitros.topArbitros)}" class="no-data-message">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="12" fill="#fff">i</text></svg>
-        No hay datos de árbitros activos disponibles.
+        <span th:text="#{estadisticas.sin.datos.top}">No hay datos de árbitros activos disponibles.</span>
       </div>
     </section>
 
     <section class="estadisticas-section">
-      <h2>Gráficos</h2>
+      <h2 th:text="#{estadisticas.graficos}">Gráficos</h2>
       <div class="estadisticas-graficos">
         <div>
           <canvas id="graficoEspecialidad" width="400" height="200"></canvas>
           <div th:if="${arbitrosStats.cantidadPorEspecialidad == null or #lists.isEmpty(arbitrosStats.cantidadPorEspecialidad)}" class="no-data-message">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="12" fill="#fff">i</text></svg>
-            No hay datos para graficar especialidades.
+            <span th:text="#{estadisticas.sin.datos.grafico.especialidad}">No hay datos para graficar especialidades.</span>
           </div>
         </div>
         <div>
           <canvas id="graficoAsignaciones" width="400" height="200"></canvas>
           <div th:if="${asignacionesStats.totalAsignaciones == null or asignacionesStats.totalAsignaciones == 0}" class="no-data-message">
             <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><text x="12" y="16" text-anchor="middle" font-size="12" fill="#fff">i</text></svg>
-            No hay datos para graficar asignaciones.
+            <span th:text="#{estadisticas.sin.datos.grafico.asignaciones}">No hay datos para graficar asignaciones.</span>
           </div>
         </div>
       </div>
@@ -120,12 +143,16 @@
         const totalAsignaciones = /*[[${asignacionesStats != null ? asignacionesStats.totalAsignaciones : 0}]]*/ 0;
         const aceptadas = /*[[${asignacionesStats != null ? asignacionesStats.aceptadas : 0}]]*/ 0;
         const rechazadas = /*[[${asignacionesStats != null ? asignacionesStats.rechazadas : 0}]]*/ 0;
+        const labelEspecialidad = /*[[#{estadisticas.grafico.especialidad.label}]]*/ 'Árbitros por especialidad';
+        const labelAsignaciones = /*[[#{estadisticas.grafico.asignaciones.label}]]*/ 'Asignaciones';
+        const labelAceptadas = /*[[#{estadisticas.aceptadas}]]*/ 'Aceptadas';
+        const labelRechazadas = /*[[#{estadisticas.rechazadas}]]*/ 'Rechazadas';
 
         // 2) Transforma a arrays seguros en el navegador (evita #maps/#lists/#arrays)
         const especialidades = mapaEspecialidad ? Object.keys(mapaEspecialidad) : [];
         const cantidades     = mapaEspecialidad ? Object.values(mapaEspecialidad) : [];
         const datosAsignaciones = [Number(aceptadas)||0, Number(rechazadas)||0];
-        const etiquetasAsignaciones = ['Aceptadas','Rechazadas'];
+        const etiquetasAsignaciones = [labelAceptadas, labelRechazadas];
 
         // Diagnóstico en consola (mira DevTools → Console)
         console.log('[Estadísticas] especialidades:', especialidades);
@@ -140,7 +167,7 @@
                 type: 'bar',
                 data: {
                 labels: especialidades,
-                datasets: [{ label: 'Árbitros por especialidad', data: cantidades }]
+                datasets: [{ label: labelEspecialidad, data: cantidades }]
                 },
                 options: { responsive: true, maintainAspectRatio: false }
             });
@@ -152,7 +179,7 @@
                 type: 'pie',
                 data: {
                 labels: etiquetasAsignaciones,
-                datasets: [{ label: 'Asignaciones', data: datosAsignaciones }]
+                datasets: [{ label: labelAsignaciones, data: datosAsignaciones }]
                 },
                 options: { responsive: true, maintainAspectRatio: false }
             });
@@ -161,6 +188,27 @@
         /*]]>*/
         </script>
     </section>
+      </div>
+    </div>
   </div>
+
+  <script>
+  function toggleLanguageDropdown() {
+    document.getElementById("languageDropdown").classList.toggle("show");
+  }
+
+  // Cerrar el dropdown si se hace clic fuera de él
+  window.onclick = function(event) {
+    if (!event.target.matches('.language-btn')) {
+      var dropdowns = document.getElementsByClassName("language-dropdown");
+      for (var i = 0; i < dropdowns.length; i++) {
+        var openDropdown = dropdowns[i];
+        if (openDropdown.classList.contains('show')) {
+          openDropdown.classList.remove('show');
+        }
+      }
+    }
+  }
+  </script>
 </body>
 </html>

@@ -1,13 +1,24 @@
 /**
- * Archivo: PartidoController.java Autores: JJRodriguezz & Diego.Gonzalez Fecha última modificación:
- * [10.09.2025] Descripción: Controlador HTTP para administración de partidos. Proyecto: CABA Pro -
- * Sistema de Gestión Integral de Arbitraje
+ * Archivo: PartidoController.java Autores: JJRodriguezz Fecha última modificación: [10.09.2025]
+ * Descripción: Controlador HTTP para administración de partidos. Proyecto: CABA Pro - Sistema de
+ * Gestión Integral de Arbitraje
  */
 package com.caba.caba_pro.controllers;
 
 // 1. Java estándar
+import com.caba.caba_pro.DTOs.AsignacionDto;
+import com.caba.caba_pro.DTOs.PartidoDto;
+import com.caba.caba_pro.exceptions.BusinessException;
+import com.caba.caba_pro.models.Arbitro;
+import com.caba.caba_pro.models.Partido;
+import com.caba.caba_pro.models.Torneo;
+import com.caba.caba_pro.services.ArbitroService;
+import com.caba.caba_pro.services.PartidoService;
+import com.caba.caba_pro.services.TorneoService;
+import jakarta.validation.Valid;
 import java.util.List;
-
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,19 +29,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import com.caba.caba_pro.DTOs.AsignacionDto;
-import com.caba.caba_pro.DTOs.PartidoDto;
-import com.caba.caba_pro.exceptions.BusinessException;
-import com.caba.caba_pro.models.Arbitro;
-import com.caba.caba_pro.models.Partido;
-import com.caba.caba_pro.models.Torneo;
-import com.caba.caba_pro.services.ArbitroService;
-import com.caba.caba_pro.services.GoogleMapsService;
-import com.caba.caba_pro.services.PartidoService;
-import com.caba.caba_pro.services.TorneoService;
-
-import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/admin/partidos")
@@ -44,7 +42,8 @@ public class PartidoController {
   private final ArbitroService arbitroService;
   private final TorneoService torneoService;
   private final com.caba.caba_pro.services.DisponibilidadService disponibilidadService;
-  private final GoogleMapsService googleMapsService;
+  private final MessageSource messageSource;
+  private final com.caba.caba_pro.services.GoogleMapsService googleMapsService;
 
   // 3. Constructores
   public PartidoController(
@@ -52,11 +51,13 @@ public class PartidoController {
       ArbitroService arbitroService,
       TorneoService torneoService,
       com.caba.caba_pro.services.DisponibilidadService disponibilidadService,
-      GoogleMapsService googleMapsService) {
+      MessageSource messageSource,
+      com.caba.caba_pro.services.GoogleMapsService googleMapsService) {
     this.partidoService = partidoService;
     this.arbitroService = arbitroService;
     this.torneoService = torneoService;
     this.disponibilidadService = disponibilidadService;
+    this.messageSource = messageSource;
     this.googleMapsService = googleMapsService;
   }
 
@@ -75,7 +76,7 @@ public class PartidoController {
     // Añadir lista de torneos activos para el formulario
     List<Torneo> torneosActivos = torneoService.buscarTodosActivos();
     model.addAttribute("torneos", torneosActivos);
-    // Añadir API key de Google Maps para el mapa
+    // Agregar Google Maps API Key para el mapa interactivo
     model.addAttribute("googleMapsApiKey", googleMapsService.getApiKey());
     return "admin/partidos/form";
   }
@@ -90,7 +91,6 @@ public class PartidoController {
       // Si hay errores, volvemos a cargar la lista de torneos
       List<Torneo> torneosActivos = torneoService.buscarTodosActivos();
       model.addAttribute("torneos", torneosActivos);
-      model.addAttribute("googleMapsApiKey", googleMapsService.getApiKey());
       return "admin/partidos/form";
     }
 
@@ -100,7 +100,59 @@ public class PartidoController {
 
   @GetMapping("/{id}")
   public String detalle(@PathVariable Long id, Model model) {
-    cargarDatosAsignacion(id, model);
+    Partido partido = partidoService.buscarPorId(id);
+    List<Arbitro> arbitros = arbitroService.buscarTodosActivos();
+
+    // Crear mapa de disponibilidad para cada árbitro en la fecha/hora del partido
+    java.util.Map<Long, Boolean> disponibilidadArbitros = new java.util.HashMap<>();
+    java.util.Map<Long, String> motivosNoDisponible = new java.util.HashMap<>();
+
+    for (Arbitro arbitro : arbitros) {
+      boolean disponible =
+          disponibilidadService.esArbitroDisponibleEnFechaHora(
+              arbitro.getUsername(), partido.getFechaHora());
+      disponibilidadArbitros.put(arbitro.getId(), disponible);
+
+      if (!disponible) {
+        // Obtener motivo específico de no disponibilidad
+        var disponibilidadDto =
+            disponibilidadService.obtenerDisponibilidadPorUsername(arbitro.getUsername());
+        if (disponibilidadDto.isPresent()) {
+          switch (disponibilidadDto.get().getTipoDisponibilidad()) {
+            case NUNCA:
+              String mensajeNunca =
+                  messageSource.getMessage(
+                      "partido.arbitro.no.disponible", null, LocaleContextHolder.getLocale());
+              motivosNoDisponible.put(arbitro.getId(), mensajeNunca);
+              break;
+            case HORARIO_ESPECIFICO:
+              java.time.LocalTime horaPartido = partido.getFechaHora().toLocalTime();
+              String horarioArbitro =
+                  disponibilidadDto.get().getHoraInicio()
+                      + " - "
+                      + disponibilidadDto.get().getHoraFin();
+              String mensajeHorario =
+                  messageSource.getMessage(
+                      "partido.arbitro.horario.especifico",
+                      new Object[] {horarioArbitro, horaPartido},
+                      LocaleContextHolder.getLocale());
+              motivosNoDisponible.put(arbitro.getId(), mensajeHorario);
+              break;
+            case SIEMPRE:
+              String mensajeError =
+                  messageSource.getMessage(
+                      "partido.error.disponibilidad", null, LocaleContextHolder.getLocale());
+              motivosNoDisponible.put(arbitro.getId(), mensajeError);
+              break;
+          }
+        }
+      }
+    }
+
+    model.addAttribute("partido", partido);
+    model.addAttribute("arbitros", arbitros);
+    model.addAttribute("disponibilidadArbitros", disponibilidadArbitros);
+    model.addAttribute("motivosNoDisponible", motivosNoDisponible);
     model.addAttribute("asignacionDto", new AsignacionDto());
     return "admin/partidos/detalle";
   }
@@ -140,7 +192,8 @@ public class PartidoController {
 
     if (result.hasErrors()) {
       // Cargamos datos necesarios de la vista
-      cargarDatosAsignacion(id, model);
+      model.addAttribute("partido", partidoService.buscarPorId(id));
+      model.addAttribute("arbitros", arbitroService.buscarTodosActivos());
       return "admin/partidos/detalle";
     }
 
@@ -155,96 +208,22 @@ public class PartidoController {
     } catch (BusinessException e) {
       model.addAttribute("error", e.getMessage());
       // Reponer datos de la pantalla y mantener el DTO con lo que el usuario eligió
-      cargarDatosAsignacion(id, model);
+      model.addAttribute("partido", partidoService.buscarPorId(id));
+      model.addAttribute("arbitros", arbitroService.buscarTodosActivos());
       return "admin/partidos/detalle";
     }
 
     return "redirect:/admin/partidos/{id}";
   }
 
-  //  Función para cargar datos del formulario de asignación
-
-  private void cargarDatosAsignacion(Long partidoId, Model model) {
-    Partido partido = partidoService.buscarPorId(partidoId);
-
-    // Filtrar árbitros: excluir los ya asignados a este partido
-
-    List<Arbitro> todosArbitros = arbitroService.buscarTodosActivos();
-    List<Arbitro> arbitrosDisponibles =
-        todosArbitros.stream()
-            .filter(
-                arbitro ->
-                    partido.getAsignaciones().stream()
-                        .noneMatch(
-                            asignacion ->
-                                asignacion.getArbitro().getId().equals(arbitro.getId())
-                                    && asignacion.getActivo()))
-            .toList();
-
-    List<String> todasPosiciones = List.of("PRINCIPAL", "ASISTENTE 1", "ASISTENTE 2", "ANOTADOR");
-    List<String> posicionesOcupadas =
-        partido.getAsignaciones().stream()
-            .filter(asignacion -> asignacion.getActivo())
-            .map(asignacion -> asignacion.getPosicion())
-            .toList();
-
-    List<String> posicionesDisponibles =
-        todasPosiciones.stream()
-            .filter(posicion -> !posicionesOcupadas.contains(posicion))
-            .toList();
-
-    // Crear disponibilidad para cada árbitro en la fecha del partido
-
-    java.util.Map<Long, Boolean> disponibilidadArbitros = new java.util.HashMap<>();
-    java.util.Map<Long, String> motivosNoDisponible = new java.util.HashMap<>();
-
-    for (Arbitro arbitro : arbitrosDisponibles) {
-      boolean disponible =
-          disponibilidadService.esArbitroDisponibleEnFechaHora(
-              arbitro.getUsername(), partido.getFechaHora());
-
-      disponibilidadArbitros.put(arbitro.getId(), disponible);
-
-      if (!disponible) {
-
-        var disponibilidadDto =
-            disponibilidadService.obtenerDisponibilidadPorUsername(arbitro.getUsername());
-        if (disponibilidadDto.isPresent()) {
-          switch (disponibilidadDto.get().getTipoDisponibilidad()) {
-            case NUNCA:
-              motivosNoDisponible.put(arbitro.getId(), "Configurado como no disponible");
-              break;
-            case HORARIO_ESPECIFICO:
-              java.time.LocalTime horaPartido = partido.getFechaHora().toLocalTime();
-              String horarioArbitro =
-                  disponibilidadDto.get().getHoraInicio()
-                      + " - "
-                      + disponibilidadDto.get().getHoraFin();
-              motivosNoDisponible.put(
-                  arbitro.getId(),
-                  "Disponible solo de " + horarioArbitro + " (partido a las " + horaPartido + ")");
-              break;
-            case SIEMPRE:
-              motivosNoDisponible.put(arbitro.getId(), "Error en configuración de disponibilidad");
-              break;
-          }
-        }
-      }
-    }
-
-    model.addAttribute("partido", partido);
-    model.addAttribute("arbitros", arbitrosDisponibles);
-    model.addAttribute("posicionesDisponibles", posicionesDisponibles);
-    model.addAttribute("disponibilidadArbitros", disponibilidadArbitros);
-    model.addAttribute("motivosNoDisponible", motivosNoDisponible);
-  }
-
   // Eliminar partido
   @PostMapping("/{id}/eliminar")
   public String eliminar(@PathVariable Long id, RedirectAttributes ra) {
     partidoService.eliminar(id); // activo=false
-    ra.addFlashAttribute("success", "Partido eliminado correctamente.");
-    return "redirect:/admin/partidos";
+    String mensaje =
+        messageSource.getMessage("partido.eliminado.exito", null, LocaleContextHolder.getLocale());
+    ra.addFlashAttribute("success", mensaje);
+    return "redirect:/admin/partidos"; // vuelve al listado
   }
 
   @PostMapping("/{id}/editar")
@@ -264,7 +243,10 @@ public class PartidoController {
     }
 
     partidoService.actualizar(id, partidoDto);
-    ra.addFlashAttribute("success", "Partido actualizado correctamente.");
+    String mensaje =
+        messageSource.getMessage(
+            "partido.actualizado.exito", null, LocaleContextHolder.getLocale());
+    ra.addFlashAttribute("success", mensaje);
     return "redirect:/admin/partidos";
   }
 }

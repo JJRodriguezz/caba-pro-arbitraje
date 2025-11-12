@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-    <title>Editar Perfil - CABA Pro</title>
+    <title>[[#{editar.perfil.titulo}]] - CABA Pro</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/style.css}" />
@@ -14,9 +14,9 @@
 <div class="perfil-container">
     <!-- Header del formulario -->
     <div class="perfil-header">
-        <h1>✏️ Editar Perfil</h1>
-        <p th:if="${esAdmin}" class="text-muted">Administrador del Sistema</p>
-        <p th:if="${!esAdmin}" class="text-muted">Árbitro Profesional</p>
+        <h1><span>✏️</span> <span th:text="#{editar.perfil.titulo}">Editar Perfil</span></h1>
+        <p th:if="${esAdmin}" class="text-muted" th:text="#{cambiar.password.rol.admin}">Administrador del Sistema</p>
+        <p th:if="${!esAdmin}" class="text-muted" th:text="#{cambiar.password.rol.arbitro}">Árbitro Profesional</p>
     </div>
 
     <!-- Mostrar errores -->
@@ -32,21 +32,21 @@
         <!-- Información para Administrador -->
         <div th:if="${esAdmin}" class="info-section">
             <div class="info-title">
-                <span>🔧</span> Información del Administrador
+                <span>🔧</span> <span th:text="#{editar.perfil.admin.seccion}">Información del Administrador</span>
             </div>
             
             <div class="form-group">
-                <label for="fotoPerfil">Foto de Perfil</label>
+                <label for="fotoPerfil" th:text="#{editar.perfil.foto}">Foto de Perfil</label>
                 <input type="file" id="fotoPerfil" name="fotoPerfil" accept="image/*">
             </div>
             
             <div class="form-group">
-                <label for="username">Nombre de Usuario:</label>
+                <label for="username" th:text="#{editar.perfil.admin.username}">Nombre de Usuario:</label>
                 <input type="text" 
                        id="username" 
                        th:field="*{username}" 
                        class="form-control"
-                       placeholder="Ingrese el nombre de usuario" />
+                       th:placeholder="#{editar.perfil.admin.username.placeholder}" />
                 <span th:if="${#fields.hasErrors('username')}" 
                       th:errors="*{username}" 
                       class="error-message"></span>
@@ -56,50 +56,50 @@
         <!-- Información para Árbitro -->
         <div th:if="${!esAdmin}" class="perfil-info">
             <div class="form-group">
-                <label for="fotoPerfil">Foto de Perfil</label>
+                <label for="fotoPerfil" th:text="#{editar.perfil.foto}">Foto de Perfil</label>
                 <input type="file" id="fotoPerfil" name="fotoPerfil" accept="image/*">
             </div>
             <!-- Información Personal -->
             <div class="info-section">
                 <div class="info-title">
-                    <span>👤</span> Información Personal
+                    <span>👤</span> <span th:text="#{editar.perfil.personal.seccion}">Información Personal</span>
                 </div>
                 
                 <div class="form-group">
-                    <label for="nombre">Nombre:</label>
+                    <label for="nombre" th:text="#{editar.perfil.personal.nombre}">Nombre:</label>
                     <input type="text" 
                            id="nombre" 
                            th:field="*{nombre}" 
                            class="form-control"
-                           placeholder="Ingrese su nombre" />
+                           th:placeholder="#{editar.perfil.personal.nombre.placeholder}" />
                     <span th:if="${#fields.hasErrors('nombre')}" 
                           th:errors="*{nombre}" 
                           class="error-message"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="apellidos">Apellidos:</label>
+                    <label for="apellidos" th:text="#{editar.perfil.personal.apellidos}">Apellidos:</label>
                     <input type="text" 
                            id="apellidos" 
                            th:field="*{apellidos}" 
                            class="form-control"
-                           placeholder="Ingrese sus apellidos" />
+                           th:placeholder="#{editar.perfil.personal.apellidos.placeholder}" />
                     <span th:if="${#fields.hasErrors('apellidos')}" 
                           th:errors="*{apellidos}" 
                           class="error-message"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="numeroIdentificacion">Número de Identificación:</label>
+                    <label for="numeroIdentificacion" th:text="#{editar.perfil.personal.numero.id}">Número de Identificación:</label>
                     <input type="text" 
                            id="numeroIdentificacion" 
                            th:field="*{numeroIdentificacion}" 
                            class="form-control"
-                           placeholder="Ingrese su número de identificación" />
+                           th:placeholder="#{editar.perfil.personal.numero.id.placeholder}" />
                 </div>
 
                 <div class="form-group">
-                    <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+                    <label for="fechaNacimiento" th:text="#{editar.perfil.personal.fecha.nacimiento}">Fecha de Nacimiento:</label>
                     <input type="date" 
                            id="fechaNacimiento" 
                            th:field="*{fechaNacimiento}" 
@@ -110,43 +110,43 @@
             <!-- Información de Contacto -->
             <div class="info-section">
                 <div class="info-title">
-                    <span>📧</span> Contacto
+                    <span>📧</span> <span th:text="#{editar.perfil.contacto.seccion}">Contacto</span>
                 </div>
                 
                 <div class="form-group">
-                    <label for="email">Email:</label>
+                    <label for="email" th:text="#{editar.perfil.contacto.email}">Email:</label>
                     <input type="email" 
                            id="email" 
                            th:field="*{email}" 
                            class="form-control"
-                           placeholder="Ingrese su email" />
+                           th:placeholder="#{editar.perfil.contacto.email.placeholder}" />
                     <span th:if="${#fields.hasErrors('email')}" 
                           th:errors="*{email}" 
                           class="error-message"></span>
                 </div>
 
                 <div class="form-group">
-                    <label for="telefono">Teléfono:</label>
+                    <label for="telefono" th:text="#{editar.perfil.contacto.telefono}">Teléfono:</label>
                     <input type="tel" 
                            id="telefono" 
                            th:field="*{telefono}" 
                            class="form-control"
-                           placeholder="Ingrese su teléfono" />
+                           th:placeholder="#{editar.perfil.contacto.telefono.placeholder}" />
                 </div>
             </div>
 
             <!-- Información Profesional -->
             <div class="info-section">
                 <div class="info-title">
-                    <span>⚽</span> Información Profesional
+                    <span>⚽</span> <span th:text="#{editar.perfil.profesional.seccion}">Información Profesional</span>
                 </div>
                 
                 <div class="form-group">
-                    <label for="especialidad">Especialidad:</label>
+                    <label for="especialidad" th:text="#{editar.perfil.profesional.especialidad}">Especialidad:</label>
                     <select id="especialidad" 
                             th:field="*{especialidad}" 
                             class="form-control">
-                        <option value="">Seleccione una especialidad</option>
+                        <option value="" th:text="#{editar.perfil.profesional.especialidad.seleccionar}">Seleccione una especialidad</option>
                         <option th:each="esp : ${especialidades}" 
                                 th:value="${esp}" 
                                 th:text="${esp.descripcion}"></option>
@@ -154,12 +154,12 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="escalafon">Escalafón:</label>
+                    <label for="escalafon" th:text="#{editar.perfil.profesional.escalafon}">Escalafón:</label>
                     <input type="text" 
                            id="escalafon" 
                            th:field="*{escalafon}" 
                            class="form-control"
-                           placeholder="Ingrese su escalafón" />
+                           th:placeholder="#{editar.perfil.profesional.escalafon.placeholder}" />
                 </div>
             </div>
         </div>
@@ -167,7 +167,7 @@
         <!-- Estado común -->
         <div class="info-section">
             <div class="info-title">
-                <span>⚙️</span> Estado
+                <span>⚙️</span> <span th:text="#{editar.perfil.estado.seccion}">Estado</span>
             </div>
             
             <div class="form-group">
@@ -176,17 +176,17 @@
                            th:field="*{activo}" 
                            class="form-checkbox" />
                     <span class="checkmark"></span>
-                    Usuario Activo
+                    <span th:text="#{editar.perfil.estado.activo}">Usuario Activo</span>
                 </label>
-                <small class="help-text">Desmarque para establecer como "Ausente"</small>
+                <small class="help-text" th:text="#{editar.perfil.estado.help}">Desmarque para establecer como "Ausente"</small>
             </div>
         </div>
 
         <!-- Botones de acción -->
         <div class="actions-section">
             <a th:href="${esAdmin ? '/admin/perfil' : '/arbitro/perfil'}" 
-               class="btn btn-secondary">❌ Cancelar</a>
-            <button type="submit" class="btn btn-primary">💾 Guardar Cambios</button>
+               class="btn btn-secondary"><span>❌</span> <span th:text="#{btn.cancelar}">Cancelar</span></a>
+            <button type="submit" class="btn btn-primary"><span>💾</span> <span th:text="#{editar.perfil.btn.guardar}">Guardar Cambios</span></button>
         </div>
     </form>
 </div>

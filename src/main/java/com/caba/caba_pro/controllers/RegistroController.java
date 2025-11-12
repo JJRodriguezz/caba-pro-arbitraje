@@ -10,6 +10,8 @@ import com.caba.caba_pro.DTOs.RegistroForm;
 import com.caba.caba_pro.exceptions.BusinessException;
 import com.caba.caba_pro.services.RegistroService;
 import jakarta.validation.Valid;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,10 +25,12 @@ public class RegistroController {
 
   // 2. Variables de instancia
   private final RegistroService registroService;
+  private final MessageSource messageSource;
 
   // 3. Constructores
-  public RegistroController(RegistroService registroService) {
+  public RegistroController(RegistroService registroService, MessageSource messageSource) {
     this.registroService = registroService;
+    this.messageSource = messageSource;
   }
 
   // 4. Métodos públicos
@@ -46,7 +50,10 @@ public class RegistroController {
 
     // Validación de contraseñas coincidentes
     if (!registroForm.getPassword().equals(registroForm.getConfirmPassword())) {
-      result.rejectValue("confirmPassword", "error.registroForm", "Las contraseñas no coinciden");
+      String mensaje =
+          messageSource.getMessage(
+              "registro.password.no.coinciden", null, LocaleContextHolder.getLocale());
+      result.rejectValue("confirmPassword", "error.registroForm", mensaje);
     }
 
     if (result.hasErrors()) {
@@ -55,13 +62,17 @@ public class RegistroController {
 
     try {
       registroService.registrarAdministrador(registroForm);
-      flash.addFlashAttribute("success", "Administrador registrado exitosamente");
+      String mensaje =
+          messageSource.getMessage("registro.admin.exito", null, LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("success", mensaje);
       return "redirect:/login?registroExitoso";
     } catch (BusinessException e) {
       model.addAttribute("error", e.getMessage());
       return "registro";
     } catch (Exception e) {
-      model.addAttribute("error", "Error interno del sistema");
+      String mensaje =
+          messageSource.getMessage("registro.error.sistema", null, LocaleContextHolder.getLocale());
+      model.addAttribute("error", mensaje);
       return "registro";
     }
   }

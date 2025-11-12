@@ -2,77 +2,106 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Partido – Asignar Árbitro</title>
+  <title>[[#{partido.titulo.prefix}]] [[${partido.nombre}]]</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" th:href="@{/css/partidos.css}" />
-  <link rel="stylesheet" th:href="@{/css/partido-detalle.css}" />
+  <style>
+    .no-disponible {
+      color: #999 !important;
+      background-color: #f5f5f5 !important;
+    }
+    
+    .disponible {
+      color: #28a745;
+    }
+    
+    .arbitro-disponibilidad-info {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+    
+    .info-disponible {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    
+    .info-no-disponible {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
 </head>
 <body>
 <div class="container">
+  <!-- Nav -->
   <div class="nav-bar">
     <div class="nav-links">
-      <a th:href="@{/admin/dashboard}">Dashboard</a>
-      <a th:href="@{/admin/arbitros}">Árbitros</a>
-      <a th:href="@{/admin/partidos}" class="active">Partidos</a>
-      <a th:href="@{/admin/torneos}">Torneos</a>
-      <a th:href="@{/admin/calendario}">Calendario</a>
-      <a th:href="@{/admin/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
+      <a th:href="@{/admin/dashboard}" th:text="#{title.dashboard}">Dashboard</a>
+      <a th:href="@{/admin/arbitros}" th:text="#{nav.arbitros}">Árbitros</a>
+      <a th:href="@{/admin/partidos}" class="active" th:text="#{nav.partidos}">Partidos</a>
+      <a th:href="@{/admin/torneos}" th:text="#{nav.torneos}">Torneos</a>
+      <a th:href="@{/admin/calendario}" th:text="#{nav.calendario}">Calendario</a>
+      <a th:href="@{/admin/notificaciones}" th:title="#{nav.notificaciones}" class="notificaciones-btn">🔔</a>
     </div>
     <div class="user-info">
       <a th:href="@{/admin/perfil}" class="profile-link">
         <span th:text="${#authentication.name}">Administrador</span>
       </a>
       <form th:action="@{/logout}" method="post" style="display:inline;">
-        <button type="submit" class="logout-btn">Salir</button>
+        <button type="submit" class="logout-btn" th:text="#{nav.salir}">Salir</button>
       </form>
     </div>
   </div>
 
-
+  <!-- Mensajes -->
   <div th:if="${success}" class="message success" th:text="${success}"></div>
   <div th:if="${error}" class="message error" th:text="${error}"></div>
 
-
+  <!-- Header -->
   <div class="header">
-    <h1 th:text="${'Partido: ' + partido.nombre}">Partido</h1>
+    <h1><span th:text="#{partido.titulo.prefix}">Partido:</span> <span th:text="${partido.nombre}">Partido</span></h1>
     <div class="action-buttons">
-      <a th:href="@{/admin/partidos}" class="btn btn-secondary">Volver</a>
-      <a th:href="@{'/admin/partidos/' + ${partido.id} + '/editar'}" class="btn btn-primary">Editar</a>
+      <a th:href="@{/admin/partidos}" class="btn btn-secondary" th:text="#{partido.volver}">Volver</a>
+      <a th:href="@{'/admin/partidos/' + ${partido.id} + '/editar'}" class="btn btn-primary" th:text="#{partido.editar}">Editar</a>
     </div>
   </div>
 
+  <!-- Contenido: dos columnas -->
   <div class="grid-2">
-
+    <!-- Columna izquierda: info + asignaciones -->
     <section class="card">
-      <h2 style="margin-top:0;">Información</h2>
+      <h2 style="margin-top:0;" th:text="#{partido.informacion}">Información</h2>
       <ul class="info-list">
-        <li><b>Fecha:</b> <span th:text="${#temporals.format(partido.fechaHora,'dd/MM/yyyy HH:mm')}">01/01/2026 19:00</span></li>
-        <li><b>Sede:</b> <span th:text="${partido.sede}">Coliseo</span></li>
-        <li><b>Equipos:</b>
+        <li><b th:text="#{partido.fecha}">Fecha:</b> <span th:text="${#temporals.format(partido.fechaHora,'dd/MM/yyyy HH:mm')}">01/01/2026 19:00</span></li>
+        <li><b th:text="#{partido.sede}">Sede:</b> <span th:text="${partido.sede}">Coliseo</span></li>
+        <li><b th:text="#{partido.equipos}">Equipos:</b>
           <span th:text="${partido.equipoLocal}">Local</span>
-          vs
+          <span th:text="#{partido.vs}">vs</span>
           <span th:text="${partido.equipoVisitante}">Visitante</span>
         </li>
-        <li><b>Estado:</b>
+        <li><b th:text="#{partido.estado}">Estado:</b>
           <span class="status-badge"
                 th:class="'status-badge status-' + ${#strings.toLowerCase(partido.estado)}"
                 th:text="${partido.estado}">PROGRAMADO</span>
         </li>
       </ul>
 
-      <h2>Asignaciones</h2>
+      <h2 th:text="#{partido.asignaciones.titulo}">Asignaciones</h2>
       <table>
         <thead>
           <tr>
-            <th>Árbitro</th>
-            <th>Posición</th>
-            <th>Estado</th>
-            <th>Asignado</th>
+            <th th:text="#{partido.asignaciones.arbitro}">Árbitro</th>
+            <th th:text="#{partido.asignaciones.posicion}">Posición</th>
+            <th th:text="#{partido.asignaciones.estado}">Estado</th>
+            <th th:text="#{partido.asignaciones.asignado}">Asignado</th>
           </tr>
         </thead>
         <tbody>
           <tr th:if="${#lists.isEmpty(partido.asignaciones)}">
-            <td colspan="4">Sin asignaciones aún.</td>
+            <td colspan="4" th:text="#{partido.asignaciones.sin}">Sin asignaciones aún.</td>
           </tr>
           <tr th:each="a : ${partido.asignaciones}">
             <td th:text="${a.arbitro.nombre + ' ' + a.arbitro.apellidos}">Nombre</td>
@@ -88,33 +117,20 @@
       </table>
     </section>
 
+    <!-- Columna derecha: formulario de asignación -->
     <section class="card">
-      <h2 id="asignar" style="margin-top:0;">Asignar Árbitro</h2>
-      
-      <!-- Verificar si hay árbitros y posiciones disponibles -->
-      <div th:if="${#lists.isEmpty(arbitros) || #lists.isEmpty(posicionesDisponibles)}">
-        <div class="message error">
-          <p th:if="${#lists.isEmpty(arbitros)}">
-            ⚠️ No hay árbitros disponibles para asignar. Todos los árbitros activos ya están asignados a este partido.
-          </p>
-          <p th:if="${#lists.isEmpty(posicionesDisponibles)}">
-            ⚠️ No hay posiciones disponibles. Todas las posiciones ya están ocupadas para este partido.
-          </p>
-        </div>
-      </div>
-      
-      <form th:if="${!#lists.isEmpty(arbitros) && !#lists.isEmpty(posicionesDisponibles)}"
-            th:action="@{'/admin/partidos/' + ${partido.id} + '/asignar'}"
+      <h2 id="asignar" style="margin-top:0;" th:text="#{partido.asignar.titulo}">Asignar Árbitro</h2>
+      <form th:action="@{'/admin/partidos/' + ${partido.id} + '/asignar'}"
             th:object="${asignacionDto}"
             method="post">
         <div class="form-grid">
           <div class="form-group">
-            <label for="arbitroId">Árbitro *</label>
+            <label for="arbitroId" th:text="#{partido.asignar.arbitro.label}">Árbitro *</label>
             <select id="arbitroId" th:field="*{arbitroId}" required>
-              <option value="">Selecciona un árbitro</option>
+              <option value="" th:text="#{partido.asignar.arbitro.seleccionar}">Selecciona un árbitro</option>
               <option th:each="arb : ${arbitros}"
                       th:value="${arb.id}"
-                      th:text="${arb.nombre + ' ' + arb.apellidos + (disponibilidadArbitros[arb.id] ? ' ✓ (Disponible)' : ' ✗ (No disponible)')}"
+                      th:text="${arb.nombre + ' ' + arb.apellidos + (disponibilidadArbitros[arb.id] ? ' ✓ (' + #{partido.asignar.disponible} + ')' : ' ✗ (' + #{partido.asignar.no.disponible} + ')')}"
                       th:disabled="${!disponibilidadArbitros[arb.id]}"
                       th:class="${disponibilidadArbitros[arb.id] ? 'disponible' : 'no-disponible'}">
               </option>
@@ -126,20 +142,21 @@
           </div>
 
           <div class="form-group">
-            <label for="posicion">Posición *</label>
+            <label for="posicion" th:text="#{partido.asignar.posicion.label}">Posición *</label>
             <select id="posicion" th:field="*{posicion}" required>
-              <option value="">Selecciona posición</option>
-              <option th:each="pos : ${posicionesDisponibles}" 
-                      th:value="${pos}" 
-                      th:text="${pos}">PRINCIPAL</option>
+              <option value="" th:text="#{partido.asignar.posicion.seleccionar}">Selecciona posición</option>
+              <option value="PRINCIPAL" th:text="#{partido.asignar.posicion.principal}">PRINCIPAL</option>
+              <option value="ASISTENTE 1" th:text="#{partido.asignar.posicion.asistente1}">ASISTENTE 1</option>
+              <option value="ASISTENTE 2" th:text="#{partido.asignar.posicion.asistente2}">ASISTENTE 2</option>
+              <option value="ANOTADOR" th:text="#{partido.asignar.posicion.anotador}">ANOTADOR</option>
             </select>
             <span th:if="${#fields.hasErrors('posicion')}" th:errors="*{posicion}" class="error"></span>
           </div>
         </div>
 
         <div class="buttons" style="margin-top:12px;">
-          <a th:href="@{/admin/partidos}" class="btn btn-secondary">Cancelar</a>
-          <button type="submit" class="btn btn-primary">Asignar</button>
+          <a th:href="@{/admin/partidos}" class="btn btn-secondary" th:text="#{btn.cancelar}">Cancelar</a>
+          <button type="submit" class="btn btn-primary" th:text="#{partido.asignar.btn}">Asignar</button>
         </div>
       </form>
     </section>
@@ -151,15 +168,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const arbitroSelect = document.getElementById('arbitroId');
   const arbitroInfo = document.getElementById('arbitro-info');
   
-  // Verificar si los elementos existen antes de continuar
-
-  if (!arbitroSelect || !arbitroInfo) {
-    return;
-  }
-  
   // Mapas de disponibilidad desde el controlador
   const disponibilidadArbitros = /*[[${disponibilidadArbitros}]]*/ {};
   const motivosNoDisponible = /*[[${motivosNoDisponible}]]*/ {};
+  
+  // Textos internacionalizados
+  const textoDisponible = /*[[#{partido.asignar.info.disponible}]]*/ 'Árbitro disponible para este horario';
+  const textoNoDisponibleDefault = /*[[#{partido.asignar.info.no.disponible.default}]]*/ 'No disponible';
   
   arbitroSelect.addEventListener('change', function() {
     const arbitroId = this.value;
@@ -169,9 +184,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const disponible = disponibilidadArbitros[arbitroId];
       
       if (disponible) {
-        arbitroInfo.innerHTML = '<span class="info-disponible">✓ Árbitro disponible para este horario</span>';
+        arbitroInfo.innerHTML = '<span class="info-disponible">✓ ' + textoDisponible + '</span>';
       } else {
-        const motivo = motivosNoDisponible[arbitroId] || 'No disponible';
+        const motivo = motivosNoDisponible[arbitroId] || textoNoDisponibleDefault;
         arbitroInfo.innerHTML = '<span class="info-no-disponible">✗ ' + motivo + '</span>';
       }
     }

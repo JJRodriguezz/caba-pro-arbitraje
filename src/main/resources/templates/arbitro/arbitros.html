@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Árbitros - CABA Pro</title>
+    <title>[[#{arbitros.titulo}]] - CABA Pro</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/arbitros.css}" />
@@ -12,19 +12,19 @@
     <!-- Navigation -->
     <div class="nav-bar">
         <div class="nav-links">
-            <a th:href="@{/admin/dashboard}">Dashboard</a>
-            <a href="#" class="active">Árbitros</a>
-            <a th:href="@{/admin/partidos}">Partidos</a>
-            <a th:href="@{/admin/torneos}">Torneos</a>
-            <a th:href="@{/admin/calendario}">Calendario</a>
-            <a th:href="@{/arbitro/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
+            <a th:href="@{/admin/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
+            <a href="#" class="active" th:text="#{nav.arbitros}">Árbitros</a>
+            <a th:href="@{/admin/partidos}" th:text="#{nav.partidos}">Partidos</a>
+            <a th:href="@{/admin/torneos}" th:text="#{nav.torneos}">Torneos</a>
+            <a th:href="@{/admin/calendario}" th:text="#{nav.calendario}">Calendario</a>
+            <a th:href="@{/arbitro/notificaciones}" th:title="#{nav.notificaciones}" class="notificaciones-btn">🔔</a>
         </div>
         <div class="user-info">
             <a th:href="@{/arbitro/perfil}" class="profile-link">
                 <span th:text="${#authentication.name}">Árbitro</span>
             </a>
             <form th:action="@{/logout}" method="post" style="display: inline;">
-                <button type="submit" class="logout-btn">Salir</button>
+                <button type="submit" class="logout-btn" th:text="#{btn.salir}">Salir</button>
             </form>
         </div>
     </div>
@@ -35,10 +35,10 @@
 
     <!-- Header -->
     <div class="header">
-        <h1>Gestión de Árbitros</h1>
+        <h1 th:text="#{arbitros.gestion}">Gestión de Árbitros</h1>
         <div class="action-buttons">
-            <a href="#" class="btn btn-secondary">Exportar Excel</a>
-            <a th:href="@{/admin/arbitros/nuevo}" class="btn btn-primary">Crear Árbitro</a>
+            <a href="#" class="btn btn-secondary" th:text="#{arbitros.exportar}">Exportar Excel</a>
+            <a th:href="@{/admin/arbitros/nuevo}" class="btn btn-primary" th:text="#{arbitros.crear}">Crear Árbitro</a>
         </div>
     </div>
 
@@ -47,14 +47,14 @@
         <table>
             <thead>
             <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Apellidos</th>
-                <th>Número ID</th>
-                <th>Email</th>
-                <th>Especialidad</th>
-                <th>Escalafón</th>
-                <th>Acciones</th>
+                <th th:text="#{arbitros.tabla.id}">ID</th>
+                <th th:text="#{arbitros.tabla.nombre}">Nombre</th>
+                <th th:text="#{arbitros.tabla.apellidos}">Apellidos</th>
+                <th th:text="#{arbitros.tabla.numero.id}">Número ID</th>
+                <th th:text="#{arbitros.tabla.email}">Email</th>
+                <th th:text="#{arbitros.tabla.especialidad}">Especialidad</th>
+                <th th:text="#{arbitros.tabla.escalafon}">Escalafón</th>
+                <th th:text="#{arbitros.tabla.acciones}">Acciones</th>
             </tr>
             </thead>
             <tbody>
@@ -72,10 +72,11 @@
                 <td th:text="${arbitro.escalafon}">FIBA</td>
                 <td>
                     <div class="action-links">
-                        <a th:href="@{/admin/arbitros/editar/{id}(id=${arbitro.id})}" class="edit-btn">Editar</a>
+                        <a th:href="@{/admin/arbitros/editar/{id}(id=${arbitro.id})}" class="edit-btn" th:text="#{arbitros.editar}">Editar</a>
                         <a th:href="@{/admin/arbitros/eliminar/{id}(id=${arbitro.id})}"
                            class="delete-btn"
-                           onclick="return confirm('¿Seguro que quieres eliminar este árbitro?')">Eliminar</a>
+                           th:onclick="'return confirm(\'' + #{arbitros.eliminar.confirmar} + '\');'"
+                           th:text="#{arbitros.eliminar}">Eliminar</a>
                     </div>
                 </td>
             </tr>
@@ -85,9 +86,9 @@
 
     <!-- Empty State -->
     <div th:if="${#lists.isEmpty(arbitros)}" class="empty-state">
-        <h3>No hay árbitros registrados</h3>
-        <p>Comienza creando el primer árbitro en el sistema</p>
-        <a th:href="@{/admin/arbitros/nuevo}" class="btn btn-primary">Crear Primer Árbitro</a>
+        <h3 th:text="#{arbitros.vacio.titulo}">No hay árbitros registrados</h3>
+        <p th:text="#{arbitros.vacio.mensaje}">Comienza creando el primer árbitro en el sistema</p>
+        <a th:href="@{/admin/arbitros/nuevo}" class="btn btn-primary" th:text="#{arbitros.vacio.btn}">Crear Primer Árbitro</a>
     </div>
 </div>
 </body>

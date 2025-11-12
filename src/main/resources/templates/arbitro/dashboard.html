@@ -2,10 +2,11 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-  <title>Dashboard Árbitro - CABA Pro</title>
+  <title>[[#{title.dashboard}]] - CABA Pro</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" th:href="@{/css/arbitro-dashboard.css}" />
+  <link rel="stylesheet" th:href="@{/css/language-selector.css}" />
   
   <!-- SockJS y STOMP para WebSockets -->
   <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
@@ -19,37 +20,57 @@
   <!-- Header Navigation -->
   <nav class="header-nav">
     <div class="nav-links">
-      <a href="#" class="active">Dashboard</a>
-      <a th:href="@{/arbitro/asignaciones}">Mis Asignaciones</a>
-      <a th:href="@{/arbitro/calendario}">Calendario</a>
-      <a th:href="@{/arbitro/disponibilidad}">Disponibilidad</a>
-      <a th:href="@{/arbitro/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
+      <a href="#" class="active" th:text="#{title.dashboard}">Dashboard</a>
+      <a th:href="@{/arbitro/asignaciones}" th:text="#{arbitro.mis.asignaciones}">Mis Asignaciones</a>
+      <a th:href="@{/arbitro/calendario}" th:text="#{nav.calendario}">Calendario</a>
+      <a th:href="@{/arbitro/disponibilidad}" th:text="#{nav.disponibilidad}">Disponibilidad</a>
+      <a th:href="@{/arbitro/notificaciones}" th:title="#{nav.notificaciones}" class="notificaciones-btn">🔔</a>
     </div>
     <div class="user-section">
       <a th:href="@{/arbitro/perfil}" class="profile-link">
         <span sec:authentication="name">Árbitro</span>
       </a>
-      <form th:action="@{/logout}" method="post" style="display: inline;">
-        <button type="submit" class="logout-btn">🔓 Salir</button>
+      
+      <!-- Selector de Idioma -->
+      <div class="language-selector">
+        <button class="language-btn" onclick="toggleLanguageDropdown()">🌐</button>
+        <div id="languageDropdown" class="language-dropdown">
+          <a th:href="@{''(lang='es')}">
+            <span class="flag-icon">🇪🇸</span>
+            <span th:text="#{lang.spanish}">Español</span>
+          </a>
+          <a th:href="@{''(lang='en')}">
+            <span class="flag-icon">🇺🇸</span>
+            <span th:text="#{lang.english}">English</span>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Botón de Cerrar Sesión -->
+      <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 10px;">
+        <button type="submit" style="background: #dc3545; border: 2px solid #dc3545; color: white; cursor: pointer; font-size: 16px; padding: 10px 15px; font-weight: bold; border-radius: 5px;" th:text="#{nav.salir}">Salir</button>
       </form>
     </div>
   </nav>
 
   <!-- Main Panel -->
   <div class="main-panel">
-    <h1 class="welcome-title">Bienvenido <span sec:authentication="name">José</span></h1>
-    <p class="welcome-subtitle">Estás en la vista de Árbitro</p>
+    <h1 class="welcome-title"><span th:text="#{dashboard.welcome}">Bienvenido</span> <span sec:authentication="name">José</span></h1>
+    <p class="welcome-subtitle" th:text="#{dashboard.arbitro.subtitle}">Estás en la vista de Árbitro</p>
 
     <!-- Acciones principales del árbitro -->
     <div class="arbitro-actions">
       <a href="/arbitro/asignaciones" class="action-btn">
-        📋 Ver Mis Asignaciones
+        <span>📋</span> <span th:text="#{arbitro.ver.asignaciones}">Ver Mis Asignaciones</span>
       </a>
       <a href="/arbitro/calendario" class="action-btn secondary">
-        📅 Mi Calendario
+        <span>📅</span> <span th:text="#{arbitro.mi.calendario}">Mi Calendario</span>
       </a>
       <a href="/arbitro/disponibilidad" class="action-btn tertiary">
-        ⏰ Gestionar Disponibilidad
+        <span>⏰</span> <span th:text="#{arbitro.gestionar.disponibilidad}">Gestionar Disponibilidad</span>
+      </a>
+      <a href="/arbitro/liquidaciones" class="action-btn tertiary">
+        <span>💰</span> <span th:text="#{arbitro.mis.liquidaciones}">Mis Liquidaciones</span>
       </a>
     </div>
   </div>
@@ -59,5 +80,24 @@
 <div th:replace="~{chat :: chatWidget}"></div>
 
 <script th:replace="~{chat :: chatScripts}"></script>
+
+<script>
+function toggleLanguageDropdown() {
+    document.getElementById("languageDropdown").classList.toggle("show");
+}
+
+// Cerrar el dropdown si se hace clic fuera de él
+window.onclick = function(event) {
+    if (!event.target.matches('.language-btn')) {
+        var dropdowns = document.getElementsByClassName("language-dropdown");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+</script>
 </body>
 </html>

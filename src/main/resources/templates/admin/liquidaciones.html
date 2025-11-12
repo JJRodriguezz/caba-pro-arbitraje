@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
+      lang="es">
+<head>
+  <title>Liquidación de Pagos - CABA Pro</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
+  <link rel="stylesheet" th:href="@{/css/language-selector.css}" />
+  <link rel="stylesheet" th:href="@{/css/liquidaciones.css}" />
+</head>
+<body>
+  <div class="dashboard-container">
+    <nav class="header-nav">
+      <div class="nav-links">
+        <a th:href="@{/admin/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
+        <a th:href="@{/admin/arbitros}" th:text="#{nav.arbitros}">Árbitros</a>
+        <a th:href="@{/admin/partidos}" th:text="#{nav.partidos}">Partidos</a>
+        <a th:href="@{/admin/torneos}" th:text="#{nav.torneos}">Torneos</a>
+        <a th:href="@{/admin/calendario}" th:text="#{nav.calendario}">Calendario</a>
+        <a th:href="@{/admin/notificaciones}" th:title="#{nav.notificaciones}" class="notificaciones-btn">🔔</a>
+      </div>
+      <div class="user-section">
+        <a th:href="@{/admin/perfil}" class="profile-link">
+          <span sec:authentication="name">Administrador</span>
+        </a>
+        
+        <!-- Selector de Idioma -->
+        <div class="language-selector">
+          <button class="language-btn" onclick="toggleLanguageDropdown()">🌐</button>
+          <div id="languageDropdown" class="language-dropdown">
+            <a th:href="@{''(lang='es')}">
+              <span class="flag-icon">🇪🇸</span>
+              <span th:text="#{lang.spanish}">Español</span>
+            </a>
+            <a th:href="@{''(lang='en')}">
+              <span class="flag-icon">🇺🇸</span>
+              <span th:text="#{lang.english}">English</span>
+            </a>
+          </div>
+        </div>
+        
+        <form th:action="@{/logout}" method="post" style="display: inline;">
+          <button type="submit" class="logout-btn" th:text="#{nav.salir}">Salir</button>
+        </form>
+      </div>
+    </nav>
+
+    <div class="content-wrapper">
+      <div class="liquidacion-container">
+    <h1 class="liquidacion-titulo" th:text="#{admin.liquidaciones.titulo}"> Liquidación de Pagos a Árbitros</h1>
+    <p class="liquidacion-subtitulo" th:text="#{admin.liquidaciones.subtitulo}">Genera reportes de liquidación para el posterior pago a los árbitros</p>
+
+    <!-- Formulario de filtros -->
+    <form method="get" th:action="@{/admin/liquidaciones}" class="filter-form">
+      <div class="form-group">
+        <label for="fechaInicio"> <span th:text="#{admin.liquidaciones.fecha.inicio}">Fecha de Inicio</span></label>
+        <input type="date" id="fechaInicio" name="fechaInicio" th:value="${fechaInicio}" required />
+      </div>
+      <div class="form-group">
+        <label for="fechaFin"> <span th:text="#{admin.liquidaciones.fecha.fin}">Fecha de Fin</span></label>
+        <input type="date" id="fechaFin" name="fechaFin" th:value="${fechaFin}" required />
+      </div>
+      <div class="btn-group">
+        <button type="submit" class="btn btn-primary"> <span th:text="#{admin.liquidaciones.btn.generar}">Generar Liquidación</span></button>
+        <a th:if="${mostrarResultados}" 
+           th:href="@{/api/liquidaciones/excel(fechaInicio=${fechaInicio},fechaFin=${fechaFin})}" 
+           class="btn btn-success">
+           <span th:text="#{admin.liquidaciones.btn.descargar}">Descargar Excel</span>
+        </a>
+      </div>
+    </form>
+
+    <!-- Mensaje de error -->
+    <div th:if="${error}" class="alert alert-danger">
+      <span></span>
+      <span th:text="${error}"></span>
+    </div>
+
+    <!-- Mensaje informativo si no hay resultados -->
+    <div th:if="${mostrarResultados == null and error == null}" class="alert alert-info">
+      <span>ℹ️</span>
+      <span th:text="#{admin.liquidaciones.info.seleccion}">Selecciona un rango de fechas y haz clic en "Generar Liquidación" para ver los resultados.</span>
+    </div>
+
+    <!-- Resultados de la liquidación -->
+    <div th:if="${mostrarResultados}">
+      <!-- Tarjetas de estadísticas -->
+      <div class="stats-cards">
+        <div class="stat-card">
+          <div class="stat-label" th:text="#{admin.liquidaciones.total.arbitros}">Total Árbitros</div>
+          <div class="stat-value" th:text="${liquidacion.arbitros.size()}">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label" th:text="#{admin.liquidaciones.total.asignaciones}">Total Asignaciones</div>
+          <div class="stat-value" th:text="${liquidacion.totalAsignaciones}">0</div>
+        </div>
+        <div class="stat-card total-amount">
+          <div class="stat-label" th:text="#{admin.liquidaciones.total.pagar}">Monto Total a Pagar</div>
+          <div class="stat-value money">
+            $<span th:text="${#numbers.formatDecimal(liquidacion.totalGeneral, 1, 'COMMA', 2, 'POINT')}">0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de liquidación por árbitro -->
+      <div class="table-container">
+        <h2 style="margin-top: 0; color: #2c3e50;">📋 <span th:text="#{admin.liquidaciones.detalle.titulo}">Detalle por Árbitro</span></h2>
+        
+        <div th:if="${liquidacion.arbitros.isEmpty()}" class="no-data-message">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="#bdc3c7" stroke-width="2" fill="none"/>
+            <text x="12" y="16" text-anchor="middle" font-size="12" fill="#95a5a6">!</text>
+          </svg>
+          <p th:text="#{admin.liquidaciones.sin.datos}">No se encontraron asignaciones completadas en el período seleccionado.</p>
+        </div>
+
+        <table th:if="${!liquidacion.arbitros.isEmpty()}" class="liquidacion-table">
+          <thead>
+            <tr>
+              <th th:text="#{admin.liquidaciones.tabla.id}">ID</th>
+              <th th:text="#{admin.liquidaciones.tabla.arbitro}">Árbitro</th>
+              <th th:text="#{admin.liquidaciones.tabla.numero.id}">Número Identificación</th>
+              <th class="text-center" th:text="#{admin.liquidaciones.tabla.escalafon}">Escalafón</th>
+              <th class="text-center" th:text="#{admin.liquidaciones.tabla.cantidad}">Cantidad Partidos</th>
+              <th class="text-right" th:text="#{admin.liquidaciones.tabla.total}">Total a Pagar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="arbitro : ${liquidacion.arbitros}">
+              <td th:text="${arbitro.arbitroId}">1</td>
+              <td>
+                <strong th:text="${arbitro.nombreCompleto}">Juan Pérez</strong>
+              </td>
+              <td th:text="${arbitro.numeroIdentificacion}">12345678</td>
+              <td class="text-center">
+                <span class="badge badge-primary" th:text="${arbitro.escalafon}">A</span>
+              </td>
+              <td class="text-center" th:text="${arbitro.cantidadPartidos}">5</td>
+              <td class="text-right money">
+                $<span th:text="${#numbers.formatDecimal(arbitro.totalAPagar, 1, 'COMMA', 2, 'POINT')}">1,500.00</span>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr style="background: #f8f9fa; font-weight: bold;">
+              <td colspan="4"></td>
+              <td class="text-center" th:text="${liquidacion.totalAsignaciones}">15</td>
+              <td class="text-right money" style="font-size: 1.2em;">
+                $<span th:text="${#numbers.formatDecimal(liquidacion.totalGeneral, 1, 'COMMA', 2, 'POINT')}">4,500.00</span>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  function toggleLanguageDropdown() {
+    document.getElementById("languageDropdown").classList.toggle("show");
+  }
+
+  // Cerrar el dropdown si se hace clic fuera de él
+  window.onclick = function(event) {
+    if (!event.target.matches('.language-btn')) {
+      var dropdowns = document.getElementsByClassName("language-dropdown");
+      for (var i = 0; i < dropdowns.length; i++) {
+        var openDropdown = dropdowns[i];
+        if (openDropdown.classList.contains('show')) {
+          openDropdown.classList.remove('show');
+        }
+      }
+    }
+  }
+  </script>
+</body>
+</html>

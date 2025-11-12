@@ -2,12 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-    <title>Mi Calendario - CABA Pro</title>
+    <title th:text="#{calendario.mi.calendario} + ' - CABA Pro'">Mi Calendario - CABA Pro</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Estilos generales del dashboard -->
     <link rel="stylesheet" th:href="@{/css/arbitro-dashboard.css}" />
+    <link rel="stylesheet" th:href="@{/css/language-selector.css}" />
     
     <!-- Estilos del calendario -->
     <link rel="stylesheet" th:href="@{/css/calendario.css}" />
@@ -20,51 +21,68 @@
     <!-- Navbar -->
     <nav class="header-nav">
         <div class="nav-links">
-            <a th:href="@{/arbitro/dashboard}">Dashboard</a>
-            <a th:href="@{/arbitro/asignaciones}">Mis asignaciones</a>
-            <a th:href="@{/arbitro/calendario}" class="active">Calendario</a>
-            <a th:href="@{/arbitro/disponibilidad}" class="active">Disponibilidad</a>
+            <a th:href="@{/arbitro/dashboard}" th:text="#{title.dashboard}">Dashboard</a>
+            <a th:href="@{/arbitro/asignaciones}" th:text="#{nav.asignaciones}">Mis asignaciones</a>
+            <a th:href="@{/arbitro/calendario}" class="active" th:text="#{nav.calendario}">Calendario</a>
+            <a th:href="@{/arbitro/disponibilidad}" th:text="#{nav.disponibilidad}">Disponibilidad</a>
         </div>
         <div class="user-section">
             <a th:href="@{/arbitro/perfil}" class="profile-link">
                 <span sec:authentication="name">Árbitro</span>
             </a>
-            <form th:action="@{/logout}" method="post" style="display: inline;">
-                <button type="submit" class="logout-btn">🔓 Salir</button>
+            
+            <!-- Selector de Idioma -->
+            <div class="language-selector">
+                <button class="language-btn" onclick="toggleLanguageDropdown()">🌐</button>
+                <div id="languageDropdown" class="language-dropdown">
+                    <a th:href="@{''(lang='es')}">
+                        <span class="flag-icon">🇪🇸</span>
+                        <span th:text="#{lang.spanish}">Español</span>
+                    </a>
+                    <a th:href="@{''(lang='en')}">
+                        <span class="flag-icon">🇺🇸</span>
+                        <span th:text="#{lang.english}">English</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Botón de Cerrar Sesión -->
+            <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 10px;">
+                <button type="submit" style="background: #dc3545; border: 2px solid #dc3545; color: white; cursor: pointer; font-size: 16px; padding: 10px 15px; font-weight: bold; border-radius: 5px;" th:text="#{nav.salir}">Salir</button>
             </form>
         </div>
     </nav>
 
     <!-- Contenedor Principal -->
     <div class="main-panel">
-        <h1 class="welcome-title">📅 Mi Calendario de Asignaciones</h1>
+        <h1 class="welcome-title">📅 <span th:text="#{calendario.mi.calendario}">Mi Calendario de Asignaciones</span></h1>
         
         <!-- Información para el árbitro -->
         <div class="info-arbitro">
-            <h4>🏀 Mis Partidos Asignados</h4>
-            <p>Aquí puedes ver todos los partidos que tienes asignados. Los eventos mostrados corresponden únicamente a tus asignaciones activas.</p>
+            <h4>🏀 <span th:text="#{calendario.mis.partidos}">Mis Partidos Asignados</span></h4>
+            <p th:text="#{calendario.info.arbitro}">Aquí puedes ver todos los partidos que tienes asignados. Los eventos mostrados corresponden únicamente a tus asignaciones activas.</p>
         </div>
         
         <!-- Filtros -->
         <div class="filtros-container">
-            <h3>🔍 Filtros</h3>
+            <h3>🔍 <span th:text="#{calendario.filtros}">Filtros</span></h3>
             <div class="filtro-grupo">
-                <label for="filtroTorneo">Torneo:</label>
+                <label for="filtroTorneo" th:text="#{calendario.filtro.torneo}">Torneo:</label>
                 <select id="filtroTorneo">
-                    <option value="">Todos mis torneos</option>
+                    <option value="" th:text="#{calendario.todos.mis.torneos}">Todos mis torneos</option>
                     <!-- Se llenarán dinámicamente -->
                 </select>
             </div>
             <div class="filtro-grupo">
-                <label for="filtroFechaInicio">Desde:</label>
+                <label for="filtroFechaInicio" th:text="#{calendario.filtro.desde}">Desde:</label>
                 <input type="date" id="filtroFechaInicio">
             </div>
             <div class="filtro-grupo">
-                <label for="filtroFechaFin">Hasta:</label>
+                <label for="filtroFechaFin" th:text="#{calendario.filtro.hasta}">Hasta:</label>
                 <input type="date" id="filtroFechaFin">
             </div>
-            <button class="btn-filtrar" onclick="aplicarFiltros()">Aplicar Filtros</button>
-            <button class="btn-filtrar" onclick="limpiarFiltros()">Limpiar</button>
+            <button class="btn-filtrar" onclick="aplicarFiltros()" th:text="#{calendario.aplicar.filtros}">Aplicar Filtros</button>
+            <button class="btn-filtrar" onclick="limpiarFiltros()" th:text="#{calendario.limpiar}">Limpiar</button>
         </div>
 
         <!-- Calendario -->
@@ -76,7 +94,7 @@
 <div id="modalDetalles" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h2 class="modal-title">⚽ Detalles del Partido</h2>
+            <h2 class="modal-title">⚽ <span th:text="#{calendario.detalles.partido}">Detalles del Partido</span></h2>
             <span class="close" onclick="cerrarModal()">&times;</span>
         </div>
         <div id="contenidoModal">
@@ -90,6 +108,28 @@
 
 <script th:inline="javascript">
     var calendar;
+    
+    // Mensajes internacionalizados
+    var mensajes = {
+        partido: [[#{calendario.partido}]],
+        fecha: [[#{calendario.fecha}]],
+        hora: [[#{calendario.hora}]],
+        sede: [[#{calendario.sede}]],
+        torneo: [[#{calendario.torneo}]],
+        estado: [[#{calendario.estado}]],
+        descripcion: [[#{calendario.descripcion}]],
+        noEspecificada: [[#{calendario.no.especificada}]],
+        sinTorneo: [[#{calendario.sin.torneo}]],
+        noEspecificado: [[#{calendario.no.especificado}]],
+        todosMisTorneos: [[#{calendario.todos.mis.torneos}]],
+        errorTorneos: [[#{calendario.error.cargar.torneos}]],
+        fcPrev: [[#{fullcalendar.prev}]],
+        fcNext: [[#{fullcalendar.next}]],
+        fcToday: [[#{fullcalendar.today}]],
+        fcMonth: [[#{fullcalendar.month}]],
+        fcWeek: [[#{fullcalendar.week}]],
+        fcDay: [[#{fullcalendar.day}]]
+    };
 
     // Cuando la página carga
     document.addEventListener('DOMContentLoaded', function() {
@@ -98,11 +138,19 @@
         // Configurar el calendario
         calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
-            locale: 'es',
+            locale: [[#{lang.spanish}]] === 'Español' ? 'es' : 'en',
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
+            },
+            buttonText: {
+                prev: mensajes.fcPrev,
+                next: mensajes.fcNext,
+                today: mensajes.fcToday,
+                month: mensajes.fcMonth,
+                week: mensajes.fcWeek,
+                day: mensajes.fcDay
             },
             height: 'auto',
             events: '/eventos',
@@ -126,19 +174,19 @@
         var contenido = '';
         contenido += '<div class="detalle-item">';
         contenido += '<span class="detalle-icono">⚽</span>';
-        contenido += '<span class="detalle-label">Partido:</span>';
+        contenido += '<span class="detalle-label">' + mensajes.partido + '</span>';
         contenido += '<span class="detalle-valor">' + evento.title + '</span>';
         contenido += '</div>';
         
         contenido += '<div class="detalle-item">';
         contenido += '<span class="detalle-icono">📅</span>';
-        contenido += '<span class="detalle-label">Fecha:</span>';
+        contenido += '<span class="detalle-label">' + mensajes.fecha + '</span>';
         contenido += '<span class="detalle-valor">' + fecha.getDate() + '/' + (fecha.getMonth()+1) + '/' + fecha.getFullYear() + '</span>';
         contenido += '</div>';
         
         contenido += '<div class="detalle-item">';
         contenido += '<span class="detalle-icono">🕐</span>';
-        contenido += '<span class="detalle-label">Hora:</span>';
+        contenido += '<span class="detalle-label">' + mensajes.hora + '</span>';
         var horas = fecha.getHours().toString().padStart(2, '0');
         var minutos = fecha.getMinutes().toString().padStart(2, '0');
         contenido += '<span class="detalle-valor">' + horas + ':' + minutos + '</span>';
@@ -146,26 +194,26 @@
         
         contenido += '<div class="detalle-item">';
         contenido += '<span class="detalle-icono">🏟️</span>';
-        contenido += '<span class="detalle-label">Sede:</span>';
-        contenido += '<span class="detalle-valor">' + (props.sede || 'No especificada') + '</span>';
+        contenido += '<span class="detalle-label">' + mensajes.sede + '</span>';
+        contenido += '<span class="detalle-valor">' + (props.sede || mensajes.noEspecificada) + '</span>';
         contenido += '</div>';
         
         contenido += '<div class="detalle-item">';
         contenido += '<span class="detalle-icono">🏆</span>';
-        contenido += '<span class="detalle-label">Torneo:</span>';
-        contenido += '<span class="detalle-valor">' + (props.torneo || 'Sin torneo') + '</span>';
+        contenido += '<span class="detalle-label">' + mensajes.torneo + '</span>';
+        contenido += '<span class="detalle-valor">' + (props.torneo || mensajes.sinTorneo) + '</span>';
         contenido += '</div>';
         
         contenido += '<div class="detalle-item">';
         contenido += '<span class="detalle-icono">📊</span>';
-        contenido += '<span class="detalle-label">Estado:</span>';
-        contenido += '<span class="detalle-valor">' + (props.estado || 'No especificado') + '</span>';
+        contenido += '<span class="detalle-label">' + mensajes.estado + '</span>';
+        contenido += '<span class="detalle-valor">' + (props.estado || mensajes.noEspecificado) + '</span>';
         contenido += '</div>';
         
         if (props.descripcion) {
             contenido += '<div class="detalle-item">';
             contenido += '<span class="detalle-icono">📝</span>';
-            contenido += '<span class="detalle-label">Descripción:</span>';
+            contenido += '<span class="detalle-label">' + mensajes.descripcion + '</span>';
             contenido += '<span class="detalle-valor">' + props.descripcion + '</span>';
             contenido += '</div>';
         }
@@ -255,7 +303,7 @@
                 
                 // Llenar el select de filtros
                 var select = document.getElementById('filtroTorneo');
-                select.innerHTML = '<option value="">Todos mis torneos</option>';
+                select.innerHTML = '<option value="">' + mensajes.todosMisTorneos + '</option>';
                 
                 for (var i = 0; i < torneos.length; i++) {
                     var torneo = torneos[i];
@@ -269,11 +317,28 @@
             } else if (xhr.readyState === 4) {
                 console.log('Error al cargar torneos');
                 var select = document.getElementById('filtroTorneo');
-                select.innerHTML = '<option value="">Error al cargar torneos</option>';
+                select.innerHTML = '<option value="">' + mensajes.errorTorneos + '</option>';
             }
         };
         xhr.send();
     }
+    
+    function toggleLanguageDropdown() {
+        document.getElementById("languageDropdown").classList.toggle("show");
+    }
+
+    // Cerrar el dropdown si se hace clic fuera de él
+    window.addEventListener('click', function(event) {
+        if (!event.target.matches('.language-btn')) {
+            var dropdowns = document.getElementsByClassName("language-dropdown");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    });
 </script>
 </body>
 </html>
