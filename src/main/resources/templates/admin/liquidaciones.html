@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <title>Liquidación de Pagos - CABA Pro</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" th:href="@{/css/admin-dashboard.css}" />
+  <link rel="stylesheet" th:href="@{/css/estadisticas.css}" />
+  <style>
+    .liquidacion-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .liquidacion-titulo {
+      color: #2c3e50;
+      font-size: 2em;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .liquidacion-subtitulo {
+      color: #7f8c8d;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .filter-form {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      display: flex;
+      gap: 15px;
+      align-items: end;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+      color: #2c3e50;
+      font-size: 0.9em;
+    }
+
+    .form-group input[type="date"] {
+      padding: 10px;
+      border: 2px solid #e0e0e0;
+      border-radius: 5px;
+      font-size: 1em;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input[type="date"]:focus {
+      outline: none;
+      border-color: #3498db;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+      color: white;
+    }
+
+    .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(17, 153, 142, 0.4);
+    }
+
+    .btn:disabled {
+      background: #95a5a6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .alert {
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .alert-danger {
+      background: #fee;
+      border-left: 4px solid #e74c3c;
+      color: #c0392b;
+    }
+
+    .alert-info {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      color: #1976d2;
+    }
+
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .stat-card .stat-value {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #3498db;
+      margin: 10px 0;
+    }
+
+    .stat-card .stat-label {
+      color: #7f8c8d;
+      font-size: 0.9em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .stat-card.total-amount .stat-value {
+      color: #27ae60;
+    }
+
+    .table-container {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      overflow-x: auto;
+    }
+
+    .liquidacion-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .liquidacion-table thead {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .liquidacion-table th {
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.85em;
+      letter-spacing: 0.5px;
+    }
+
+    .liquidacion-table td {
+      padding: 15px;
+      border-bottom: 1px solid #ecf0f1;
+    }
+
+    .liquidacion-table tbody tr:hover {
+      background: #f8f9fa;
+    }
+
+    .liquidacion-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .badge {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.85em;
+      font-weight: 600;
+    }
+
+    .badge-primary {
+      background: #e3f2fd;
+      color: #1976d2;
+    }
+
+    .no-data-message {
+      text-align: center;
+      padding: 60px 20px;
+      color: #95a5a6;
+      font-size: 1.1em;
+    }
+
+    .no-data-message svg {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+      fill: #bdc3c7;
+    }
+
+    .money {
+      font-family: 'Courier New', monospace;
+      font-weight: bold;
+      color: #27ae60;
+    }
+
+    @media (max-width: 768px) {
+      .filter-form {
+        flex-direction: column;
+      }
+
+      .form-group {
+        width: 100%;
+      }
+
+      .btn-group {
+        width: 100%;
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="header-nav">
+    <div class="nav-links">
+      <a th:href="@{/admin/dashboard}">Dashboard</a>
+      <a th:href="@{/admin/arbitros}">Árbitros</a>
+      <a th:href="@{/admin/partidos}">Partidos</a>
+      <a th:href="@{/admin/torneos}">Torneos</a>
+      <a th:href="@{/admin/estadisticas}">Estadísticas</a>
+      <a th:href="@{/admin/liquidaciones}" class="active">Liquidaciones</a>
+    </div>
+    <div class="user-section">
+      <a th:href="@{/admin/perfil}" class="profile-link">
+        <span sec:authentication="name">Administrador</span>
+      </a>
+      <form th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit" class="logout-btn"> Salir</button>
+      </form>
+    </div>
+  </nav>
+
+  <div class="liquidacion-container">
+    <h1 class="liquidacion-titulo">💰 Liquidación de Pagos a Árbitros</h1>
+    <p class="liquidacion-subtitulo">Genera reportes de liquidación para el posterior pago a los árbitros</p>
+
+    <!-- Formulario de filtros -->
+    <form method="get" th:action="@{/admin/liquidaciones}" class="filter-form">
+      <div class="form-group">
+        <label for="fechaInicio"> Fecha de Inicio</label>
+        <input type="date" id="fechaInicio" name="fechaInicio" th:value="${fechaInicio}" required />
+      </div>
+      <div class="form-group">
+        <label for="fechaFin"> Fecha de Fin</label>
+        <input type="date" id="fechaFin" name="fechaFin" th:value="${fechaFin}" required />
+      </div>
+      <div class="btn-group">
+        <button type="submit" class="btn btn-primary">🔍 Generar Liquidación</button>
+        <a th:if="${mostrarResultados}" 
+           th:href="@{/api/liquidaciones/excel(fechaInicio=${fechaInicio},fechaFin=${fechaFin})}" 
+           class="btn btn-success">
+          📥 Descargar Excel
+        </a>
+      </div>
+    </form>
+
+    <!-- Mensaje de error -->
+    <div th:if="${error}" class="alert alert-danger">
+      <span>⚠️</span>
+      <span th:text="${error}"></span>
+    </div>
+
+    <!-- Mensaje informativo si no hay resultados -->
+    <div th:if="${mostrarResultados == null and error == null}" class="alert alert-info">
+      <span></span>
+      <span>Selecciona un rango de fechas y haz clic en "Generar Liquidación" para ver los resultados.</span>
+    </div>
+
+    <!-- Resultados de la liquidación -->
+    <div th:if="${mostrarResultados}">
+      <!-- Tarjetas de estadísticas -->
+      <div class="stats-cards">
+        <div class="stat-card">
+          <div class="stat-label">Total Árbitros</div>
+          <div class="stat-value" th:text="${liquidacion.arbitros.size()}">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Asignaciones</div>
+          <div class="stat-value" th:text="${liquidacion.totalAsignaciones}">0</div>
+        </div>
+        <div class="stat-card total-amount">
+          <div class="stat-label">Monto Total a Pagar</div>
+          <div class="stat-value money">
+            $<span th:text="${#numbers.formatDecimal(liquidacion.totalGeneral, 1, 'COMMA', 2, 'POINT')}">0.00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de liquidación por árbitro -->
+      <div class="table-container">
+        <h2 style="margin-top: 0; color: #2c3e50;">📋 Detalle por Árbitro</h2>
+        
+        <div th:if="${liquidacion.arbitros.isEmpty()}" class="no-data-message">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="#bdc3c7" stroke-width="2" fill="none"/>
+            <text x="12" y="16" text-anchor="middle" font-size="12" fill="#95a5a6">!</text>
+          </svg>
+          <p>No se encontraron asignaciones completadas en el período seleccionado.</p>
+        </div>
+
+        <table th:if="${!liquidacion.arbitros.isEmpty()}" class="liquidacion-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Árbitro</th>
+              <th>Número Identificación</th>
+              <th class="text-center">Escalafón</th>
+              <th class="text-center">Cantidad Partidos</th>
+              <th class="text-right">Total a Pagar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="arbitro : ${liquidacion.arbitros}">
+              <td th:text="${arbitro.arbitroId}">1</td>
+              <td>
+                <strong th:text="${arbitro.nombreCompleto}">Juan Pérez</strong>
+              </td>
+              <td th:text="${arbitro.numeroIdentificacion}">12345678</td>
+              <td class="text-center">
+                <span class="badge badge-primary" th:text="${arbitro.escalafon}">A</span>
+              </td>
+              <td class="text-center" th:text="${arbitro.cantidadPartidos}">5</td>
+              <td class="text-right money">
+                $<span th:text="${#numbers.formatDecimal(arbitro.totalAPagar, 1, 'COMMA', 2, 'POINT')}">1,500.00</span>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr style="background: #f8f9fa; font-weight: bold;">
+              <td colspan="4"></td>
+              <td class="text-center" th:text="${liquidacion.totalAsignaciones}">15</td>
+              <td class="text-right money" style="font-size: 1.2em;">
+                $<span th:text="${#numbers.formatDecimal(liquidacion.totalGeneral, 1, 'COMMA', 2, 'POINT')}">4,500.00</span>
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -58,13 +58,23 @@
           </td>
           <td>
             <div class="action-links">
+              <!-- Botones para asignaciones PENDIENTES -->
               <form th:action="@{'/arbitro/asignaciones/' + ${asignacion.id} + '/aceptar'}" method="post" th:if="${asignacion.estado.name() == 'PENDIENTE'}">
                 <button type="submit" class="btn btn-secondary">Aceptar</button>
               </form>
               <form th:action="@{'/arbitro/asignaciones/' + ${asignacion.id} + '/rechazar'}" method="post" th:if="${asignacion.estado.name() == 'PENDIENTE'}">
                 <button type="submit" class="btn delete-btn">Rechazar</button>
               </form>
-              <span th:if="${asignacion.estado.name() != 'PENDIENTE'}">No disponible</span>
+              
+              <!-- Botón para marcar como COMPLETADA -->
+              <form th:action="@{'/arbitro/asignaciones/' + ${asignacion.id} + '/completar'}" method="post" th:if="${asignacion.estado.name() == 'ACEPTADA'}">
+                <button type="submit" class="btn btn-success">✅ Completar</button>
+              </form>
+              
+              <span th:if="${asignacion.estado.name() == 'RECHAZADA' or asignacion.estado.name() == 'COMPLETADA'}">
+                <span th:if="${asignacion.estado.name() == 'COMPLETADA'}" style="color: green; font-weight: bold;">✓ Completado</span>
+                <span th:if="${asignacion.estado.name() == 'RECHAZADA'}" style="color: red;">Rechazado</span>
+              </span>
             </div>
           </td>
         </tr>

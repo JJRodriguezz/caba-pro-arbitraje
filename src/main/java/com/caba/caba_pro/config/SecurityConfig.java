@@ -40,12 +40,25 @@ public class SecurityConfig {
                     .requestMatchers("/h2-console/**")
                     .permitAll()
                     .requestMatchers(
-                        "/login", "/registro", "/css/**", "/js/**", "/images/**", "/h2-console")
+                        "/login",
+                        "/registro",
+                        "/css/**",
+                        "/js/**",
+                        "/images/**",
+                        "/h2-console",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/v3/api-docs/**",
+                        "/api-docs/**")
                     .permitAll()
 
                     // Rutas administrativas - solo ROLE_ADMIN
                     .requestMatchers("/admin/**")
                     .hasRole("ADMIN")
+
+                    // Rutas de API REST - autenticadas
+                    .requestMatchers("/api/**")
+                    .authenticated()
 
                     // Rutas de árbitro - solo ROLE_ARBITRO
                     .requestMatchers("/arbitro/**")

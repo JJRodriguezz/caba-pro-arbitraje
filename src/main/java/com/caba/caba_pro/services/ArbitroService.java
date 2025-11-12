@@ -7,15 +7,10 @@ package com.caba.caba_pro.services;
 
 // 1. Java estándar
 import com.caba.caba_pro.DTOs.ArbitroDto;
-import com.caba.caba_pro.config.FotoPerfilProperties;
 import com.caba.caba_pro.exceptions.BusinessException;
 import com.caba.caba_pro.models.Arbitro;
 import com.caba.caba_pro.repositories.AdministradorRepository;
 import com.caba.caba_pro.repositories.ArbitroRepository;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,14 +30,18 @@ public class ArbitroService {
   private final ArbitroRepository arbitroRepository;
   private final AdministradorRepository administradorRepository;
   private final PasswordEncoder passwordEncoder;
-  private final FotoPerfilProperties fotoPerfilProperties;
+  private final FileUploadService fileUploadService;
 
   // 3. Constructor
-  public ArbitroService(ArbitroRepository arbitroRepository, AdministradorRepository administradorRepository, PasswordEncoder passwordEncoder, FotoPerfilProperties fotoPerfilProperties) {
+  public ArbitroService(
+      ArbitroRepository arbitroRepository,
+      AdministradorRepository administradorRepository,
+      PasswordEncoder passwordEncoder,
+      FileUploadService fileUploadService) {
     this.arbitroRepository = arbitroRepository;
     this.administradorRepository = administradorRepository;
     this.passwordEncoder = passwordEncoder;
-    this.fotoPerfilProperties = fotoPerfilProperties;
+    this.fileUploadService = fileUploadService;
   }
 
   // 4. Métodos públicos
@@ -78,23 +77,10 @@ public class ArbitroService {
     // Crear árbitro
     Arbitro arbitro = mapearDtoAArbitro(arbitroDto);
 
-    // Procesar foto de perfil si se envió
+    // Procesar foto de perfil si se envió (con validaciones de seguridad)
     if (fotoPerfil != null && !fotoPerfil.isEmpty()) {
-      try {
-        String nombreArchivo = System.currentTimeMillis() + "_" + fotoPerfil.getOriginalFilename();
-        String rutaBase = fotoPerfilProperties.getFotosPerfilPath();
-        Path rutaDirectorio = Paths.get(rutaBase);
-        if (!Files.exists(rutaDirectorio)) {
-          Files.createDirectories(rutaDirectorio);
-        }
-        Path rutaArchivo = rutaDirectorio.resolve(nombreArchivo);
-        fotoPerfil.transferTo(rutaArchivo.toFile());
-        // Guardar la URL relativa para servir la imagen
-        arbitro.setUrlFotoPerfil("/uploads/perfiles/" + nombreArchivo);
-      } catch (IOException e) {
-        logger.error("Error al guardar la foto de perfil: {}", e.getMessage(), e);
-        throw new BusinessException("No se pudo guardar la foto de perfil");
-      }
+      String urlFotoPerfil = fileUploadService.guardarFotoPerfil(fotoPerfil);
+      arbitro.setUrlFotoPerfil(urlFotoPerfil);
     }
 
     // Establecer contraseña encriptada y rol
@@ -168,43 +154,18 @@ public class ArbitroService {
     // Procesar foto de perfil si se envió
     if (fotoPerfil != null && !fotoPerfil.isEmpty()) {
       logger.info("SERVICIO: Procesando foto de perfil...");
-      try {
-        // Eliminar foto anterior si existe
-        if (arbitroExistente.getUrlFotoPerfil() != null
-            && !arbitroExistente.getUrlFotoPerfil().isEmpty()) {
-          String nombreArchivoAnterior =
-              arbitroExistente.getUrlFotoPerfil().replace("/uploads/perfiles/", "");
-          String rutaArchivoAnterior =
-              System.getProperty("user.dir")
-                  + java.io.File.separator
-                  + "uploads"
-                  + java.io.File.separator
-                  + "perfiles"
-                  + java.io.File.separator
-                  + nombreArchivoAnterior;
-          java.io.File archivoAnterior = new java.io.File(rutaArchivoAnterior);
-          if (archivoAnterior.exists()) {
-            archivoAnterior.delete();
-            logger.info("Foto anterior eliminada: {}", nombreArchivoAnterior);
-          }
-        }
 
-        String nombreArchivo = System.currentTimeMillis() + "_" + fotoPerfil.getOriginalFilename();
-        String rutaBase = fotoPerfilProperties.getFotosPerfilPath();
-        java.nio.file.Path rutaDirectorio = java.nio.file.Paths.get(rutaBase);
-        if (!java.nio.file.Files.exists(rutaDirectorio)) {
-          java.nio.file.Files.createDirectories(rutaDirectorio);
-        }
-        java.nio.file.Path rutaArchivo = rutaDirectorio.resolve(nombreArchivo);
-        fotoPerfil.transferTo(rutaArchivo.toFile());
-        // Guardar la URL relativa para servir la imagen
-        arbitroExistente.setUrlFotoPerfil("/uploads/perfiles/" + nombreArchivo);
-        logger.info(
-            "SERVICIO: Nueva foto guardada con URL: {}", arbitroExistente.getUrlFotoPerfil());
-      } catch (java.io.IOException e) {
-        logger.error("Error al guardar la foto de perfil: {}", e.getMessage(), e);
-        throw new BusinessException("No se pudo guardar la foto de perfil");
+      // Eliminar foto anterior si existe (usando el servicio)
+      if (arbitroExistente.getUrlFotoPerfil() != null
+          && !arbitroExistente.getUrlFotoPerfil().isEmpty()) {
+        fileUploadService.eliminarFotoPerfil(arbitroExistente.getUrlFotoPerfil());
+        logger.info("Foto anterior eliminada: {}", arbitroExistente.getUrlFotoPerfil());
       }
+
+      // Guardar nueva foto con validaciones de seguridad
+      String urlFotoPerfil = fileUploadService.guardarFotoPerfil(fotoPerfil);
+      arbitroExistente.setUrlFotoPerfil(urlFotoPerfil);
+      logger.info("SERVICIO: Nueva foto guardada con URL: {}", urlFotoPerfil);
     } else {
       logger.info(
           "SERVICIO: No se envió nueva foto, manteniendo la actual: {}",
@@ -268,8 +229,12 @@ public class ArbitroService {
   }
 
   private void actualizarDatosArbitro(Arbitro arbitro, ArbitroDto dto) {
-    logger.info("SERVICIO: Actualizando datos - Antes: Nombre={}, Username={}", arbitro.getNombre(), arbitro.getUsername());
-    logger.info("SERVICIO: Nuevos datos - Nombre={}, Username={}", dto.getNombre(), dto.getUsername());
+    logger.info(
+        "SERVICIO: Actualizando datos - Antes: Nombre={}, Username={}",
+        arbitro.getNombre(),
+        arbitro.getUsername());
+    logger.info(
+        "SERVICIO: Nuevos datos - Nombre={}, Username={}", dto.getNombre(), dto.getUsername());
 
     arbitro.setNombre(dto.getNombre());
     arbitro.setApellidos(dto.getApellidos());
@@ -281,6 +246,9 @@ public class ArbitroService {
     arbitro.setEscalafon(dto.getEscalafon());
     arbitro.setFechaNacimiento(dto.getFechaNacimiento());
 
-    logger.info("SERVICIO: Datos actualizados - Después: Nombre={}, Username={}", arbitro.getNombre(), arbitro.getUsername());
+    logger.info(
+        "SERVICIO: Datos actualizados - Después: Nombre={}, Username={}",
+        arbitro.getNombre(),
+        arbitro.getUsername());
   }
 }

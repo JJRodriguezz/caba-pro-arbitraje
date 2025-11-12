@@ -5,6 +5,7 @@
  */
 package com.caba.caba_pro.repositories;
 
+import com.caba.caba_pro.enums.AsignacionEstado;
 import com.caba.caba_pro.models.Asignacion;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,6 +14,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AsignacionRepository extends JpaRepository<Asignacion, Long> {
 
   List<Asignacion> findByPartidoIdAndActivoTrue(Long partidoId);
+
+  List<Asignacion> findByActivoTrue();
 
   // Buscar asignaciones por árbitro
   List<Asignacion> findByArbitroIdAndActivoTrue(Long arbitroId);
@@ -24,4 +27,15 @@ public interface AsignacionRepository extends JpaRepository<Asignacion, Long> {
   // Regla: el árbitro no puede tener más de una asignación activa el MISMO día
   boolean existsByArbitroIdAndActivoTrueAndPartido_FechaHoraBetween(
       Long arbitroId, LocalDateTime inicio, LocalDateTime fin);
+
+  // Métodos para liquidación
+  List<Asignacion> findByPartidoFechaHoraBetweenAndEstadoAndActivo(
+      LocalDateTime fechaInicio, LocalDateTime fechaFin, AsignacionEstado estado, Boolean activo);
+
+  List<Asignacion> findByArbitroIdAndPartidoFechaHoraBetweenAndEstadoAndActivo(
+      Long arbitroId,
+      LocalDateTime fechaInicio,
+      LocalDateTime fechaFin,
+      AsignacionEstado estado,
+      Boolean activo);
 }

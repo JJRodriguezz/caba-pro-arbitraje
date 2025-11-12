@@ -188,4 +188,66 @@ public class ArbitroAsignacionController {
     }
     return "redirect:/arbitro/asignaciones";
   }
+
+  // Completar asignación (marcar como COMPLETADA después del partido)
+  @PostMapping("/arbitro/asignaciones/{id}/completar")
+  public String completarAsignacion(
+      @PathVariable Long id, Principal principal, RedirectAttributes ra) {
+    try {
+      Arbitro arbitro = arbitroService.buscarPorUsername(principal.getName());
+      Asignacion asignacion =
+          asignacionRepository
+              .findById(id)
+              .orElseThrow(() -> new BusinessException("Asignación no encontrada"));
+
+      if (!asignacion.getArbitro().getId().equals(arbitro.getId())) {
+        throw new BusinessException("No tienes permiso para modificar esta asignación");
+      }
+
+      if (asignacion.getEstado() != AsignacionEstado.ACEPTADA) {
+        throw new BusinessException("Solo puedes completar asignaciones aceptadas");
+      }
+
+      // Verificar que el partido ya haya pasado
+      java.time.LocalDateTime ahora = java.time.LocalDateTime.now();
+      java.time.LocalDateTime fechaPartido = asignacion.getPartido().getFechaHora();
+
+      if (fechaPartido.isAfter(ahora)) {
+        ra.addFlashAttribute(
+            "error",
+            "No puedes marcar como completada una asignación de un partido que aún no ha comenzado.");
+        return "redirect:/arbitro/asignaciones";
+      }
+
+      asignacion.setEstado(AsignacionEstado.COMPLETADA);
+      asignacionRepository.save(asignacion);
+
+      ra.addFlashAttribute(
+          "success", "Asignación marcada como completada. Ya es elegible para liquidación.");
+
+      // Notificación para el admin
+      String adminUsername = asignacion.getAdminUsername();
+      com.caba.caba_pro.models.Administrador admin =
+          administradorRepository.findByUsername(adminUsername);
+      if (admin != null) {
+        String mensajeAdmin =
+            "El árbitro '"
+                + arbitro.getNombreCompleto()
+                + "' ha completado el partido '"
+                + asignacion.getPartido().getNombre()
+                + "'.";
+        com.caba.caba_pro.models.Notificacion notificacion =
+            new com.caba.caba_pro.models.Notificacion();
+        notificacion.setMensaje(mensajeAdmin);
+        notificacion.setTipo("ADMIN");
+        notificacion.setUsuarioId(admin.getId());
+        notificacion.setAsignacionId(asignacion.getId());
+        notificacionService.crearNotificacion(notificacion);
+      }
+
+    } catch (BusinessException e) {
+      ra.addFlashAttribute("error", e.getMessage());
+    }
+    return "redirect:/arbitro/asignaciones";
+  }
 }

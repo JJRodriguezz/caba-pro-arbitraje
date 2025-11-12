@@ -20,3 +20,18 @@ server:
 # Ruta de almacenamiento de fotos de perfil de árbitros
 caba-pro:
   fotos-perfil-path: uploads/perfiles/
+  # Controla si se ejecuta el seeder de datos de prueba al iniciar
+  # true = siempre ejecuta (útil para demo/testing)
+  # false = solo ejecuta si no hay datos (por defecto)
+  seed:
+    force-enabled: false
+
+# Configuración de SpringDoc OpenAPI
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    tags-sorter: alpha
+    operations-sorter: alpha

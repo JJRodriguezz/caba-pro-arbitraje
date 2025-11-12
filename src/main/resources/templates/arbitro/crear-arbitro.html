@@ -27,10 +27,6 @@
 
         <div class="form-grid">
             <div class="form-group">
-                <label for="fotoPerfil">Foto de Perfil</label>
-                <input type="file" id="fotoPerfil" name="fotoPerfil" accept="image/*">
-            </div>
-            <div class="form-group">
                 <label for="nombre">Nombre *</label>
                 <input type="text" id="nombre" th:field="*{nombre}" required>
                 <span th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="error"></span>
