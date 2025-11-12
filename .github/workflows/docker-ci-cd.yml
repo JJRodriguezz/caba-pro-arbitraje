@@ -1,0 +1,104 @@
+# ============================================
+# GitHub Actions - CI/CD Pipeline
+# Build, Test y Deploy automático a Docker Hub
+# ============================================
+
+name: Docker CI/CD
+
+on:
+  push:
+    branches: [ main, develop, diego ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  DOCKER_IMAGE_NAME: caba-pro
+  JAVA_VERSION: '17'
+
+jobs:
+  # ========== JOB 1: BUILD & TEST ==========
+  build-and-test:
+    name: 🏗️ Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+      
+    - name: ☕ Configurar Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        cache: 'maven'
+    
+    - name: 🔧 Build con Maven
+      run: ./mvnw clean package -DskipTests
+      
+    - name: ✅ Ejecutar tests
+      run: ./mvnw test
+      
+    - name: 📦 Guardar artefacto JAR
+      uses: actions/upload-artifact@v4
+      with:
+        name: caba-pro-jar
+        path: target/*.jar
+        retention-days: 1
+
+  # ========== JOB 2: DOCKER BUILD & PUSH ==========
+  docker-build-push:
+    name: 🐳 Docker Build & Push
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+      
+    - name: 🔑 Login a Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+    
+    - name: 🏷️ Generar tags Docker
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ secrets.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable={{is_default_branch}}
+    
+    - name: 🐳 Build y Push imagen Docker
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:buildcache
+        cache-to: type=registry,ref=${{ secrets.DOCKER_USERNAME }}/${{ env.DOCKER_IMAGE_NAME }}:buildcache,mode=max
+
+  # ========== JOB 3: QUALITY CHECKS ==========
+  code-quality:
+    name: 🔍 Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout código
+      uses: actions/checkout@v4
+      
+    - name: ☕ Configurar Java 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
+        distribution: 'temurin'
+        cache: 'maven'
+    
+    - name: 📏 Verificar formato de código (Spotless)
+      run: ./mvnw spotless:check
+      continue-on-error: true

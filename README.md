@@ -1,9 +1,30 @@
 # CABA Pro - Sistema de Gestión Integral de Arbitraje
 
+[![Docker CI/CD](https://github.com/JJRodriguezz/caba-pro-arbitraje/actions/workflows/docker-ci-cd.yml/badge.svg)](https://github.com/JJRodriguezz/caba-pro-arbitraje/actions/workflows/docker-ci-cd.yml)
+
+Sistema profesional de gestión de arbitraje deportivo desarrollado con Spring Boot 3.5.5 y Java 17.
+
+## 🚀 Inicio Rápido
+
+### Con Docker (Recomendado) 🐳
+
+```powershell
+# Opción 1: Usando Docker Compose
+docker-compose up -d
+
+# Opción 2: Usando Docker directamente
+docker run -d -p 8080:8080 --name caba-pro TU-USUARIO/caba-pro:latest
+
+# Acceder a: http://localhost:8080
+```
+
+### Sin Docker
+
 ## Requisitos del Sistema
 
 - **Java**: 17 o superior
 - **Maven**: 3.6+
+- **Docker**: (Opcional) Para containerización
 - **Tomcat**: Embebido en Spring Boot (no requiere instalación separada)
 
 ## Cómo ejecutar el programa
@@ -126,3 +147,68 @@ java -version
 chmod +x mvnw
 ./mvnw spring-boot:run
 ```
+
+## 🐳 Docker y Despliegue
+
+Para información detallada sobre Docker, despliegue en AWS y CI/CD, consulta:
+
+📖 **[Guía Completa de Docker y Despliegue](docs/DOCKER-DEPLOYMENT.md)**
+
+### Comandos rápidos Docker
+
+```powershell
+# Construir imagen localmente
+docker build -t caba-pro:latest .
+
+# Ejecutar con docker-compose
+docker-compose up -d
+
+# Ver logs
+docker-compose logs -f
+
+# Detener
+docker-compose down
+```
+
+## 🔄 CI/CD
+
+Este proyecto usa GitHub Actions para:
+- ✅ Build y test automático
+- ✅ Build de imagen Docker
+- ✅ Push automático a Docker Hub
+- ✅ Quality checks con Spotless
+
+El workflow se ejecuta automáticamente en cada push a `main`, `develop` o `diego`.
+
+## 📦 Estructura del Proyecto
+
+```
+caba-pro-arbitraje/
+├── src/                          # Código fuente
+├── target/                       # Compilados
+├── data/                         # Base de datos H2
+├── uploads/                      # Archivos subidos
+├── docs/                         # Documentación
+│   └── DOCKER-DEPLOYMENT.md     # Guía Docker completa
+├── .github/
+│   └── workflows/
+│       └── docker-ci-cd.yml     # Pipeline CI/CD
+├── Dockerfile                    # Configuración Docker
+├── docker-compose.yml           # Orquestación Docker
+├── .dockerignore                # Archivos ignorados por Docker
+└── pom.xml                      # Dependencias Maven
+```
+
+## 👥 Contribución
+
+Para contribuir al proyecto:
+
+1. Fork el repositorio
+2. Crea una rama (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -m 'feat: agregar funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+5. Abre un Pull Request
+
+## 📄 Licencia
+
+Este proyecto es parte de un trabajo académico.

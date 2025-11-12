@@ -1,0 +1,63 @@
+# ============================================
+# .dockerignore - Archivos ignorados por Docker
+# ============================================
+
+# Directorios de compilación
+target/
+!target/*.jar
+
+# Archivos de Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# Base de datos local (no incluir en imagen)
+data/
+*.db
+
+# Uploads locales (se crearán en el contenedor)
+uploads/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws
+.settings/
+.project
+.classpath
+
+# Documentación y archivos de desarrollo
+README.md
+TAREAS-*.md
+docs/
+*.md
+
+# Logs
+logs/
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos temporales
+*.tmp
+*.bak
+*.swp
+*~
+
+# Tests
+src/test/
+
+# Node modules (si los hubiera)
+node_modules/
+
+# Docker files
+Dockerfile
+.dockerignore
+docker-compose*.yml
