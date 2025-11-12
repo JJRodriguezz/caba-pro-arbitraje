@@ -100,60 +100,7 @@ public class PartidoController {
 
   @GetMapping("/{id}")
   public String detalle(@PathVariable Long id, Model model) {
-    Partido partido = partidoService.buscarPorId(id);
-    List<Arbitro> arbitros = arbitroService.buscarTodosActivos();
-
-    // Crear mapa de disponibilidad para cada árbitro en la fecha/hora del partido
-    java.util.Map<Long, Boolean> disponibilidadArbitros = new java.util.HashMap<>();
-    java.util.Map<Long, String> motivosNoDisponible = new java.util.HashMap<>();
-
-    for (Arbitro arbitro : arbitros) {
-      boolean disponible =
-          disponibilidadService.esArbitroDisponibleEnFechaHora(
-              arbitro.getUsername(), partido.getFechaHora());
-      disponibilidadArbitros.put(arbitro.getId(), disponible);
-
-      if (!disponible) {
-        // Obtener motivo específico de no disponibilidad
-        var disponibilidadDto =
-            disponibilidadService.obtenerDisponibilidadPorUsername(arbitro.getUsername());
-        if (disponibilidadDto.isPresent()) {
-          switch (disponibilidadDto.get().getTipoDisponibilidad()) {
-            case NUNCA:
-              String mensajeNunca =
-                  messageSource.getMessage(
-                      "partido.arbitro.no.disponible", null, LocaleContextHolder.getLocale());
-              motivosNoDisponible.put(arbitro.getId(), mensajeNunca);
-              break;
-            case HORARIO_ESPECIFICO:
-              java.time.LocalTime horaPartido = partido.getFechaHora().toLocalTime();
-              String horarioArbitro =
-                  disponibilidadDto.get().getHoraInicio()
-                      + " - "
-                      + disponibilidadDto.get().getHoraFin();
-              String mensajeHorario =
-                  messageSource.getMessage(
-                      "partido.arbitro.horario.especifico",
-                      new Object[] {horarioArbitro, horaPartido},
-                      LocaleContextHolder.getLocale());
-              motivosNoDisponible.put(arbitro.getId(), mensajeHorario);
-              break;
-            case SIEMPRE:
-              String mensajeError =
-                  messageSource.getMessage(
-                      "partido.error.disponibilidad", null, LocaleContextHolder.getLocale());
-              motivosNoDisponible.put(arbitro.getId(), mensajeError);
-              break;
-          }
-        }
-      }
-    }
-
-    model.addAttribute("partido", partido);
-    model.addAttribute("arbitros", arbitros);
-    model.addAttribute("disponibilidadArbitros", disponibilidadArbitros);
-    model.addAttribute("motivosNoDisponible", motivosNoDisponible);
-    model.addAttribute("asignacionDto", new AsignacionDto());
+    prepararModeloDetalle(id, model);
     return "admin/partidos/detalle";
   }
 
@@ -191,9 +138,8 @@ public class PartidoController {
       Model model) {
 
     if (result.hasErrors()) {
-      // Cargamos datos necesarios de la vista
-      model.addAttribute("partido", partidoService.buscarPorId(id));
-      model.addAttribute("arbitros", arbitroService.buscarTodosActivos());
+      // Recarga completa de datos de la vista (igual que en GET)
+      prepararModeloDetalle(id, model);
       return "admin/partidos/detalle";
     }
 
@@ -207,13 +153,106 @@ public class PartidoController {
       partidoService.asignarArbitro(id, asignacionDto);
     } catch (BusinessException e) {
       model.addAttribute("error", e.getMessage());
-      // Reponer datos de la pantalla y mantener el DTO con lo que el usuario eligió
-      model.addAttribute("partido", partidoService.buscarPorId(id));
-      model.addAttribute("arbitros", arbitroService.buscarTodosActivos());
+      // Recarga completa de datos de la vista (igual que en GET)
+      prepararModeloDetalle(id, model);
       return "admin/partidos/detalle";
     }
 
     return "redirect:/admin/partidos/{id}";
+  }
+
+  // Método auxiliar para preparar los datos del modelo de detalle
+  private void prepararModeloDetalle(Long partidoId, Model model) {
+    Partido partido = partidoService.buscarPorId(partidoId);
+    List<Arbitro> todosArbitros = arbitroService.buscarTodosActivos();
+
+    // Obtener IDs de árbitros ya asignados a este partido
+    java.util.Set<Long> arbitrosAsignados = new java.util.HashSet<>();
+    if (partido.getAsignaciones() != null) {
+      partido.getAsignaciones().stream()
+          .filter(a -> a.getActivo())
+          .forEach(a -> arbitrosAsignados.add(a.getArbitro().getId()));
+    }
+
+    // Filtrar árbitros que NO están asignados aún
+    List<Arbitro> arbitrosDisponiblesParaAsignar =
+        todosArbitros.stream()
+            .filter(arb -> !arbitrosAsignados.contains(arb.getId()))
+            .collect(java.util.stream.Collectors.toList());
+
+    // Crear mapa de disponibilidad para cada árbitro en la fecha/hora del partido
+    java.util.Map<Long, Boolean> disponibilidadArbitros = new java.util.HashMap<>();
+    java.util.Map<Long, String> motivosNoDisponible = new java.util.HashMap<>();
+
+    for (Arbitro arbitro : arbitrosDisponiblesParaAsignar) {
+      boolean disponible =
+          disponibilidadService.esArbitroDisponibleEnFechaHora(
+              arbitro.getUsername(), partido.getFechaHora());
+      disponibilidadArbitros.put(arbitro.getId(), disponible);
+
+      if (!disponible) {
+        var disponibilidadDto =
+            disponibilidadService.obtenerDisponibilidadPorUsername(arbitro.getUsername());
+        if (disponibilidadDto.isPresent()) {
+          switch (disponibilidadDto.get().getTipoDisponibilidad()) {
+            case NUNCA:
+              String mensajeNunca =
+                  messageSource.getMessage(
+                      "partido.arbitro.no.disponible", null, LocaleContextHolder.getLocale());
+              motivosNoDisponible.put(arbitro.getId(), mensajeNunca);
+              break;
+            case HORARIO_ESPECIFICO:
+              java.time.LocalTime horaPartido = partido.getFechaHora().toLocalTime();
+              String horarioArbitro =
+                  disponibilidadDto.get().getHoraInicio()
+                      + " - "
+                      + disponibilidadDto.get().getHoraFin();
+              String mensajeHorario =
+                  messageSource.getMessage(
+                      "partido.arbitro.horario.especifico",
+                      new Object[] {horarioArbitro, horaPartido},
+                      LocaleContextHolder.getLocale());
+              motivosNoDisponible.put(arbitro.getId(), mensajeHorario);
+              break;
+            case SIEMPRE:
+              String mensajeError =
+                  messageSource.getMessage(
+                      "partido.error.disponibilidad", null, LocaleContextHolder.getLocale());
+              motivosNoDisponible.put(arbitro.getId(), mensajeError);
+              break;
+          }
+        }
+      }
+    }
+
+    // Definir todas las posiciones posibles
+    List<String> todasPosiciones =
+        java.util.Arrays.asList("PRINCIPAL", "ASISTENTE_1", "ASISTENTE_2", "CUARTO_ARBITRO");
+
+    // Obtener posiciones ya ocupadas
+    java.util.Set<String> posicionesOcupadas = new java.util.HashSet<>();
+    if (partido.getAsignaciones() != null) {
+      partido.getAsignaciones().stream()
+          .filter(a -> a.getActivo())
+          .forEach(a -> posicionesOcupadas.add(a.getPosicion()));
+    }
+
+    // Filtrar posiciones disponibles
+    List<String> posicionesDisponibles =
+        todasPosiciones.stream()
+            .filter(pos -> !posicionesOcupadas.contains(pos))
+            .collect(java.util.stream.Collectors.toList());
+
+    model.addAttribute("partido", partido);
+    model.addAttribute("arbitros", arbitrosDisponiblesParaAsignar);
+    model.addAttribute("posicionesDisponibles", posicionesDisponibles);
+    model.addAttribute("disponibilidadArbitros", disponibilidadArbitros);
+    model.addAttribute("motivosNoDisponible", motivosNoDisponible);
+
+    // Agregar asignacionDto solo si no existe (para no sobrescribir en caso de error)
+    if (!model.containsAttribute("asignacionDto")) {
+      model.addAttribute("asignacionDto", new AsignacionDto());
+    }
   }
 
   // Eliminar partido

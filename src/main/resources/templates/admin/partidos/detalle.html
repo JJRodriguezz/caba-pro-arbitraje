@@ -2,7 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>[[#{partido.titulo.prefix}]] [[${partido.nombre}]]</title>
+  <title th:text="#{partido.titulo.prefix} + ' ' + ${partido.nombre}">Partido</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" th:href="@{/css/partidos.css}" />
   <link rel="stylesheet" th:href="@{/css/partido-detalle.css}" />
@@ -92,18 +92,18 @@
       <h2 id="asignar" style="margin-top:0;" th:text="#{partido.asignar.titulo}">Asignar Árbitro</h2>
       
       <!-- Verificar si hay árbitros y posiciones disponibles -->
-      <div th:if="${#lists.isEmpty(arbitros) || #lists.isEmpty(posicionesDisponibles)}">
+      <div th:if="${arbitros == null || arbitros.isEmpty() || posicionesDisponibles == null || posicionesDisponibles.isEmpty()}">
         <div class="message error">
-          <p th:if="${#lists.isEmpty(arbitros)}">
+          <p th:if="${arbitros == null || arbitros.isEmpty()}">
             ⚠️ No hay árbitros disponibles para asignar. Todos los árbitros activos ya están asignados a este partido.
           </p>
-          <p th:if="${#lists.isEmpty(posicionesDisponibles)}">
+          <p th:if="${posicionesDisponibles == null || posicionesDisponibles.isEmpty()}">
             ⚠️ No hay posiciones disponibles. Todas las posiciones ya están ocupadas para este partido.
           </p>
         </div>
       </div>
       
-      <form th:if="${!#lists.isEmpty(arbitros) && !#lists.isEmpty(posicionesDisponibles)}"
+      <form th:if="${arbitros != null && !arbitros.isEmpty() && posicionesDisponibles != null && !posicionesDisponibles.isEmpty()}"
             th:action="@{'/admin/partidos/' + ${partido.id} + '/asignar'}"
             th:object="${asignacionDto}"
             method="post">
@@ -114,9 +114,9 @@
               <option value="" th:text="#{partido.asignar.arbitro.seleccionar}">Selecciona un árbitro</option>
               <option th:each="arb : ${arbitros}"
                       th:value="${arb.id}"
-                      th:text="${arb.nombre + ' ' + arb.apellidos + (disponibilidadArbitros[arb.id] ? ' ✓ (' + #{partido.asignar.disponible} + ')' : ' ✗ (' + #{partido.asignar.no.disponible} + ')')}"
-                      th:disabled="${!disponibilidadArbitros[arb.id]}"
-                      th:class="${disponibilidadArbitros[arb.id] ? 'disponible' : 'no-disponible'}">
+                      th:text="${arb.nombre} + ' ' + ${arb.apellidos}"
+                      th:disabled="${disponibilidadArbitros[arb.id] == null || !disponibilidadArbitros[arb.id]}"
+                      th:class="${disponibilidadArbitros[arb.id] != null && disponibilidadArbitros[arb.id] ? 'disponible' : 'no-disponible'}">
               </option>
             </select>
             <span th:if="${#fields.hasErrors('arbitroId')}" th:errors="*{arbitroId}" class="error"></span>
