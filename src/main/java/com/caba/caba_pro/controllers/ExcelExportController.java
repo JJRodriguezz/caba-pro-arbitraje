@@ -12,6 +12,8 @@ import com.caba.caba_pro.services.TorneoService;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,16 +35,19 @@ public class ExcelExportController {
   private final ArbitroService arbitroService;
   private final PartidoService partidoService;
   private final TorneoService torneoService;
+  private final MessageSource messageSource;
 
   public ExcelExportController(
       ExcelExportService excelExportService,
       ArbitroService arbitroService,
       PartidoService partidoService,
-      TorneoService torneoService) {
+      TorneoService torneoService,
+      MessageSource messageSource) {
     this.excelExportService = excelExportService;
     this.arbitroService = arbitroService;
     this.partidoService = partidoService;
     this.torneoService = torneoService;
+    this.messageSource = messageSource;
   }
 
   @GetMapping("/arbitros")
@@ -66,11 +71,15 @@ public class ExcelExportController {
 
     } catch (IOException e) {
       logger.error("Error al exportar árbitros a Excel: {}", e.getMessage(), e);
-      redirectAttributes.addFlashAttribute("error", "Error al generar el archivo Excel");
+      String mensaje =
+          messageSource.getMessage("excel.error.generar", null, LocaleContextHolder.getLocale());
+      redirectAttributes.addFlashAttribute("error", mensaje);
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
       logger.error("Error inesperado al exportar árbitros: {}", e.getMessage(), e);
-      redirectAttributes.addFlashAttribute("error", "Error inesperado al generar el archivo");
+      String mensaje =
+          messageSource.getMessage("excel.error.inesperado", null, LocaleContextHolder.getLocale());
+      redirectAttributes.addFlashAttribute("error", mensaje);
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -96,11 +105,15 @@ public class ExcelExportController {
 
     } catch (IOException e) {
       logger.error("Error al exportar partidos a Excel: {}", e.getMessage(), e);
-      redirectAttributes.addFlashAttribute("error", "Error al generar el archivo Excel");
+      String mensaje =
+          messageSource.getMessage("excel.error.generar", null, LocaleContextHolder.getLocale());
+      redirectAttributes.addFlashAttribute("error", mensaje);
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
       logger.error("Error inesperado al exportar partidos: {}", e.getMessage(), e);
-      redirectAttributes.addFlashAttribute("error", "Error inesperado al generar el archivo");
+      String mensaje =
+          messageSource.getMessage("excel.error.inesperado", null, LocaleContextHolder.getLocale());
+      redirectAttributes.addFlashAttribute("error", mensaje);
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -126,11 +139,15 @@ public class ExcelExportController {
 
     } catch (IOException e) {
       logger.error("Error al exportar torneos a Excel: {}", e.getMessage(), e);
-      redirectAttributes.addFlashAttribute("error", "Error al generar el archivo Excel");
+      String mensaje =
+          messageSource.getMessage("excel.error.generar", null, LocaleContextHolder.getLocale());
+      redirectAttributes.addFlashAttribute("error", mensaje);
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     } catch (Exception e) {
       logger.error("Error inesperado al exportar torneos: {}", e.getMessage(), e);
-      redirectAttributes.addFlashAttribute("error", "Error inesperado al generar el archivo");
+      String mensaje =
+          messageSource.getMessage("excel.error.inesperado", null, LocaleContextHolder.getLocale());
+      redirectAttributes.addFlashAttribute("error", mensaje);
       return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }

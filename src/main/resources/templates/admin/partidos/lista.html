@@ -2,7 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Partidos - CABA Pro</title>
+  <title>[[#{partidos.titulo}]] - CABA Pro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" th:href="@{/css/partidos.css}" />
 </head>
@@ -11,19 +11,19 @@
   <!-- Navigation -->
   <div class="nav-bar">
     <div class="nav-links">
-      <a th:href="@{/admin/dashboard}">Dashboard</a>
-      <a th:href="@{/admin/arbitros}">Árbitros</a>
-      <a href="#" class="active">Partidos</a>
-      <a th:href="@{/admin/torneos}">Torneos</a>
-      <a th:href="@{/admin/calendario}">Calendario</a>
-      <a th:href="@{/admin/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
+      <a th:href="@{/admin/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
+      <a th:href="@{/admin/arbitros}" th:text="#{nav.arbitros}">Árbitros</a>
+      <a href="#" class="active" th:text="#{nav.partidos}">Partidos</a>
+      <a th:href="@{/admin/torneos}" th:text="#{nav.torneos}">Torneos</a>
+      <a th:href="@{/admin/calendario}" th:text="#{nav.calendario}">Calendario</a>
+      <a th:href="@{/admin/notificaciones}" th:title="#{nav.notificaciones}" class="notificaciones-btn">🔔</a>
     </div>
     <div class="user-info">
       <a th:href="@{/admin/perfil}" class="profile-link">
         <span th:text="${#authentication.name}">Administrador</span>
       </a>
       <form th:action="@{/logout}" method="post" style="display:inline;">
-        <button type="submit" class="logout-btn">Salir</button>
+        <button type="submit" class="logout-btn" th:text="#{btn.salir}">Salir</button>
       </form>
     </div>
   </div>
@@ -34,10 +34,10 @@
 
   <!-- Header -->
   <div class="header">
-    <h1>Gestión de Partidos</h1>
+    <h1 th:text="#{partidos.gestion}">Gestión de Partidos</h1>
     <div class="action-buttons">
-      <a th:href="@{/admin/export/partidos}" class="btn btn-secondary">Exportar Excel</a>
-      <a th:href="@{/admin/partidos/nuevo}" class="btn btn-primary">Crear Partido</a>
+      <a th:href="@{/admin/export/partidos}" class="btn btn-secondary" th:text="#{partidos.exportar}">Exportar Excel</a>
+      <a th:href="@{/admin/partidos/nuevo}" class="btn btn-primary" th:text="#{partidos.crear}">Crear Partido</a>
     </div>
   </div>
 
@@ -46,14 +46,14 @@
     <table>
       <thead>
       <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Fecha y hora</th>
-        <th>Sede</th>
-        <th>Local</th>
-        <th>Visitante</th>
-        <th>Estado</th>
-        <th>Acciones</th>
+        <th th:text="#{partidos.tabla.id}">ID</th>
+        <th th:text="#{partidos.tabla.nombre}">Nombre</th>
+        <th th:text="#{partidos.tabla.fecha}">Fecha y hora</th>
+        <th th:text="#{partidos.tabla.sede}">Sede</th>
+        <th th:text="#{partidos.tabla.local}">Local</th>
+        <th th:text="#{partidos.tabla.visitante}">Visitante</th>
+        <th th:text="#{partidos.tabla.estado}">Estado</th>
+        <th th:text="#{partidos.tabla.acciones}">Acciones</th>
       </tr>
       </thead>
       <tbody>
@@ -72,14 +72,14 @@
         <td>
             <div class="action-links">
                 <!-- Asignar Árbitro a partido -->
-                <a th:href="@{'/admin/partidos/' + ${p.id} + '#asignar'}" class="assign-btn">Asignar Árbitro</a>
+                <a th:href="@{'/admin/partidos/' + ${p.id} + '#asignar'}" class="assign-btn" th:text="#{partidos.asignar}">Asignar Árbitro</a>
                 <!-- Editar partido -->
-                <a th:href="@{'/admin/partidos/' + ${p.id} + '/editar'}" class="edit-btn">Editar</a>
+                <a th:href="@{'/admin/partidos/' + ${p.id} + '/editar'}" class="edit-btn" th:text="#{partidos.editar}">Editar</a>
                 <!-- Eliminar partido -->
                 <form th:action="@{'/admin/partidos/' + ${p.id} + '/eliminar'}"
                     method="post"
-                    onsubmit="return confirm('¿Seguro que quieres eliminar este partido?');">
-                <button type="submit" class="delete-btn">Eliminar</button>
+                    th:onsubmit="'return confirm(\'' + #{partidos.eliminar.confirmar} + '\');'">
+                <button type="submit" class="delete-btn" th:text="#{partidos.eliminar}">Eliminar</button>
                 </form>
             </div>
         </td>
@@ -90,9 +90,9 @@
 
   <!-- Empty State -->
   <div th:if="${#lists.isEmpty(partidos)}" class="empty-state">
-    <h3>No hay partidos creados</h3>
-    <p>Crea el primer partido para comenzar a asignar árbitros.</p>
-    <a th:href="@{/admin/partidos/nuevo}" class="btn btn-primary">Crear Primer Partido</a>
+    <h3 th:text="#{partidos.vacio.titulo}">No hay partidos creados</h3>
+    <p th:text="#{partidos.vacio.mensaje}">Crea el primer partido para comenzar a asignar árbitros.</p>
+    <a th:href="@{/admin/partidos/nuevo}" class="btn btn-primary" th:text="#{partidos.vacio.btn}">Crear Primer Partido</a>
   </div>
 </div>
 </body>
