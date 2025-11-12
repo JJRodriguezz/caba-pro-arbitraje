@@ -33,7 +33,10 @@ jobs:
         distribution: 'temurin'
         cache: 'maven'
     
-    - name: 🔧 Build con Maven
+    - name: � Dar permisos ejecutables a mvnw
+      run: chmod +x ./mvnw
+    
+    - name: �🔧 Build con Maven
       run: ./mvnw clean package -DskipTests
       
     - name: ✅ Ejecutar tests
