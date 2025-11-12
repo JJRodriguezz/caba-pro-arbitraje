@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,10 +43,12 @@ public class ArbitroController {
 
   // 2. Variables de instancia
   private final ArbitroService arbitroService;
+  private final MessageSource messageSource;
 
   // 3. Constructores
-  public ArbitroController(ArbitroService arbitroService) {
+  public ArbitroController(ArbitroService arbitroService, MessageSource messageSource) {
     this.arbitroService = arbitroService;
+    this.messageSource = messageSource;
   }
 
   // 4. Métodos públicos
@@ -80,12 +84,12 @@ public class ArbitroController {
       Arbitro arbitroCreado = arbitroService.crearArbitro(arbitroDto, fotoPerfil);
       logger.info("Árbitro creado exitosamente: {}", arbitroCreado.getNombreCompleto());
 
-      flash.addFlashAttribute(
-          "success",
-          "Árbitro creado exitosamente: "
-              + arbitroDto.getNombre()
-              + " "
-              + arbitroDto.getApellidos());
+      String mensaje =
+          messageSource.getMessage(
+              "arbitro.controller.creado.exito",
+              new Object[] {arbitroDto.getNombre(), arbitroDto.getApellidos()},
+              LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("success", mensaje);
       return "redirect:/admin/arbitros";
 
     } catch (BusinessException e) {
@@ -96,7 +100,10 @@ public class ArbitroController {
 
     } catch (Exception e) {
       logger.error("Error inesperado al crear árbitro", e);
-      model.addAttribute("error", "Error interno del sistema");
+      String mensajeError =
+          messageSource.getMessage(
+              "arbitro.controller.error.sistema", null, LocaleContextHolder.getLocale());
+      model.addAttribute("error", mensajeError);
       model.addAttribute("especialidades", Especialidad.values());
       return "arbitro/crear-arbitro";
     }
@@ -142,7 +149,10 @@ public class ArbitroController {
     try {
       Arbitro arbitroActualizado = arbitroService.actualizarArbitro(id, arbitroDto, fotoPerfil);
       logger.info("Árbitro actualizado exitosamente con ID: {}", arbitroActualizado.getId());
-      flash.addFlashAttribute("success", "Árbitro actualizado exitosamente");
+      String mensaje =
+          messageSource.getMessage(
+              "arbitro.controller.actualizado.exito", null, LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("success", mensaje);
       return "redirect:/admin/arbitros";
 
     } catch (BusinessException e) {
@@ -153,7 +163,10 @@ public class ArbitroController {
       return "arbitro/editar-arbitro";
     } catch (Exception e) {
       logger.error("Error inesperado al actualizar árbitro: ", e);
-      model.addAttribute("error", "Error interno del sistema");
+      String mensajeError =
+          messageSource.getMessage(
+              "arbitro.controller.error.sistema", null, LocaleContextHolder.getLocale());
+      model.addAttribute("error", mensajeError);
       model.addAttribute("arbitroId", id);
       model.addAttribute("especialidades", Especialidad.values());
       return "arbitro/editar-arbitro";
@@ -164,7 +177,10 @@ public class ArbitroController {
   public String eliminarArbitro(@PathVariable Long id, RedirectAttributes flash) {
     try {
       arbitroService.eliminarArbitro(id);
-      flash.addFlashAttribute("success", "Árbitro eliminado exitosamente");
+      String mensaje =
+          messageSource.getMessage(
+              "arbitro.controller.eliminado.exito", null, LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("success", mensaje);
     } catch (BusinessException e) {
       flash.addFlashAttribute("error", e.getMessage());
     }

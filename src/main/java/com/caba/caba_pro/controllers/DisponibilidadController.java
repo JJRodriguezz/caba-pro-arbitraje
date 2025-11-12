@@ -12,6 +12,8 @@ import com.caba.caba_pro.services.DisponibilidadService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,9 +34,12 @@ public class DisponibilidadController {
   private static final Logger logger = LoggerFactory.getLogger(DisponibilidadController.class);
 
   private final DisponibilidadService disponibilidadService;
+  private final MessageSource messageSource;
 
-  public DisponibilidadController(DisponibilidadService disponibilidadService) {
+  public DisponibilidadController(
+      DisponibilidadService disponibilidadService, MessageSource messageSource) {
     this.disponibilidadService = disponibilidadService;
+    this.messageSource = messageSource;
   }
 
   /** Muestra el formulario de disponibilidad del árbitro */
@@ -56,7 +61,10 @@ public class DisponibilidadController {
 
     } catch (Exception e) {
       logger.error("Error al cargar disponibilidad del árbitro: {}", e.getMessage());
-      model.addAttribute("error", "Error al cargar la disponibilidad");
+      String mensaje =
+          messageSource.getMessage(
+              "disponibilidad.error.cargar", null, LocaleContextHolder.getLocale());
+      model.addAttribute("error", mensaje);
       return "arbitro/dashboard";
     }
   }
@@ -77,16 +85,24 @@ public class DisponibilidadController {
     // Validación adicional para horario específico
     if (disponibilidadDto.getTipoDisponibilidad() == TipoDisponibilidad.HORARIO_ESPECIFICO) {
       if (disponibilidadDto.getHoraInicio() == null) {
-        result.rejectValue("horaInicio", "error.horaInicio", "La hora de inicio es obligatoria");
+        String mensaje =
+            messageSource.getMessage(
+                "disponibilidad.hora.inicio.obligatoria", null, LocaleContextHolder.getLocale());
+        result.rejectValue("horaInicio", "error.horaInicio", mensaje);
       }
       if (disponibilidadDto.getHoraFin() == null) {
-        result.rejectValue("horaFin", "error.horaFin", "La hora de fin es obligatoria");
+        String mensaje =
+            messageSource.getMessage(
+                "disponibilidad.hora.fin.obligatoria", null, LocaleContextHolder.getLocale());
+        result.rejectValue("horaFin", "error.horaFin", mensaje);
       }
       if (disponibilidadDto.getHoraInicio() != null
           && disponibilidadDto.getHoraFin() != null
           && !disponibilidadDto.getHoraInicio().isBefore(disponibilidadDto.getHoraFin())) {
-        result.rejectValue(
-            "horaFin", "error.horaFin", "La hora de fin debe ser posterior a la hora de inicio");
+        String mensaje =
+            messageSource.getMessage(
+                "disponibilidad.hora.fin.posterior", null, LocaleContextHolder.getLocale());
+        result.rejectValue("horaFin", "error.horaFin", mensaje);
       }
     }
 
@@ -98,7 +114,10 @@ public class DisponibilidadController {
     try {
       disponibilidadService.guardarDisponibilidad(username, disponibilidadDto);
 
-      flash.addFlashAttribute("success", "Disponibilidad actualizada exitosamente");
+      String mensaje =
+          messageSource.getMessage(
+              "disponibilidad.actualizada.exito", null, LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("success", mensaje);
       return "redirect:/arbitro/disponibilidad";
 
     } catch (BusinessException e) {
@@ -109,7 +128,10 @@ public class DisponibilidadController {
 
     } catch (Exception e) {
       logger.error("Error inesperado al guardar disponibilidad: ", e);
-      flash.addFlashAttribute("error", "Error interno del sistema");
+      String mensajeError =
+          messageSource.getMessage(
+              "disponibilidad.error.sistema", null, LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("error", mensajeError);
       return "redirect:/arbitro/disponibilidad";
     }
   }

@@ -12,6 +12,8 @@ import com.caba.caba_pro.services.TarifaService;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.util.List;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -32,10 +34,12 @@ public class TarifaController {
 
   // 2. Variables de instancia
   private final TarifaService tarifaService;
+  private final MessageSource messageSource;
 
   // 3. Constructores
-  public TarifaController(TarifaService tarifaService) {
+  public TarifaController(TarifaService tarifaService, MessageSource messageSource) {
     this.tarifaService = tarifaService;
+    this.messageSource = messageSource;
   }
 
   // 4. Métodos públicos
@@ -74,7 +78,9 @@ public class TarifaController {
     }
 
     tarifaService.guardarTarifas(tarifaForm);
-    ra.addFlashAttribute("success", "Tarifas actualizadas correctamente.");
+    String mensaje =
+        messageSource.getMessage("tarifa.actualizada.exito", null, LocaleContextHolder.getLocale());
+    ra.addFlashAttribute("success", mensaje);
     return "redirect:/admin/tarifas";
   }
 }

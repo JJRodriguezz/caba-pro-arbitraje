@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Crear Partido - CABA Pro</title>
+  <title>[[#{partido.crear.titulo}]] - CABA Pro</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Reutilizamos el mismo CSS para que sea visualmente idéntico -->
@@ -11,12 +11,12 @@
 <div class="container">
   <!-- Navigation -->
   <div class="nav-bar">
-    <a th:href="@{/admin/dashboard}">Dashboard</a>
-    <a th:href="@{/admin/partidos}">Partidos</a>
-    <a href="#" style="background: rgba(255,255,255,0.3);">Crear Partido</a>
+    <a th:href="@{/admin/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
+    <a th:href="@{/admin/partidos}" th:text="#{nav.partidos}">Partidos</a>
+    <a href="#" style="background: rgba(255,255,255,0.3);" th:text="#{partido.crear.titulo}">Crear Partido</a>
   </div>
 
-  <h1>Crear Nuevo Partido</h1>
+  <h1 th:text="#{partido.crear.titulo.nuevo}">Crear Nuevo Partido</h1>
 
   <!-- Messages -->
   <div th:if="${success}" class="message success" th:text="${success}"></div>
@@ -24,57 +24,57 @@
 
   <!-- Form -->
   <form th:action="@{/admin/partidos}" method="post" th:object="${partidoDto}">
-    <p style="margin-top:-10px;color:#6c757d;">Los campos marcados con * son obligatorios.</p>
+    <p style="margin-top:-10px;color:#6c757d;" th:text="#{partido.crear.campos.obligatorios}">Los campos marcados con * son obligatorios.</p>
 
     <div class="form-grid">
       <div class="form-group">
-        <label for="nombre">Nombre *</label>
+        <label for="nombre" th:text="#{partido.editar.nombre}">Nombre *</label>
         <input type="text" id="nombre" th:field="*{nombre}" required>
         <span th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="error"></span>
       </div>
 
       <div class="form-group">
-        <label for="descripcion">Descripción</label>
-        <input type="text" id="descripcion" th:field="*{descripcion}" placeholder="Opcional">
+        <label for="descripcion" th:text="#{partido.editar.descripcion}">Descripción</label>
+        <input type="text" id="descripcion" th:field="*{descripcion}" th:placeholder="#{partido.crear.descripcion.placeholder}">
         <span th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}" class="error"></span>
       </div>
 
       <div class="form-group">
-        <label for="fechaHora">Fecha y hora *</label>
+        <label for="fechaHora" th:text="#{partido.editar.fecha.hora}">Fecha y hora *</label>
         <input type="datetime-local" id="fechaHora" th:field="*{fechaHora}" required>
         <span th:if="${#fields.hasErrors('fechaHora')}" th:errors="*{fechaHora}" class="error"></span>
       </div>
 
       <div class="form-group">
-        <label for="sede">Sede *</label>
+        <label for="sede" th:text="#{partido.editar.sede.label}">Sede *</label>
         <input type="text" id="sede" th:field="*{sede}" required>
         <span th:if="${#fields.hasErrors('sede')}" th:errors="*{sede}" class="error"></span>
       </div>
 
       <div class="form-group">
-        <label for="torneoId">Torneo (Opcional)</label>
+        <label for="torneoId" th:text="#{partido.editar.torneo}">Torneo (Opcional)</label>
         <select id="torneoId" th:field="*{torneoId}">
-          <option value="">No asociar a ningún torneo</option>
+          <option value="" th:text="#{partido.editar.torneo.ninguno}">No asociar a ningún torneo</option>
           <option th:each="torneo : ${torneos}" 
                   th:value="${torneo.id}" 
                   th:text="${torneo.nombre + ' (' + torneo.estado.descripcion + ')'}">
             Torneo ejemplo
           </option>
         </select>
-        <small style="color: #6c757d; font-size: 0.875rem;">
+        <small style="color: #6c757d; font-size: 0.875rem;" th:text="#{partido.crear.torneo.ayuda}">
           Selecciona un torneo si este partido forma parte de una competencia oficial.
         </small>
         <span th:if="${#fields.hasErrors('torneoId')}" th:errors="*{torneoId}" class="error"></span>
       </div>
 
       <div class="form-group">
-        <label for="equipoLocal">Equipo local *</label>
+        <label for="equipoLocal" th:text="#{partido.editar.equipo.local}">Equipo local *</label>
         <input type="text" id="equipoLocal" th:field="*{equipoLocal}" required>
         <span th:if="${#fields.hasErrors('equipoLocal')}" th:errors="*{equipoLocal}" class="error"></span>
       </div>
 
       <div class="form-group">
-        <label for="equipoVisitante">Equipo visitante *</label>
+        <label for="equipoVisitante" th:text="#{partido.editar.equipo.visitante}">Equipo visitante *</label>
         <input type="text" id="equipoVisitante" th:field="*{equipoVisitante}" required>
         <span th:if="${#fields.hasErrors('equipoVisitante')}" th:errors="*{equipoVisitante}" class="error"></span>
       </div>
@@ -82,8 +82,8 @@
 
     <!-- Buttons -->
     <div class="buttons">
-      <a th:href="@{/admin/partidos}" class="btn btn-secondary">Cancelar</a>
-      <button type="submit" class="btn btn-primary">Crear Partido</button>
+      <a th:href="@{/admin/partidos}" class="btn btn-secondary" th:text="#{btn.cancelar}">Cancelar</a>
+      <button type="submit" class="btn btn-primary" th:text="#{partido.crear.btn}">Crear Partido</button>
     </div>
   </form>
 </div>

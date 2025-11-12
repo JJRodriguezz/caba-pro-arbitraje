@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Torneos - CABA Pro</title>
+    <title>[[#{torneos.titulo}]] - CABA Pro</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/arbitros.css}" />
@@ -12,19 +12,19 @@
     <!-- Navegación -->
     <div class="nav-bar">
         <div class="nav-links">
-            <a th:href="@{/admin/dashboard}">Dashboard</a>
-            <a th:href="@{/admin/arbitros}">Árbitros</a>
-            <a th:href="@{/admin/partidos}">Partidos</a>
-            <a href="#" class="active">Torneos</a>
-            <a th:href="@{/admin/calendario}">Calendario</a>
-            <a th:href="@{/admin/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
+            <a th:href="@{/admin/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
+            <a th:href="@{/admin/arbitros}" th:text="#{nav.arbitros}">Árbitros</a>
+            <a th:href="@{/admin/partidos}" th:text="#{nav.partidos}">Partidos</a>
+            <a href="#" class="active" th:text="#{nav.torneos}">Torneos</a>
+            <a th:href="@{/admin/calendario}" th:text="#{nav.calendario}">Calendario</a>
+            <a th:href="@{/admin/notificaciones}" th:title="#{nav.notificaciones}" class="notificaciones-btn">🔔</a>
         </div>
         <div class="user-info">
             <a th:href="@{/admin/perfil}" class="profile-link">
                 <span th:text="${#authentication.name}">Administrador</span>
             </a>
             <form th:action="@{/logout}" method="post" style="display: inline;">
-                <button type="submit" class="logout-btn">Salir</button>
+                <button type="submit" class="logout-btn" th:text="#{btn.salir}">Salir</button>
             </form>
         </div>
     </div>
@@ -35,10 +35,10 @@
 
     <!-- Encabezado -->
     <div class="header">
-        <h1>Gestión de Torneos</h1>
+        <h1 th:text="#{torneos.gestion}">Gestión de Torneos</h1>
         <div class="action-buttons">
-            <a th:href="@{/admin/export/torneos}" class="btn btn-secondary">Exportar Excel</a>
-            <a th:href="@{/admin/torneos/nuevo}" class="btn btn-primary">Crear Torneo</a>
+            <a th:href="@{/admin/export/torneos}" class="btn btn-secondary" th:text="#{torneos.exportar}">Exportar Excel</a>
+            <a th:href="@{/admin/torneos/nuevo}" class="btn btn-primary" th:text="#{torneos.crear}">Crear Torneo</a>
         </div>
     </div>
 
@@ -47,15 +47,15 @@
         <table>
             <thead>
             <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th>Fecha Inicio</th>
-                <th>Fecha Fin</th>
-                <th>Estado</th>
-                <th>Ubicación</th>
-                <th>Partidos</th>
-                <th>Acciones</th>
+                <th th:text="#{torneos.tabla.id}">ID</th>
+                <th th:text="#{torneos.tabla.nombre}">Nombre</th>
+                <th th:text="#{torneos.tabla.descripcion}">Descripción</th>
+                <th th:text="#{torneos.tabla.fecha.inicio}">Fecha Inicio</th>
+                <th th:text="#{torneos.tabla.fecha.fin}">Fecha Fin</th>
+                <th th:text="#{torneos.tabla.estado}">Estado</th>
+                <th th:text="#{torneos.tabla.ubicacion}">Ubicación</th>
+                <th th:text="#{torneos.tabla.partidos}">Partidos</th>
+                <th th:text="#{torneos.tabla.acciones}">Acciones</th>
             </tr>
             </thead>
             <tbody>
@@ -73,11 +73,12 @@
                 <td th:text="${torneo.totalPartidos}">5</td>
                 <td>
                     <div class="action-links">
-                        <a th:href="@{/admin/torneos/ver/{id}(id=${torneo.id})}" class="view-btn">Ver</a>
-                        <a th:href="@{/admin/torneos/editar/{id}(id=${torneo.id})}" class="edit-btn">Editar</a>
+                        <a th:href="@{/admin/torneos/ver/{id}(id=${torneo.id})}" class="view-btn" th:text="#{torneos.ver}">Ver</a>
+                        <a th:href="@{/admin/torneos/editar/{id}(id=${torneo.id})}" class="edit-btn" th:text="#{torneos.editar}">Editar</a>
                         <a th:href="@{/admin/torneos/eliminar/{id}(id=${torneo.id})}"
                            class="delete-btn"
-                           onclick="return confirm('¿Seguro que quieres eliminar este torneo?')">Eliminar</a>
+                           th:onclick="'return confirm(\'' + #{torneos.eliminar.confirmar} + '\');'"
+                           th:text="#{torneos.eliminar}">Eliminar</a>
                     </div>
                 </td>
             </tr>
@@ -87,9 +88,9 @@
 
     <!-- Estado vacío -->
     <div th:if="${#lists.isEmpty(torneos)}" class="empty-state">
-        <h3>No hay torneos registrados</h3>
-        <p>Comienza creando tu primer torneo para organizar partidos</p>
-        <a th:href="@{/admin/torneos/nuevo}" class="btn btn-primary">Crear Primer Torneo</a>
+        <h3 th:text="#{torneos.vacio.titulo}">No hay torneos registrados</h3>
+        <p th:text="#{torneos.vacio.mensaje}">Comienza creando tu primer torneo para organizar partidos</p>
+        <a th:href="@{/admin/torneos/nuevo}" class="btn btn-primary" th:text="#{torneos.vacio.btn}">Crear Primer Torneo</a>
     </div>
 </div>
 

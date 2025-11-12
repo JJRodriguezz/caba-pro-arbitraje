@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-    <title>Mi Perfil - CABA Pro</title>
+    <title>[[#{perfil.titulo}]] - CABA Pro</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/style.css}" />
@@ -34,8 +34,8 @@
         </div>
         <h1 th:if="${perfil.isArbitro()}" th:text="${perfil.nombreCompleto}"></h1>
         <h1 th:if="${perfil.isAdmin()}" th:text="${perfil.username}"></h1>
-        <p th:if="${perfil.isArbitro()}" class="text-muted">Árbitro Profesional</p>
-        <p th:if="${perfil.isAdmin()}" class="text-muted">Administrador del Sistema</p>
+        <p th:if="${perfil.isArbitro()}" class="text-muted" th:text="#{perfil.arbitro.profesional}">Árbitro Profesional</p>
+        <p th:if="${perfil.isAdmin()}" class="text-muted" th:text="#{perfil.administrador.sistema}">Administrador del Sistema</p>
     </div>
 
     <!-- Información del perfil -->
@@ -43,18 +43,18 @@
         <!-- Información Personal -->
         <div class="info-section" th:if="${perfil.isArbitro()}">
             <div class="info-title">
-                <span>👤</span> Información Personal
+                <span>👤</span> <span th:text="#{perfil.informacion.personal}">Información Personal</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Nombre Completo:</span>
+                <span class="info-label" th:text="#{perfil.nombre.completo}">Nombre Completo:</span>
                 <span class="info-value" th:text="${perfil.nombreCompleto}"></span>
             </div>
             <div class="info-item">
-                <span class="info-label">Identificación:</span>
+                <span class="info-label" th:text="#{perfil.identificacion}">Identificación:</span>
                 <span class="info-value" th:text="${perfil.numeroIdentificacion}"></span>
             </div>
             <div class="info-item" th:if="${perfil.fechaNacimiento}">
-                <span class="info-label">Fecha de Nacimiento:</span>
+                <span class="info-label" th:text="#{perfil.fecha.nacimiento}">Fecha de Nacimiento:</span>
                 <span class="info-value" th:text="${#temporals.format(perfil.fechaNacimiento, 'dd/MM/yyyy')}"></span>
             </div>
         </div>
@@ -62,14 +62,14 @@
         <!-- Información de Contacto -->
         <div class="info-section" th:if="${perfil.isArbitro()}">
             <div class="info-title">
-                <span>📧</span> Contacto
+                <span>📧</span> <span th:text="#{perfil.contacto}">Contacto</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Email:</span>
+                <span class="info-label" th:text="#{perfil.email}">Email:</span>
                 <span class="info-value" th:text="${perfil.email}"></span>
             </div>
             <div class="info-item" th:if="${perfil.telefono}">
-                <span class="info-label">Teléfono:</span>
+                <span class="info-label" th:text="#{perfil.telefono}">Teléfono:</span>
                 <span class="info-value" th:text="${perfil.telefono}"></span>
             </div>
         </div>
@@ -77,17 +77,17 @@
         <!-- Información Profesional para Árbitros -->
         <div class="info-section" th:if="${perfil.isArbitro()}">
             <div class="info-title">
-                <span>⚽</span> Información Profesional
+                <span>⚽</span> <span th:text="#{perfil.informacion.profesional}">Información Profesional</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Especialidad:</span>
+                <span class="info-label" th:text="#{perfil.especialidad}">Especialidad:</span>
                 <span class="info-value">
                     <span th:class="${perfil.especialidad == T(com.caba.caba_pro.enums.Especialidad).CAMPO} ? 'especialidad-badge especialidad-campo' : 'especialidad-badge especialidad-mesa'"
                           th:text="${perfil.especialidad?.descripcion}"></span>
                 </span>
             </div>
             <div class="info-item">
-                <span class="info-label">Escalafón:</span>
+                <span class="info-label" th:text="#{perfil.escalafon}">Escalafón:</span>
                 <span class="info-value" th:text="${perfil.escalafon}"></span>
             </div>
         </div>
@@ -95,27 +95,32 @@
         <!-- Información del Sistema -->
         <div class="info-section">
             <div class="info-title">
-                <span>⚙️</span> Información del Sistema
+                <span>⚙️</span> <span th:text="#{perfil.informacion.sistema}">Información del Sistema</span>
             </div>
             <div class="info-item" th:if="${perfil.isAdmin()}">
-                <span class="info-label">Usuario:</span>
+                <span class="info-label" th:text="#{perfil.usuario}">Usuario:</span>
                 <span class="info-value" th:text="${perfil.username}"></span>
             </div>
             <div class="info-item" th:if="${perfil.isArbitro()}">
-                <span class="info-label">Usuario:</span>
+                <span class="info-label" th:text="#{perfil.usuario}">Usuario:</span>
                 <span class="info-value" th:text="${perfil.username}"></span>
             </div>
             <div class="info-item">
-                <span class="info-label">Rol:</span>
-                <span class="info-value" th:text="${perfil.isAdmin() ? 'Administrador' : 'Árbitro'}"></span>
+                <span class="info-label" th:text="#{perfil.rol}">Rol:</span>
+                <span class="info-value">
+                    <th:block th:if="${perfil.isAdmin()}" th:text="#{perfil.rol.administrador}">Administrador</th:block>
+                    <th:block th:unless="${perfil.isAdmin()}" th:text="#{perfil.rol.arbitro}">Árbitro</th:block>
+                </span>
             </div>
             <div class="info-item">
-                <span class="info-label">Estado:</span>
-                <span th:class="${perfil.activo} ? 'status-badge status-activo' : 'status-badge status-inactivo'"
-                      th:text="${perfil.activo} ? 'Activo' : 'Inactivo'"></span>
+                <span class="info-label" th:text="#{perfil.estado}">Estado:</span>
+                <span th:class="${perfil.activo} ? 'status-badge status-activo' : 'status-badge status-inactivo'">
+                    <th:block th:if="${perfil.activo}" th:text="#{perfil.estado.activo}">Activo</th:block>
+                    <th:block th:unless="${perfil.activo}" th:text="#{perfil.estado.inactivo}">Inactivo</th:block>
+                </span>
             </div>
             <div class="info-item">
-                <span class="info-label">Miembro desde:</span>
+                <span class="info-label" th:text="#{perfil.miembro.desde}">Miembro desde:</span>
                 <span class="info-value" th:text="${#temporals.format(perfil.fechaCreacion, 'dd/MM/yyyy HH:mm')}"></span>
             </div>
         </div>
@@ -124,11 +129,17 @@
     <!-- Acciones -->
     <div class="actions-section">
         <a th:href="${perfil.isAdmin() ? '/admin/dashboard' : '/arbitro/dashboard'}" 
-           class="btn btn-secondary">🔙 Volver al Dashboard</a>
+           class="btn btn-secondary">
+            <span>🔙</span> <span th:text="#{perfil.volver.dashboard}">Volver al Dashboard</span>
+        </a>
         <a th:href="${perfil.isAdmin() ? '/admin/perfil/editar' : '/arbitro/perfil/editar'}" 
-           class="btn btn-primary">✏️ Editar Perfil</a>
+           class="btn btn-primary">
+            <span>✏️</span> <span th:text="#{perfil.editar.perfil}">Editar Perfil</span>
+        </a>
         <a th:href="${perfil.isAdmin() ? '/admin/perfil/cambiar-password' : '/arbitro/perfil/cambiar-password'}" 
-           class="btn btn-primary">🔒 Cambiar Contraseña</a>
+           class="btn btn-primary">
+            <span>🔒</span> <span th:text="#{perfil.cambiar.password}">Cambiar Contraseña</span>
+        </a>
     </div>
 </div>
 

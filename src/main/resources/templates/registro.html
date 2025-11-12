@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Registro - CABA Pro</title>
+    <title>[[#{registro.titulo}]] - CABA Pro</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Referencia al CSS -->
@@ -15,7 +15,7 @@
             <img th:src="@{/trinity-logo.png}" alt="Trinity Devs Logo" />
         </div>
 
-        <h2>Crear Cuenta</h2>
+        <h2 th:text="#{registro.titulo}">Crear Cuenta</h2>
 
         <!-- Mensaje de error general -->
         <div th:if="${error}" class="alert alert-error">
@@ -23,11 +23,11 @@
         </div>
 
         <div class="input-group">
-            <label for="username">Nombre de Usuario</label>
+            <label for="username" th:text="#{registro.username}">Nombre de Usuario</label>
             <input type="text"
                    id="username"
                    th:field="*{username}"
-                   placeholder="Ingresa tu nombre de usuario"
+                   th:placeholder="#{registro.username.placeholder}"
                    required>
             <span th:if="${#fields.hasErrors('username')}"
                   th:errors="*{username}"
@@ -35,11 +35,11 @@
         </div>
 
         <div class="input-group">
-            <label for="password">Contraseña</label>
+            <label for="password" th:text="#{registro.password}">Contraseña</label>
             <input type="password"
                    id="password"
                    th:field="*{password}"
-                   placeholder="Mínimo 6 caracteres"
+                   th:placeholder="#{registro.password.placeholder}"
                    required>
             <span th:if="${#fields.hasErrors('password')}"
                   th:errors="*{password}"
@@ -47,22 +47,22 @@
         </div>
 
         <div class="input-group">
-            <label for="confirmPassword">Confirmar Contraseña</label>
+            <label for="confirmPassword" th:text="#{registro.confirm.password}">Confirmar Contraseña</label>
             <input type="password"
                    id="confirmPassword"
                    th:field="*{confirmPassword}"
-                   placeholder="Repite tu contraseña"
+                   th:placeholder="#{registro.confirm.password.placeholder}"
                    required>
             <span th:if="${#fields.hasErrors('confirmPassword')}"
                   th:errors="*{confirmPassword}"
                   class="field-error"></span>
         </div>
 
-        <button type="submit" class="btn-registro">Registrarse</button>
+        <button type="submit" class="btn-registro" th:text="#{registro.btn}">Registrarse</button>
 
         <div class="login-link">
-            <p>¿Ya tienes cuenta?
-                <a th:href="@{/login}">Inicia sesión aquí</a>
+            <p><span th:text="#{registro.login.texto}">¿Ya tienes cuenta?</span>
+                <a th:href="@{/login}" th:text="#{registro.login.link}">Inicia sesión aquí</a>
             </p>
         </div>
     </form>

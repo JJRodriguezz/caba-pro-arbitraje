@@ -7,12 +7,9 @@ Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
 -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Mis Notificaciones</title>
+  <title>[[#{arbitro.notificaciones.titulo}]]</title>
   <link rel="stylesheet" th:href="@{/css/arbitro-dashboard.css}" />
   <link rel="stylesheet" th:href="@{/css/asignaciones.css}" />
   <link rel="stylesheet" th:href="@{/css/notificaciones.css}" />
@@ -22,10 +19,10 @@ Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
 <div class="dashboard-container">
   <nav class="header-nav">
     <div class="nav-links">
-      <a th:href="@{/arbitro/dashboard}">Dashboard</a>
-      <a th:href="@{/arbitro/asignaciones}">Mis Asignaciones</a>
-      <a th:href="@{/arbitro/calendario}">Calendario</a>
-      <a th:href="@{/arbitro/disponibilidad}">Disponibilidad</a>
+      <a th:href="@{/arbitro/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
+      <a th:href="@{/arbitro/asignaciones}" th:text="#{nav.asignaciones}">Mis Asignaciones</a>
+      <a th:href="@{/arbitro/calendario}" th:text="#{nav.calendario}">Calendario</a>
+      <a th:href="@{/arbitro/disponibilidad}" th:text="#{nav.disponibilidad}">Disponibilidad</a>
       <a th:href="@{/arbitro/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
     </div>
     <div class="user-section">
@@ -33,22 +30,22 @@ Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
         <span sec:authentication="name">Árbitro</span>
       </a>
       <form th:action="@{/logout}" method="post" style="display: inline;">
-        <button type="submit" class="logout-btn">🔓 Salir</button>
+        <button type="submit" class="logout-btn" th:text="#{btn.salir}">🔓 Salir</button>
       </form>
     </div>
   </nav>
   <div class="main-panel">
-    <h1 class="welcome-title">Mis Notificaciones</h1>
+    <h1 class="welcome-title" th:text="#{arbitro.notificaciones.titulo}">Mis Notificaciones</h1>
     <div class="action-buttons" style="margin-bottom: 24px; text-align: right;">
-      <a th:href="@{/arbitro/asignaciones}" class="btn btn-secondary">Ver Mis Asignaciones</a>
+      <a th:href="@{/arbitro/asignaciones}" class="btn btn-secondary" th:text="#{arbitro.notificaciones.btn.asignaciones}">Ver Mis Asignaciones</a>
     </div>
     <table class="asignaciones-table" th:if="${notificaciones != null and notificaciones.size() > 0}">
       <thead>
         <tr>
-          <th>Fecha</th>
-          <th>Mensaje</th>
-          <th>Leída</th>
-          <th>Acción</th>
+          <th th:text="#{arbitro.notificaciones.fecha}">Fecha</th>
+          <th th:text="#{arbitro.notificaciones.mensaje}">Mensaje</th>
+          <th th:text="#{arbitro.notificaciones.leida}">Leída</th>
+          <th th:text="#{arbitro.notificaciones.accion}">Acción</th>
         </tr>
       </thead>
       <tbody>
@@ -56,18 +53,18 @@ Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
           <td th:text="${notificacion['fechaFormateada']}"></td>
           <td th:text="${notificacion.mensaje != null ? notificacion.mensaje : '-'}"></td>
           <td>
-            <span th:if="${notificacion.leida}" class="estado-label aceptada">Sí</span>
-            <span th:unless="${notificacion.leida}" class="estado-label rechazada">No</span>
+            <span th:if="${notificacion.leida}" class="estado-label aceptada" th:text="#{arbitro.notificaciones.leida.si}">Sí</span>
+            <span th:unless="${notificacion.leida}" class="estado-label rechazada" th:text="#{arbitro.notificaciones.leida.no}">No</span>
           </td>
           <td>
-            <a th:href="@{/arbitro/asignaciones}" class="btn btn-secondary">Ver Asignación</a>
+            <a th:href="@{/arbitro/asignaciones}" class="btn btn-secondary" th:text="#{arbitro.notificaciones.btn.ver}">Ver Asignación</a>
           </td>
         </tr>
       </tbody>
     </table>
     <div th:if="${notificaciones == null or notificaciones.size() == 0}" class="empty-state">
-      <h3>No tienes notificaciones.</h3>
-      <p>Cuando recibas una asignación o respuesta aparecerá aquí.</p>
+      <h3 th:text="#{arbitro.notificaciones.vacio}">No tienes notificaciones.</h3>
+      <p th:text="#{arbitro.notificaciones.vacio.texto}">Cuando recibas una asignación o respuesta aparecerá aquí.</p>
     </div>
   </div>
 </div>
