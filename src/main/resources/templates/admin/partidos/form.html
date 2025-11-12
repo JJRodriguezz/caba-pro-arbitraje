@@ -78,14 +78,15 @@
 
     <!-- Google Maps Section (Opcional) -->
     <div class="map-container" th:if="${googleMapsApiKey != null and !googleMapsApiKey.isEmpty()}">
-      <h3 style="margin-bottom: 10px;">📍 Ubicación del Partido (Opcional)</h3>
-      <p style="color: #6c757d; margin-bottom: 10px;">
+      <h3 style="margin-bottom: 10px;" th:text="'📍 ' + #{partido.ubicacion.titulo}">📍 Ubicación del Partido (Opcional)</h3>
+      <p style="color: #6c757d; margin-bottom: 10px;" th:text="#{partido.ubicacion.descripcion}">
         Busca y selecciona la ubicación exacta del partido en el mapa. Esto ayudará a los árbitros a encontrar el lugar.
       </p>
       
       <!-- Campo de búsqueda -->
       <input type="text" 
              id="autocomplete" 
+             th:placeholder="'🔍 ' + #{partido.ubicacion.buscar.placeholder}"
              placeholder="🔍 Buscar ubicación en el mapa..."
              style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px; margin-bottom: 10px; font-size: 1em;">
       
@@ -99,8 +100,8 @@
       
       <!-- Info de ubicación seleccionada -->
       <div class="map-info" id="map-info" style="display: none;">
-        <strong>✓ Ubicación seleccionada:</strong> <span id="selected-location"></span><br>
-        <small>Coordenadas: <span id="selected-coords"></span></small>
+        <strong>✓ <span th:text="#{partido.ubicacion.seleccionada}">Ubicación seleccionada:</span></strong> <span id="selected-location"></span><br>
+        <small><span th:text="#{partido.ubicacion.latitud} + ': ' + #{partido.ubicacion.longitud}">Coordenadas:</span> <span id="selected-coords"></span></small>
       </div>
     </div>
 
@@ -144,6 +145,11 @@
 
 <script th:inline="javascript">
 /*<![CDATA[*/
+// Variables de traducción
+const i18n = {
+  customLocation: /*[[#{partido.ubicacion.personalizada}]]*/ 'Custom location'
+};
+
 let map;
 let marker;
 let autocomplete;
@@ -208,7 +214,7 @@ function initMap() {
       if (status === 'OK' && results[0]) {
         updateLocationInfo(event.latLng, results[0].formatted_address);
       } else {
-        updateLocationInfo(event.latLng, 'Ubicación personalizada');
+        updateLocationInfo(event.latLng, i18n.customLocation);
       }
     });
   });
@@ -220,7 +226,7 @@ function initMap() {
       if (status === 'OK' && results[0]) {
         updateLocationInfo(event.latLng, results[0].formatted_address);
       } else {
-        updateLocationInfo(event.latLng, 'Ubicación personalizada');
+        updateLocationInfo(event.latLng, i18n.customLocation);
       }
     });
   });
