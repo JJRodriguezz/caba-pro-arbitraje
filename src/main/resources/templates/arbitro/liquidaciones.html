@@ -7,376 +7,130 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" th:href="@{/css/arbitro-dashboard.css}" />
-  <link rel="stylesheet" th:href="@{/css/estadisticas.css}" />
-  <style>
-    .liquidacion-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .liquidacion-titulo {
-      color: #2c3e50;
-      font-size: 2em;
-      margin-bottom: 10px;
-      text-align: center;
-    }
-
-    .liquidacion-subtitulo {
-      color: #7f8c8d;
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .filter-form {
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      display: flex;
-      gap: 15px;
-      align-items: end;
-      flex-wrap: wrap;
-      margin-bottom: 30px;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      flex: 1;
-      min-width: 200px;
-    }
-
-    .form-group label {
-      font-weight: 600;
-      color: #2c3e50;
-      font-size: 0.9em;
-    }
-
-    .form-group input[type="date"] {
-      padding: 10px;
-      border: 2px solid #e0e0e0;
-      border-radius: 5px;
-      font-size: 1em;
-      transition: border-color 0.3s;
-    }
-
-    .form-group input[type="date"]:focus {
-      outline: none;
-      border-color: #3498db;
-    }
-
-    .btn {
-      padding: 12px 25px;
-      border: none;
-      border-radius: 5px;
-      font-size: 1em;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      text-decoration: none;
-      display: inline-block;
-    }
-
-    .btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-    }
-
-    .alert {
-      padding: 15px 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .alert-danger {
-      background: #fee;
-      border-left: 4px solid #e74c3c;
-      color: #c0392b;
-    }
-
-    .alert-info {
-      background: #e3f2fd;
-      border-left: 4px solid #2196f3;
-      color: #1976d2;
-    }
-
-    .stats-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
-
-    .stat-card {
-      background: white;
-      padding: 25px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-
-    .stat-card .stat-value {
-      font-size: 2.5em;
-      font-weight: bold;
-      color: #3498db;
-      margin: 10px 0;
-    }
-
-    .stat-card .stat-label {
-      color: #7f8c8d;
-      font-size: 0.9em;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .arbitro-info {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 30px;
-      border-radius: 10px;
-      margin-bottom: 30px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-    }
-
-    .arbitro-info h2 {
-      margin: 0 0 10px 0;
-      font-size: 1.8em;
-    }
-
-    .arbitro-info p {
-      margin: 5px 0;
-      opacity: 0.9;
-    }
-
-    .partidos-table {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-
-    .partidos-table h3 {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 20px;
-      margin: 0;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    thead {
-      background: #f8f9fa;
-    }
-
-    th, td {
-      padding: 15px;
-      text-align: left;
-      border-bottom: 1px solid #e0e0e0;
-    }
-
-    th {
-      font-weight: 600;
-      color: #2c3e50;
-      text-transform: uppercase;
-      font-size: 0.85em;
-      letter-spacing: 0.5px;
-    }
-
-    tbody tr:hover {
-      background: #f8f9fa;
-    }
-
-    .badge {
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 0.85em;
-      font-weight: 600;
-    }
-
-    .badge-completada {
-      background: #d4edda;
-      color: #155724;
-    }
-
-    .monto {
-      font-weight: 700;
-      color: #27ae60;
-      font-size: 1.1em;
-    }
-
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      color: #3498db;
-      text-decoration: none;
-      margin-bottom: 20px;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-
-    .back-btn:hover {
-      color: #2980b9;
-      transform: translateX(-5px);
-    }
-
-    .no-data {
-      text-align: center;
-      padding: 60px 20px;
-      color: #7f8c8d;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    .no-data-icon {
-      font-size: 4em;
-      margin-bottom: 20px;
-    }
-
-    @media (max-width: 768px) {
-      .filter-form {
-        flex-direction: column;
-        align-items: stretch;
-      }
-
-      .form-group {
-        width: 100%;
-      }
-
-      table {
-        font-size: 0.9em;
-      }
-
-      th, td {
-        padding: 10px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" th:href="@{/css/language-selector.css}" />
+  <link rel="stylesheet" th:href="@{/css/liquidaciones.css}" />
 </head>
 <body>
-  <!-- Header Navigation -->
-  <nav class="header-nav">
-    <div class="nav-links">
-      <a th:href="@{/arbitro/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
-      <a th:href="@{/arbitro/asignaciones}" th:text="#{nav.asignaciones}">Mis Asignaciones</a>
-      <a th:href="@{/arbitro/calendario}" th:text="#{nav.calendario}">Calendario</a>
-      <a th:href="@{/arbitro/disponibilidad}" th:text="#{nav.disponibilidad}">Disponibilidad</a>
-      <a href="#" class="active" th:text="#{nav.liquidaciones}">Liquidaciones</a>
-      <a th:href="@{/arbitro/notificaciones}" th:title="#{nav.notificaciones}" class="notificaciones-btn">🔔</a>
-    </div>
-    <div class="user-section">
-      <a th:href="@{/arbitro/perfil}" class="profile-link">
-        <span sec:authentication="name">Árbitro</span>
-      </a>
-      <form th:action="@{/logout}" method="post" style="display: inline;">
-        <button type="submit" class="logout-btn" th:text="'🔓 ' + #{nav.salir}">🔓 Salir</button>
-      </form>
-    </div>
-  </nav>
+  <div class="dashboard-container">
+    <!-- Header Navigation -->
+    <nav class="header-nav">
+      <div class="nav-links">
+        <a th:href="@{/arbitro/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
+        <a th:href="@{/arbitro/asignaciones}" th:text="#{nav.asignaciones}">Mis Asignaciones</a>
+        <a th:href="@{/arbitro/calendario}" th:text="#{nav.calendario}">Calendario</a>
+        <a th:href="@{/arbitro/disponibilidad}" th:text="#{nav.disponibilidad}">Disponibilidad</a>
+        <a href="#" class="active" th:text="#{nav.liquidaciones}">Liquidaciones</a>
+        <a th:href="@{/arbitro/notificaciones}" th:title="#{nav.notificaciones}" class="notificaciones-btn">🔔</a>
+      </div>
+      <div class="user-section">
+        <a th:href="@{/arbitro/perfil}" class="profile-link">
+          <span sec:authentication="name">Árbitro</span>
+        </a>
+        
+        <!-- Selector de Idioma -->
+        <div class="language-selector">
+          <button class="language-btn" onclick="toggleLanguageDropdown()">🌐</button>
+          <div id="languageDropdown" class="language-dropdown">
+            <a th:href="@{''(lang='es')}">
+              <span class="flag-icon">🇪🇸</span>
+              <span th:text="#{lang.spanish}">Español</span>
+            </a>
+            <a th:href="@{''(lang='en')}">
+              <span class="flag-icon">🇺🇸</span>
+              <span th:text="#{lang.english}">English</span>
+            </a>
+          </div>
+        </div>
+        
+        <!-- Botón de Cerrar Sesión -->
+        <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 10px;">
+          <button type="submit" style="background: #dc3545; border: 2px solid #dc3545; color: white; cursor: pointer; font-size: 16px; padding: 10px 15px; font-weight: bold; border-radius: 5px;" th:text="#{nav.salir}">Salir</button>
+        </form>
+      </div>
+    </nav>
 
-  <div class="liquidacion-container">
-
-    <h1 class="liquidacion-titulo" th:text="#{liquidaciones.titulo}">💰 Mi Liquidación de Pagos</h1>
+    <div class="content-wrapper">
+      <div class="liquidacion-container">
+    <h1 class="liquidacion-titulo" th:text="#{liquidaciones.titulo}">Mi Liquidación</h1>
     <p class="liquidacion-subtitulo" th:text="#{liquidaciones.subtitulo}">Consulta tus pagos por partidos arbitrados en un período específico</p>
 
-    <!-- Formulario de Filtros -->
+    <!-- Formulario de filtros -->
     <form th:action="@{/arbitro/liquidaciones}" method="get" class="filter-form">
       <div class="form-group">
-   <label for="fechaInicio">📅 <span th:text="#{liquidaciones.fecha.inicio}">Fecha Inicio</span></label>
-   <input type="date" 
-     id="fechaInicio" 
-     name="fechaInicio" 
-     th:value="${fechaInicio}"
-     required>
+        <label for="fechaInicio"><span th:text="#{liquidaciones.fecha.inicio}">Fecha Inicio:</span></label>
+        <input type="date" 
+          id="fechaInicio" 
+          name="fechaInicio" 
+          th:value="${fechaInicio}" 
+          required />
       </div>
-
       <div class="form-group">
-   <label for="fechaFin">📅 <span th:text="#{liquidaciones.fecha.fin}">Fecha Fin</span></label>
-   <input type="date" 
-     id="fechaFin" 
-     name="fechaFin" 
-     th:value="${fechaFin}"
-     required>
+        <label for="fechaFin"><span th:text="#{liquidaciones.fecha.fin}">Fecha Fin:</span></label>
+        <input type="date" 
+          id="fechaFin" 
+          name="fechaFin" 
+          th:value="${fechaFin}" 
+          required />
       </div>
-
       <div class="btn-group">
-        <button type="submit" class="btn btn-primary" th:text="#{liquidaciones.btn.generar}">🔍 Generar Liquidación</button>
+        <button type="submit" class="btn btn-primary"><span th:text="#{liquidaciones.btn.generar}">Generar Liquidación</span></button>
       </div>
     </form>
-
-    <!-- Mensaje de Error -->
+    <!-- Mensaje de error -->
     <div th:if="${error}" class="alert alert-danger">
       <span>⚠️</span>
-      <span th:text="${error}">Error</span>
+      <span th:text="${error}"></span>
     </div>
 
-    <!-- Mensaje Informativo cuando no hay búsqueda -->
+    <!-- Mensaje informativo si no hay resultados -->
     <div th:if="${mostrarResultados == null and error == null}" class="alert alert-info">
       <span>ℹ️</span>
       <span th:text="#{liquidaciones.info.seleccion}">Selecciona un rango de fechas y haz clic en "Generar Liquidación" para ver tus pagos.</span>
     </div>
 
-    <!-- Resultados de la Liquidación -->
+    <!-- Resultados de la liquidación -->
     <div th:if="${liquidacionArbitro != null}">
-      <!-- Información del Árbitro -->
-      <div class="arbitro-info">
-        <h2 th:text="${liquidacionArbitro.nombreCompleto}">Nombre Árbitro</h2>
-        <p><strong th:text="#{perfil.identificacion}">Documento:</strong> <span th:text="${liquidacionArbitro.numeroIdentificacion}">123456789</span></p>
-        <p><strong th:text="#{perfil.escalafon}">Escalafón:</strong> <span th:text="${liquidacionArbitro.escalafon}">Nacional</span></p>
-        <p><strong th:text="#{liquidaciones.periodo}">Período:</strong> 
-          <span th:text="${#temporals.format(fechaInicio, 'dd/MM/yyyy')}"></span> - 
-          <span th:text="${#temporals.format(fechaFin, 'dd/MM/yyyy')}"></span>
-        </p>
-      </div>
-
-      <!-- Tarjetas de Estadísticas -->
+      <!-- Tarjetas de estadísticas -->
       <div class="stats-cards">
         <div class="stat-card">
-          <div class="stat-label" th:text="#{liquidaciones.total.label}">💵 Total a Recibir</div>
-          <div class="stat-value" th:text="${'$' + #numbers.formatDecimal(liquidacionArbitro.totalAPagar, 0, 'COMMA', 2, 'POINT')}">$0.00</div>
+          <div class="stat-label" th:text="#{liquidaciones.total.label}">Total a Recibir</div>
+          <div class="stat-value money">
+            $<span th:text="${#numbers.formatDecimal(liquidacionArbitro.totalAPagar, 1, 'COMMA', 2, 'POINT')}">0.00</span>
+          </div>
         </div>
-
         <div class="stat-card">
-          <div class="stat-label" th:text="#{liquidaciones.partidos.label}">⚽ Partidos Arbitrados</div>
+          <div class="stat-label" th:text="#{liquidaciones.partidos.label}">Partidos Arbitrados</div>
           <div class="stat-value" th:text="${liquidacionArbitro.cantidadPartidos}">0</div>
         </div>
-
         <div class="stat-card">
-          <div class="stat-label" th:text="#{liquidaciones.promedio.label}">📊 Promedio por Partido</div>
-          <div class="stat-value" 
-               th:text="${liquidacionArbitro.cantidadPartidos > 0 ? '$' + #numbers.formatDecimal(liquidacionArbitro.totalAPagar / liquidacionArbitro.cantidadPartidos, 0, 'COMMA', 2, 'POINT') : '$0.00'}">
-            $0.00
+          <div class="stat-label" th:text="#{liquidaciones.promedio.label}">Promedio por Partido</div>
+          <div class="stat-value money">
+            $<span th:text="${liquidacionArbitro.cantidadPartidos > 0 ? #numbers.formatDecimal(liquidacionArbitro.totalAPagar / liquidacionArbitro.cantidadPartidos, 1, 'COMMA', 2, 'POINT') : '0.00'}">0.00</span>
           </div>
         </div>
       </div>
 
-      <!-- Tabla de Partidos -->
-      <div class="partidos-table">
-        <h3 th:text="#{liquidaciones.detalle.titulo}">📋 Detalle de Partidos</h3>
-        <table>
+      <!-- Tabla de liquidación por partido -->
+      <div class="table-container">
+        <h2 style="margin-top: 0; color: #2c3e50;">📋 <span th:text="#{liquidaciones.detalle.titulo}">Detalle de Partidos</span></h2>
+        
+        <div th:if="${liquidacionArbitro.partidos.isEmpty()}" class="no-data-message">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="#bdc3c7" stroke-width="2" fill="none"/>
+            <text x="12" y="16" text-anchor="middle" font-size="12" fill="#95a5a6">!</text>
+          </svg>
+          <p>No se encontraron partidos completados en el período seleccionado.</p>
+        </div>
+
+        <table th:if="${!liquidacionArbitro.partidos.isEmpty()}" class="liquidacion-table">
           <thead>
             <tr>
               <th th:text="#{partido.fecha}">Fecha</th>
               <th th:text="#{partido.titulo}">Partido</th>
               <th th:text="#{calendario.torneo}">Torneo</th>
               <th th:text="#{partido.posicion}">Posición</th>
-              <th th:text="#{liquidaciones.monto}">Monto</th>
-              <th th:text="#{asignaciones.estado}">Estado</th>
+              <th class="text-right" th:text="#{liquidaciones.monto}">Monto</th>
+              <th class="text-center" th:text="#{asignaciones.estado}">Estado</th>
             </tr>
           </thead>
           <tbody>
@@ -385,16 +139,20 @@
               <td th:text="${partido.nombrePartido}">Equipo A vs Equipo B</td>
               <td th:text="${partido.torneo}">Liga Nacional</td>
               <td th:text="${partido.posicion}">Principal</td>
-              <td class="monto" th:text="${'$' + #numbers.formatDecimal(partido.montoPago, 0, 'COMMA', 2, 'POINT')}">$100.00</td>
-              <td>
-                <span class="badge badge-completada" th:text="${partido.estado}">COMPLETADA</span>
+              <td class="text-right money">
+                $<span th:text="${#numbers.formatDecimal(partido.montoPago, 1, 'COMMA', 2, 'POINT')}">100.00</span>
+              </td>
+              <td class="text-center">
+                <span class="badge badge-primary" th:text="${partido.estado}">COMPLETADA</span>
               </td>
             </tr>
           </tbody>
           <tfoot>
             <tr style="background: #f8f9fa; font-weight: bold;">
               <td colspan="4" style="text-align: right;">TOTAL:</td>
-              <td class="monto" th:text="${'$' + #numbers.formatDecimal(liquidacionArbitro.totalAPagar, 0, 'COMMA', 2, 'POINT')}">$0.00</td>
+              <td class="text-right money" style="font-size: 1.2em;">
+                $<span th:text="${#numbers.formatDecimal(liquidacionArbitro.totalAPagar, 1, 'COMMA', 2, 'POINT')}">0.00</span>
+              </td>
               <td></td>
             </tr>
           </tfoot>
@@ -403,12 +161,35 @@
     </div>
 
     <!-- Mensaje cuando no hay datos -->
-    <div th:if="${mostrarResultados != null and liquidacionArbitro == null}" class="no-data">
-      <div class="no-data-icon">📭</div>
-      <h3>No se encontraron registros</h3>
-      <p>No hay partidos completados en el período seleccionado.</p>
-      <p>Intenta con otro rango de fechas.</p>
+    <div th:if="${mostrarResultados != null and liquidacionArbitro == null}" class="no-data-message">
+      <svg viewBox="0 0 24 24" style="width: 60px; height: 60px; margin-bottom: 20px;">
+        <circle cx="12" cy="12" r="10" stroke="#bdc3c7" stroke-width="2" fill="none"/>
+        <text x="12" y="16" text-anchor="middle" font-size="12" fill="#95a5a6">!</text>
+      </svg>
+      <p>No se encontraron partidos completados en el período seleccionado.</p>
+      <p style="color: #95a5a6;">Intenta con otro rango de fechas.</p>
+    </div>
+      </div>
     </div>
   </div>
+
+  <script>
+  function toggleLanguageDropdown() {
+    document.getElementById("languageDropdown").classList.toggle("show");
+  }
+
+  // Cerrar el dropdown si se hace clic fuera de él
+  window.onclick = function(event) {
+    if (!event.target.matches('.language-btn')) {
+      var dropdowns = document.getElementsByClassName("language-dropdown");
+      for (var i = 0; i < dropdowns.length; i++) {
+        var openDropdown = dropdowns[i];
+        if (openDropdown.classList.contains('show')) {
+          openDropdown.classList.remove('show');
+        }
+      }
+    }
+  }
+  </script>
 </body>
 </html>

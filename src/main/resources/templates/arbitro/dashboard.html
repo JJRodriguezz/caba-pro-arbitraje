@@ -46,8 +46,9 @@
         </div>
       </div>
       
-      <form th:action="@{/logout}" method="post" style="display: inline;">
-        <button type="submit" class="logout-btn"> <span th:text="#{nav.salir}">Salir</span></button>
+      <!-- Botón de Cerrar Sesión -->
+      <form th:action="@{/logout}" method="post" style="display: inline; margin-left: 10px;">
+        <button type="submit" style="background: #dc3545; border: 2px solid #dc3545; color: white; cursor: pointer; font-size: 16px; padding: 10px 15px; font-weight: bold; border-radius: 5px;" th:text="#{nav.salir}">Salir</button>
       </form>
     </div>
   </nav>
