@@ -47,6 +47,10 @@
   background: #4ea1a5;
   color: #fff;
 }
+.btn.btn-success {
+  background: #28a745;
+  color: #fff;
+}
 .btn.delete-btn {
   background: #dc3545;
   color: #fff;

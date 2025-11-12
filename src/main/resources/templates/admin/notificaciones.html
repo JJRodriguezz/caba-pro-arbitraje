@@ -9,7 +9,7 @@ Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Mis Notificaciones</title>
+  <title>[[#{notificaciones.titulo}]]</title>
   <link rel="stylesheet" th:href="@{/css/arbitro-dashboard.css}" />
   <link rel="stylesheet" th:href="@{/css/asignaciones.css}" />
   <link rel="stylesheet" th:href="@{/css/notificaciones.css}" />
@@ -19,30 +19,30 @@ Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
 <div class="dashboard-container">
   <nav class="header-nav">
     <div class="nav-links">
-      <a th:href="@{/admin/dashboard}">Dashboard</a>
-      <a th:href="@{/admin/arbitros}">Árbitros</a>
-      <a th:href="@{/admin/partidos}">Partidos</a>
-      <a th:href="@{/admin/torneos}">Torneos</a>
-      <a th:href="@{/admin/calendario}">Calendario</a>
-      <a th:href="@{/admin/notificaciones}" title="Notificaciones" class="notificaciones-btn">🔔</a>
+      <a th:href="@{/admin/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
+      <a th:href="@{/admin/arbitros}" th:text="#{nav.arbitros}">Árbitros</a>
+      <a th:href="@{/admin/partidos}" th:text="#{nav.partidos}">Partidos</a>
+      <a th:href="@{/admin/torneos}" th:text="#{nav.torneos}">Torneos</a>
+      <a th:href="@{/admin/calendario}" th:text="#{nav.calendario}">Calendario</a>
+      <a th:href="@{/admin/notificaciones}" th:title="#{nav.notificaciones}" class="notificaciones-btn">🔔</a>
     </div>
     <div class="user-section">
       <a th:href="@{/admin/perfil}" class="profile-link">
         <span th:text="${#authentication.name}">Administrador</span>
       </a>
       <form th:action="@{/logout}" method="post" style="display: inline;">
-        <button type="submit" class="logout-btn">Salir</button>
+        <button type="submit" class="logout-btn" th:text="#{btn.salir}">Salir</button>
       </form>
     </div>
   </nav>
   <div class="main-panel">
-    <h1 class="welcome-title">Mis Notificaciones</h1>
+    <h1 class="welcome-title" th:text="#{notificaciones.titulo}">Mis Notificaciones</h1>
     <table class="asignaciones-table" th:if="${notificaciones != null and notificaciones.size() > 0}">
       <thead>
         <tr>
-          <th>Fecha</th>
-          <th>Mensaje</th>
-          <th>Leída</th>
+          <th th:text="#{notificaciones.fecha}">Fecha</th>
+          <th th:text="#{notificaciones.mensaje}">Mensaje</th>
+          <th th:text="#{notificaciones.leida}">Leída</th>
         </tr>
       </thead>
       <tbody>
@@ -50,14 +50,14 @@ Proyecto: CABA Pro - Sistema de Gestión Integral de Arbitraje
           <td th:text="${notificacion['fechaFormateada']}"></td>
           <td th:text="${notificacion.mensaje != null ? notificacion.mensaje : '-'}"></td>
           <td>
-            <span th:if="${notificacion.leida}" class="estado-label aceptada">Sí</span>
-            <span th:unless="${notificacion.leida}" class="estado-label rechazada">No</span>
+            <span th:if="${notificacion.leida}" class="estado-label aceptada" th:text="#{notificaciones.si}">Sí</span>
+            <span th:unless="${notificacion.leida}" class="estado-label rechazada" th:text="#{notificaciones.no}">No</span>
           </td>
         </tr>
       </tbody>
     </table>
     <div th:if="${notificaciones == null or notificaciones.size() == 0}" class="empty-message">
-      <p>No tienes notificaciones.</p>
+      <p th:text="#{notificaciones.vacio}">No tienes notificaciones.</p>
     </div>
   </div>
 </div>

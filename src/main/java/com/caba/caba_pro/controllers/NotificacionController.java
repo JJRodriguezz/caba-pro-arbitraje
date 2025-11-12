@@ -11,6 +11,8 @@ import com.caba.caba_pro.services.ArbitroService;
 import com.caba.caba_pro.services.NotificacionService;
 import java.security.Principal;
 import java.util.List;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,14 +25,17 @@ public class NotificacionController {
   private final NotificacionService notificacionService;
   private final ArbitroService arbitroService;
   private final com.caba.caba_pro.repositories.AdministradorRepository administradorRepository;
+  private final MessageSource messageSource;
 
   public NotificacionController(
       NotificacionService notificacionService,
       ArbitroService arbitroService,
-      com.caba.caba_pro.repositories.AdministradorRepository administradorRepository) {
+      com.caba.caba_pro.repositories.AdministradorRepository administradorRepository,
+      MessageSource messageSource) {
     this.notificacionService = notificacionService;
     this.arbitroService = arbitroService;
     this.administradorRepository = administradorRepository;
+    this.messageSource = messageSource;
   }
 
   // Vista de notificaciones para árbitros
@@ -70,8 +75,10 @@ public class NotificacionController {
     com.caba.caba_pro.models.Administrador admin =
         administradorRepository.findByUsername(principal.getName());
     if (admin == null || !admin.isActivo()) {
-      throw new com.caba.caba_pro.exceptions.BusinessException(
-          "Administrador no encontrado o inactivo");
+      String mensaje =
+          messageSource.getMessage(
+              "notificacion.admin.no.encontrado", null, LocaleContextHolder.getLocale());
+      throw new com.caba.caba_pro.exceptions.BusinessException(mensaje);
     }
     List<Notificacion> notificaciones =
         notificacionService.obtenerNotificaciones(admin.getId(), "ADMIN");

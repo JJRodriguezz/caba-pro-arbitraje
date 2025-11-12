@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-    <title>Mi Disponibilidad - CABA Pro</title>
+    <title>[[#{disponibilidad.titulo}]] - CABA Pro</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/arbitro-dashboard.css}" />
@@ -207,18 +207,18 @@
     <!-- Header Navigation -->
     <nav class="header-nav">
         <div class="nav-links">
-            <a th:href="@{/arbitro/dashboard}">Dashboard</a>
-            <a th:href="@{/arbitro/asignaciones}">Mis Asignaciones</a>
-            <a th:href="@{/arbitro/calendario}">Calendario</a>
-            <a href="#" class="active">Disponibilidad</a>
-            <a th:href="@{/arbitro/notificaciones}" title="Notificaciones">🔔</a>
+            <a th:href="@{/arbitro/dashboard}" th:text="#{title.dashboard}">Dashboard</a>
+            <a th:href="@{/arbitro/asignaciones}" th:text="#{asignaciones.titulo}">Mis Asignaciones</a>
+            <a th:href="@{/arbitro/calendario}" th:text="#{nav.calendario}">Calendario</a>
+            <a href="#" class="active" th:text="#{nav.disponibilidad}">Disponibilidad</a>
+            <a th:href="@{/arbitro/notificaciones}" th:title="#{nav.notificaciones}">🔔</a>
         </div>
         <div class="user-section">
             <a th:href="@{/arbitro/perfil}" class="profile-link">
                 <span sec:authentication="name">Árbitro</span>
             </a>
             <form th:action="@{/logout}" method="post" style="display: inline;">
-                <button type="submit" class="logout-btn">🔓 Salir</button>
+                <button type="submit" class="logout-btn">🔓 <span th:text="#{nav.salir}">Salir</span></button>
             </form>
         </div>
     </nav>
@@ -227,8 +227,8 @@
     <div class="disponibilidad-container">
         <!-- Header -->
         <div class="disponibilidad-header">
-            <h1>⏰ Mi Disponibilidad</h1>
-            <p>Configura cuándo estás disponible para recibir asignaciones de partidos</p>
+            <h1>⏰ <span th:text="#{disponibilidad.titulo}">Mi Disponibilidad</span></h1>
+            <p th:text="#{disponibilidad.subtitulo}">Configura cuándo estás disponible para recibir asignaciones de partidos</p>
         </div>
 
         <!-- Messages -->
@@ -240,7 +240,7 @@
             
             <!-- Tipo de Disponibilidad -->
             <div class="tipo-disponibilidad">
-                <h3>Tipo de Disponibilidad</h3>
+                <h3 th:text="#{disponibilidad.tipo}">Tipo de Disponibilidad</h3>
                 <div class="radio-group">
                     <label class="radio-option" th:each="tipo : ${tiposDisponibilidad}">
                         <input type="radio" 
@@ -251,9 +251,9 @@
                         <div>
                             <strong th:text="${tipo.descripcion}">Siempre disponible</strong>
                             <div th:switch="${tipo.name()}" style="font-size: 14px; color: #666; margin-top: 5px;">
-                                <p th:case="'SIEMPRE'">Podrás recibir asignaciones en cualquier momento</p>
-                                <p th:case="'NUNCA'">No recibirás asignaciones (modo ausente)</p>
-                                <p th:case="'HORARIO_ESPECIFICO'">Solo recibirás asignaciones en el horario que configures</p>
+                                <p th:case="'SIEMPRE'" th:text="#{disponibilidad.tipo.siempre.descripcion}">Podrás recibir asignaciones en cualquier momento</p>
+                                <p th:case="'NUNCA'" th:text="#{disponibilidad.tipo.nunca.descripcion}">No recibirás asignaciones (modo ausente)</p>
+                                <p th:case="'HORARIO_ESPECIFICO'" th:text="#{disponibilidad.tipo.horario.descripcion}">Solo recibirás asignaciones en el horario que configures</p>
                             </div>
                         </div>
                     </label>
@@ -265,10 +265,10 @@
 
             <!-- Sección de Horario Específico -->
             <div id="horarioSection" class="horario-section">
-                <h4>Configuración de Horario</h4>
+                <h4 th:text="#{disponibilidad.configuracion.horario}">Configuración de Horario</h4>
                 <div class="horario-inputs">
                     <div class="time-input">
-                        <label for="horaInicio">Hora de Inicio:</label>
+                        <label for="horaInicio" th:text="#{disponibilidad.hora.inicio}">Hora de Inicio:</label>
                         <input type="time" 
                                id="horaInicio" 
                                th:field="*{horaInicio}" 
@@ -278,7 +278,7 @@
                               class="error-message"></span>
                     </div>
                     <div class="time-input">
-                        <label for="horaFin">Hora de Fin:</label>
+                        <label for="horaFin" th:text="#{disponibilidad.hora.fin}">Hora de Fin:</label>
                         <input type="time" 
                                id="horaFin" 
                                th:field="*{horaFin}" 
@@ -289,22 +289,22 @@
                     </div>
                 </div>
                 <p style="font-size: 14px; color: #666; margin-top: 10px;">
-                    💡 Solo recibirás asignaciones de partidos que se desarrollen dentro de este horario
+                    💡 <span th:text="#{disponibilidad.info.horario}">Solo recibirás asignaciones de partidos que se desarrollen dentro de este horario</span>
                 </p>
             </div>
 
             <!-- Observaciones -->
             <div class="observaciones-section">
-                <label for="observaciones">Observaciones (Opcional):</label>
+                <label for="observaciones" th:text="#{disponibilidad.observaciones}">Observaciones (Opcional):</label>
                 <textarea id="observaciones" 
                           th:field="*{observaciones}" 
-                          placeholder="Puedes agregar comentarios adicionales sobre tu disponibilidad..."></textarea>
+                          th:placeholder="#{disponibilidad.observaciones.placeholder}"></textarea>
             </div>
 
             <!-- Botones -->
             <div class="buttons-section">
-                <a th:href="@{/arbitro/dashboard}" class="btn btn-secondary">❌ Cancelar</a>
-                <button type="submit" class="btn btn-primary">💾 Guardar Disponibilidad</button>
+                <a th:href="@{/arbitro/dashboard}" class="btn btn-secondary">❌ <span th:text="#{btn.cancelar}">Cancelar</span></a>
+                <button type="submit" class="btn btn-primary">💾 <span th:text="#{disponibilidad.guardar}">Guardar Disponibilidad</span></button>
             </div>
         </form>
     </div>

@@ -199,16 +199,106 @@ caba-pro-arbitraje/
 └── pom.xml                      # Dependencias Maven
 ```
 
-## 👥 Contribución
+## � Documentación de la API
 
-Para contribuir al proyecto:
+La aplicación expone una API REST protegida por autenticación basada en formulario (Spring Security). A continuación un resumen de los endpoints más importantes (ver OpenAPI/Swagger para detalles y ejemplos de respuesta):
 
-1. Fork el repositorio
-2. Crea una rama (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit tus cambios (`git commit -m 'feat: agregar funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abre un Pull Request
+- Swagger UI: http://localhost:8080/swagger-ui.html  (o http://localhost:8080/swagger-ui/index.html)
+- H2 Console: http://localhost:8080/h2-console  (JDBC URL: jdbc:h2:file:./data/caba_pro, usuario: sa, sin contraseña)
 
-## 📄 Licencia
+Endpoints REST principales (requieren autenticación):
 
-Este proyecto es parte de un trabajo académico.
+- GET /api/arbitros
+	- Descripción: Lista árbitros activos.
+	- Rol: ROLE_ADMIN
+
+- GET /api/arbitros/{id}
+	- Descripción: Obtiene detalles de un árbitro.
+	- Rol: ROLE_ADMIN o ROLE_ARBITRO (para su propio recurso)
+
+- GET /api/arbitros/username/{username}
+	- Descripción: Obtiene árbitro por username.
+
+- GET /api/partidos
+	- Descripción: Lista partidos activos.
+	- Rol: ROLE_ADMIN
+
+- GET /api/partidos/{id}
+	- Descripción: Detalle de un partido (incluye asignaciones activas).
+	- Rol: ROLE_ADMIN o ROLE_ARBITRO (si corresponde)
+
+- GET /api/asignaciones
+	- Descripción: Endpoints para gestión de asignaciones (ver controller para rutas y autorización exacta).
+
+Nota: Las rutas del panel administrativo (Thymeleaf) están bajo /admin/** y requieren ROLE_ADMIN. Las rutas de árbitro están bajo /arbitro/** y requieren ROLE_ARBITRO.
+
+## 🔐 Autenticación / Usuarios
+
+La aplicación usa login con formulario web. Página de login: http://localhost:8080/login
+
+Credenciales por defecto (si la aplicación crea el admin en la primera ejecución):
+
+- Username: admin
+- Password: admin123
+
+⚠️ Cambia esta contraseña después del primer login. El usuario administrador por defecto se crea solo si no existen administradores en la BD.
+
+## Seeder (datos de prueba)
+
+Se incluye un seeder (CommandLineRunner) que genera tarifas, árbitros, torneos, partidos y asignaciones para facilitar pruebas y demo.
+
+- Clase: `src/main/java/.../config/DataSeeder.java`
+- Perfil: `dev` (también se ejecuta en `default` si no se configura otro perfil)
+
+Cómo usarlo:
+
+1. Por seguridad por defecto el seeder omite la generación si ya hay datos (comprueba `arbitroRepository.count()`). Si quieres forzar la generación temporalmente para demo, tienes dos opciones:
+	 - Ejecutar la aplicación con una base de datos vacía (borrar `./data/caba_pro` antes de arrancar).
+	 - Editar la guardia en `DataSeeder.java` (solo para desarrollo) para permitir ejecución forzada.
+
+2. Después de ejecutar el seeder verás en logs un resumen con cuántos registros se crearon (árbitros, partidos, asignaciones, tarifas, torneos).
+
+Recomendación: Una vez que terminaste la demostración, restaura la condición del seeder (vuelve a activar la comprobación para evitar duplicados en ejecuciones posteriores).
+
+## Subida de fotos de perfil
+
+- Ruta de almacenamiento en disco (por defecto): `uploads/perfiles/` en la raíz del proyecto.
+- El servicio de subida valida tipos MIME de imagen y tamaño máximo 5 MB.
+- La implementación usa escritura segura con `Files.copy(InputStream, Path)` y crea el directorio si no existe. Esto evita problemas con `MultipartFile.transferTo(...)` que en algunos contenedores puede resolver rutas relativas al directorio temporal del servlet.
+
+Ver/editar foto desde UI (admin):
+
+- Edita un árbitro desde el panel de administrador (`/admin/arbitros`) y usa el campo de carga de imagen (preview en cliente antes de subir).
+
+## Tests
+
+Ejecutar pruebas unitarias:
+
+```bash
+./mvnw.cmd test
+```
+
+## Limpieza / Reset de datos
+
+Si quieres resetear la base de datos y volver al estado inicial (por ejemplo para re-ejecutar el seeder):
+
+1. Detén la aplicación.
+2. Borra el archivo de la base de datos: `./data/caba_pro.mv.db` y su archivo de trace si existe.
+3. Borra el directorio de uploads si deseas eliminar fotos: `./uploads/perfiles/`
+4. Vuelve a arrancar la aplicación.
+
+## Notas y recomendaciones
+
+- DevTools está habilitado en desarrollo; durante ediciones de clases puede provocar recargas automáticas y errores transitorios de classloader. Si detectas NoClassDefFoundError tras cambios rápidos, realiza un `clean compile` y reinicia la aplicación.
+- No se realizaron cambios en los modelos de base de datos para permitir la vista/edición de fotos — la funcionalidad de foto se implementó sin modificar entidades persistentes (se usó la propiedad existente `urlFotoPerfil`).
+
+---
+
+Si quieres, ahora puedo:
+
+1. Generar un archivo Postman/Insomnia con colecciones y ejemplos para los endpoints principales.
+2. Completar la documentación OpenAPI (añadir ejemplos de request/response en los controllers si falta).
+3. Revertir la modificación temporal del seeder (re-habilitar la guardia) y añadir una propiedad en application.yaml para forzar seeding por configuración.
+
+Dime cuál prefieres y lo hago a continuación.
+>>>>>>> main

@@ -14,6 +14,8 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,9 +35,11 @@ public class TorneoController {
   private static final Logger logger = LoggerFactory.getLogger(TorneoController.class);
 
   private final TorneoService torneoService;
+  private final MessageSource messageSource;
 
-  public TorneoController(TorneoService torneoService) {
+  public TorneoController(TorneoService torneoService, MessageSource messageSource) {
     this.torneoService = torneoService;
+    this.messageSource = messageSource;
   }
 
   @GetMapping
@@ -68,7 +72,12 @@ public class TorneoController {
       Torneo torneoCreado = torneoService.crearTorneo(torneoDto);
       logger.info("Torneo creado exitosamente: {}", torneoCreado.getNombre());
 
-      flash.addFlashAttribute("success", torneoDto.getNombre() + " creado exitosamente");
+      String mensaje =
+          messageSource.getMessage(
+              "torneo.creado.exito",
+              new Object[] {torneoDto.getNombre()},
+              LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("success", mensaje);
       return "redirect:/admin/torneos";
 
     } catch (BusinessException e) {
@@ -79,7 +88,9 @@ public class TorneoController {
 
     } catch (Exception e) {
       logger.error("Error inesperado al crear torneo", e);
-      model.addAttribute("error", "Error interno del sistema");
+      String mensaje =
+          messageSource.getMessage("torneo.error.sistema", null, LocaleContextHolder.getLocale());
+      model.addAttribute("error", mensaje);
       model.addAttribute("estados", TorneoEstado.values());
       return "admin/torneos/form";
     }
@@ -118,7 +129,10 @@ public class TorneoController {
 
     try {
       torneoService.actualizarTorneo(id, torneoDto);
-      flash.addFlashAttribute("success", "Torneo actualizado exitosamente");
+      String mensaje =
+          messageSource.getMessage(
+              "torneo.actualizado.exito", null, LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("success", mensaje);
       return "redirect:/admin/torneos";
 
     } catch (BusinessException e) {
@@ -146,7 +160,9 @@ public class TorneoController {
   public String eliminarTorneo(@PathVariable Long id, RedirectAttributes flash) {
     try {
       torneoService.eliminarTorneo(id);
-      flash.addFlashAttribute("success", "Torneo eliminado exitosamente");
+      String mensaje =
+          messageSource.getMessage("torneo.eliminado.exito", null, LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("success", mensaje);
     } catch (BusinessException e) {
       flash.addFlashAttribute("error", e.getMessage());
     }
@@ -161,11 +177,16 @@ public class TorneoController {
     try {
       TorneoEstado estado = TorneoEstado.valueOf(nuevoEstado);
       torneoService.cambiarEstadoTorneo(id, estado);
-      flash.addFlashAttribute("success", "Estado del torneo actualizado exitosamente");
+      String mensaje =
+          messageSource.getMessage(
+              "torneo.estado.actualizado.exito", null, LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("success", mensaje);
     } catch (BusinessException e) {
       flash.addFlashAttribute("error", e.getMessage());
     } catch (IllegalArgumentException e) {
-      flash.addFlashAttribute("error", "Estado de torneo inválido");
+      String mensaje =
+          messageSource.getMessage("torneo.estado.invalido", null, LocaleContextHolder.getLocale());
+      flash.addFlashAttribute("error", mensaje);
     }
     return "redirect:/admin/torneos/ver/" + id;
   }

@@ -8,6 +8,8 @@ package com.caba.caba_pro.controllers;
 // 1. Java estándar
 import java.util.List;
 
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -45,6 +47,7 @@ public class PartidoController {
   private final TorneoService torneoService;
   private final com.caba.caba_pro.services.DisponibilidadService disponibilidadService;
   private final GoogleMapsService googleMapsService;
+  private final MessageSource messageSource;
 
   // 3. Constructores
   public PartidoController(
@@ -52,12 +55,14 @@ public class PartidoController {
       ArbitroService arbitroService,
       TorneoService torneoService,
       com.caba.caba_pro.services.DisponibilidadService disponibilidadService,
-      GoogleMapsService googleMapsService) {
+      GoogleMapsService googleMapsService,
+      MessageSource messageSource) {
     this.partidoService = partidoService;
     this.arbitroService = arbitroService;
     this.torneoService = torneoService;
     this.disponibilidadService = disponibilidadService;
     this.googleMapsService = googleMapsService;
+    this.messageSource = messageSource;
   }
 
   // 4. Métodos públicos
@@ -243,8 +248,10 @@ public class PartidoController {
   @PostMapping("/{id}/eliminar")
   public String eliminar(@PathVariable Long id, RedirectAttributes ra) {
     partidoService.eliminar(id); // activo=false
-    ra.addFlashAttribute("success", "Partido eliminado correctamente.");
-    return "redirect:/admin/partidos";
+    String mensaje =
+        messageSource.getMessage("partido.eliminado.exito", null, LocaleContextHolder.getLocale());
+    ra.addFlashAttribute("success", mensaje);
+    return "redirect:/admin/partidos"; // vuelve al listado
   }
 
   @PostMapping("/{id}/editar")
@@ -264,7 +271,10 @@ public class PartidoController {
     }
 
     partidoService.actualizar(id, partidoDto);
-    ra.addFlashAttribute("success", "Partido actualizado correctamente.");
+    String mensaje =
+        messageSource.getMessage(
+            "partido.actualizado.exito", null, LocaleContextHolder.getLocale());
+    ra.addFlashAttribute("success", mensaje);
     return "redirect:/admin/partidos";
   }
 }

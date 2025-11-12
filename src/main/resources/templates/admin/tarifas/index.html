@@ -2,7 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head>
-  <title>Tarifas por Escalafón - CABA Pro</title>
+  <title>[[#{tarifas.titulo}]] - CABA Pro</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" th:href="@{/css/crear-arbitros.css}" />
@@ -11,15 +11,15 @@
 <div class="container">
   <!-- Navigation -->
   <div class="nav-bar">
-    <a th:href="@{/admin/dashboard}">Dashboard</a>
-    <a th:href="@{/admin/arbitros}">Árbitros</a>
-    <a th:href="@{/admin/partidos}">Partidos</a>
-    <a th:href="@{/admin/torneos}">Torneos</a>
-    <a th:href="@{/admin/calendario}">Calendario</a>
-    <a th:href="@{/admin/notificaciones}" title="Notificaciones">🔔</a>
+    <a th:href="@{/admin/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
+    <a th:href="@{/admin/arbitros}" th:text="#{nav.arbitros}">Árbitros</a>
+    <a th:href="@{/admin/partidos}" th:text="#{nav.partidos}">Partidos</a>
+    <a th:href="@{/admin/torneos}" th:text="#{nav.torneos}">Torneos</a>
+    <a th:href="@{/admin/calendario}" th:text="#{nav.calendario}">Calendario</a>
+    <a th:href="@{/admin/notificaciones}" th:title="#{nav.notificaciones}">🔔</a>
   </div>
 
-  <h1>Tarifas por Escalafón</h1>
+  <h1 th:text="#{tarifas.titulo}">Tarifas por Escalafón</h1>
 
   <!-- Messages -->
   <div th:if="${success}" class="message success" th:text="${success}"></div>
@@ -28,8 +28,9 @@
   <form th:action="@{/admin/tarifas}" th:object="${tarifaForm}" method="post">
     <div class="form-grid">
       <div class="form-group" th:each="item, iter : *{tarifas}">
-        <label th:for="${'tarifa-' + iter.index}"
-               th:text="${item.escalafon + ' (COP $)'}">FIBA (COP $)</label>
+        <label th:for="${'tarifa-' + iter.index}">
+          <span th:text="${item.escalafon}"></span> (<span th:text="#{tarifas.cop}">COP $</span>)
+        </label>
 
         <!-- escalafón como hidden para mantener el binding -->
         <input type="hidden" th:field="*{tarifas[__${iter.index}__].escalafon}"/>
@@ -46,8 +47,8 @@
     </div>
 
     <div class="buttons">
-      <a th:href="@{/admin/dashboard}" class="btn btn-secondary">Cancelar</a>
-      <button type="submit" class="btn btn-primary">Guardar cambios</button>
+      <a th:href="@{/admin/dashboard}" class="btn btn-secondary" th:text="#{btn.cancelar}">Cancelar</a>
+      <button type="submit" class="btn btn-primary" th:text="#{tarifas.guardar}">Guardar cambios</button>
     </div>
   </form>
 </div>

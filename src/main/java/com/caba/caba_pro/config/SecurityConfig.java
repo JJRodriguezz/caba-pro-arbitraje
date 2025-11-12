@@ -40,7 +40,17 @@ public class SecurityConfig {
                     .requestMatchers("/h2-console/**")
                     .permitAll()
                     .requestMatchers(
-                        "/login", "/registro", "/css/**", "/js/**", "/images/**", "/h2-console")
+                        "/login",
+                        "/registro",
+                        "/css/**",
+                        "/js/**",
+                        "/images/**",
+                        "/h2-console",
+                        "/swagger-ui/**",
+                        "/swagger-ui.html",
+                        "/v3/api-docs/**",
+                        "/api-docs/**",
+                        "/api/auth/**") // ✅ API de autenticación - pública
                     .permitAll()
 
                     // Rutas administrativas - solo ROLE_ADMIN
@@ -54,6 +64,10 @@ public class SecurityConfig {
                     // Rutas de chat
                     .requestMatchers("/chat/**", "/ws/**")
                     .authenticated()
+
+                    // Rutas de API REST - PÚBLICAS (la autenticación la maneja Node.js con JWT)
+                    .requestMatchers("/api/**")
+                    .permitAll()
 
                     // Cualquier otra request requiere autenticación
                     .anyRequest()

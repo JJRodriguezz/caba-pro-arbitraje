@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Editar Árbitro - CABA Pro</title>
+    <title>[[#{editar.arbitro.titulo}]] - CABA Pro</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" th:href="@{/css/crear-arbitros.css}" />
@@ -11,12 +11,12 @@
 <div class="container">
     <!-- Navigation -->
     <div class="nav-bar">
-        <a th:href="@{/admin/dashboard}">Dashboard</a>
-        <a th:href="@{/admin/arbitros}">Árbitros</a>
-        <a href="#" style="background: rgba(255,255,255,0.3);">Editar Árbitro</a>
+        <a th:href="@{/admin/dashboard}" th:text="#{nav.dashboard}">Dashboard</a>
+        <a th:href="@{/admin/arbitros}" th:text="#{nav.arbitros}">Árbitros</a>
+        <a href="#" style="background: rgba(255,255,255,0.3);" th:text="#{editar.arbitro.titulo}">Editar Árbitro</a>
     </div>
 
-    <h1>Editar Árbitro</h1>
+    <h1 th:text="#{editar.arbitro.titulo}">Editar Árbitro</h1>
 
     <!-- Messages -->
     <div th:if="${success}" class="message success" th:text="${success}"></div>
@@ -27,61 +27,61 @@
 
         <div class="form-grid">
             <div class="form-group">
-                <label for="fotoPerfil">Foto de Perfil</label>
+                <label for="fotoPerfil" th:text="#{crear.arbitro.foto}">Foto de Perfil</label>
                 <!-- Mostrar foto actual si existe -->
                 <div th:if="${arbitroDto.urlFotoPerfil != null}" style="margin-bottom: 10px;">
-                    <p>Foto actual:</p>
+                    <p th:text="#{editar.arbitro.foto.actual}">Foto actual:</p>
                     <img th:src="${arbitroDto.urlFotoPerfil}" alt="Foto actual" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%; border: 2px solid #ccc;">
                 </div>
                 <input type="file" id="fotoPerfil" name="fotoPerfil" accept="image/*">
-                <small>Seleccione una nueva imagen para cambiar la foto actual</small>
+                <small th:text="#{editar.arbitro.foto.cambiar}">Seleccione una nueva imagen para cambiar la foto actual</small>
             </div>
             <div class="form-group">
-                <label for="nombre">Nombre *</label>
+                <label for="nombre" th:text="#{crear.arbitro.nombre}">Nombre *</label>
                 <input type="text" id="nombre" th:field="*{nombre}" required>
                 <span th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="error"></span>
             </div>
 
             <div class="form-group">
-                <label for="apellidos">Apellidos *</label>
+                <label for="apellidos" th:text="#{crear.arbitro.apellidos}">Apellidos *</label>
                 <input type="text" id="apellidos" th:field="*{apellidos}" required>
                 <span th:if="${#fields.hasErrors('apellidos')}" th:errors="*{apellidos}" class="error"></span>
             </div>
 
             <div class="form-group">
-                <label for="username">Nombre de Usuario *</label>
+                <label for="username" th:text="#{editar.arbitro.nombre.usuario}">Nombre de Usuario *</label>
                 <input type="text" id="username" th:field="*{username}" required>
                 <span th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error"></span>
             </div>
 
             <div class="form-group">
-                <label for="numeroIdentificacion">Número de Identificación *</label>
+                <label for="numeroIdentificacion" th:text="#{crear.arbitro.numero.id}">Número de Identificación *</label>
                 <input type="text" id="numeroIdentificacion" th:field="*{numeroIdentificacion}" required>
                 <span th:if="${#fields.hasErrors('numeroIdentificacion')}" th:errors="*{numeroIdentificacion}" class="error"></span>
             </div>
 
             <div class="form-group">
-                <label for="email">Email *</label>
+                <label for="email" th:text="#{crear.arbitro.email}">Email *</label>
                 <input type="email" id="email" th:field="*{email}" required>
                 <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></span>
             </div>
 
             <div class="form-group">
-                <label for="telefono">Teléfono</label>
+                <label for="telefono" th:text="#{crear.arbitro.telefono}">Teléfono</label>
                 <input type="tel" id="telefono" th:field="*{telefono}">
                 <span th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}" class="error"></span>
             </div>
 
             <div class="form-group">
-                <label for="fechaNacimiento">Fecha de Nacimiento</label>
+                <label for="fechaNacimiento" th:text="#{crear.arbitro.fecha.nacimiento}">Fecha de Nacimiento</label>
                 <input type="date" id="fechaNacimiento" th:field="*{fechaNacimiento}">
                 <span th:if="${#fields.hasErrors('fechaNacimiento')}" th:errors="*{fechaNacimiento}" class="error"></span>
             </div>
 
             <div class="form-group">
-                <label for="especialidad">Especialidad *</label>
+                <label for="especialidad" th:text="#{crear.arbitro.especialidad}">Especialidad *</label>
                 <select id="especialidad" th:field="*{especialidad}" required>
-                    <option value="">Seleccionar especialidad</option>
+                    <option value="" th:text="#{crear.arbitro.especialidad.seleccionar}">Seleccionar especialidad</option>
                     <option value="CAMPO">CAMPO</option>
                     <option value="MESA">MESA</option>
                 </select>
@@ -89,9 +89,9 @@
             </div>
 
             <div class="form-group">
-                <label for="escalafon">Escalafón *</label>
+                <label for="escalafon" th:text="#{crear.arbitro.escalafon}">Escalafón *</label>
                 <select id="escalafon" th:field="*{escalafon}" required>
-                    <option value="">Seleccionar escalafón</option>
+                    <option value="" th:text="#{crear.arbitro.escalafon.seleccionar}">Seleccionar escalafón</option>
                     <option value="FIBA">FIBA</option>
                     <option value="PRIMERA">PRIMERA</option>
                     <option value="SEGUNDA">SEGUNDA</option>
@@ -101,21 +101,102 @@
             </div>
         </div>
 
+        <!-- Photo Section -->
+        <div class="photo-section" style="margin-top: 20px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+            <h3 style="margin-bottom: 15px; color: white;">Foto de Perfil</h3>
+            
+            <!-- Current Photo Display -->
+            <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                <div style="text-align: center;">
+                    <p style="color: #9ca3af; margin-bottom: 10px; font-size: 14px;">Foto Actual:</p>
+                    <img id="currentPhoto" 
+                         th:src="${arbitroDto.urlFotoPerfil != null ? arbitroDto.urlFotoPerfil : '/css/default-avatar.svg'}" 
+                         alt="Foto actual"
+                         style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #4a5568;"
+                         onerror="this.src='/css/default-avatar.svg'">
+                </div>
+
+                <div style="flex: 1; min-width: 250px;">
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <label for="fotoPerfil" style="display: block; margin-bottom: 8px; color: white;">
+                            Cambiar Foto de Perfil
+                        </label>
+                        <input type="file" 
+                               id="fotoPerfil" 
+                               name="fotoPerfil" 
+                               accept="image/jpeg,image/png,image/gif,image/webp"
+                               style="width: 100%; padding: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; color: white;">
+                        <small style="display: block; margin-top: 5px; color: #9ca3af;">
+                            Formatos permitidos: JPG, PNG, GIF, WebP. Tamaño máximo: 5MB
+                        </small>
+                    </div>
+
+                    <!-- New Photo Preview -->
+                    <div id="previewContainer" style="display: none; margin-top: 15px;">
+                        <p style="color: #9ca3af; margin-bottom: 10px; font-size: 14px;">Vista Previa Nueva Foto:</p>
+                        <img id="photoPreview" 
+                             src="" 
+                             alt="Vista previa"
+                             style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 3px solid #10b981;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Security Note -->
         <div class="credentials-section">
-            <h3>Información de Seguridad</h3>
+            <h3 th:text="#{editar.arbitro.seguridad}">Información de Seguridad</h3>
             <p class="security-note">
-                <strong>Nota:</strong> Las credenciales de acceso (usuario y contraseña) no se pueden modificar desde esta vista por razones de seguridad.
+                <strong th:text="#{editar.arbitro.seguridad.nota}">Nota:</strong> <span th:text="#{editar.arbitro.seguridad.texto}">Las credenciales de acceso (usuario y contraseña) no se pueden modificar desde esta vista por razones de seguridad.</span>
             </p>
         </div>
 
         <!-- Buttons -->
         <div class="buttons">
-            <a th:href="@{/admin/arbitros}" class="btn btn-secondary">Cancelar</a>
-            <button type="submit" class="btn btn-primary">Actualizar Árbitro</button>
+            <a th:href="@{/admin/arbitros}" class="btn btn-secondary" th:text="#{btn.cancelar}">Cancelar</a>
+            <button type="submit" class="btn btn-primary" th:text="#{editar.arbitro.btn}">Actualizar Árbitro</button>
         </div>
         
     </form>
 </div>
+
+<script>
+// Vista previa de la foto cuando se selecciona un nuevo archivo
+document.getElementById('fotoPerfil').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    const previewContainer = document.getElementById('previewContainer');
+    const preview = document.getElementById('photoPreview');
+    
+    if (file) {
+        // Validar tamaño (5MB = 5 * 1024 * 1024 bytes)
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            alert('El archivo es demasiado grande. Tamaño máximo permitido: 5MB');
+            event.target.value = '';
+            previewContainer.style.display = 'none';
+            return;
+        }
+        
+        // Validar tipo de archivo
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            alert('Formato de archivo no válido. Solo se permiten: JPG, PNG, GIF, WebP');
+            event.target.value = '';
+            previewContainer.style.display = 'none';
+            return;
+        }
+        
+        // Mostrar vista previa
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            previewContainer.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        previewContainer.style.display = 'none';
+    }
+});
+</script>
 </body>
 </html>
